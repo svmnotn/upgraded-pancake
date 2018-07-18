@@ -1,0 +1,8 @@
+[package]
+name = "upgraded-pancake-server"
+version = "0.1.0"
+authors = ["Victor M. Suarez <svmnotn@gmail.com>"]
+
+[dependencies]
+rocket = "0.3.15"
+rocket_codegen = "0.3.15"
