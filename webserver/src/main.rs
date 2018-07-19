@@ -137,9 +137,18 @@ fn get_complex() -> String {
         .get()
 }
 
+use std::io;
+use std::path::{Path, PathBuf};
+use rocket::response::NamedFile;
+
 #[get("/")]
-fn index() -> &'static str {
-    "Welcome to a table roller :D"
+fn index() -> io::Result<NamedFile> {
+    NamedFile::open("../static/index.html")
+}
+
+#[get("/<file..>")]
+fn files(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("../static/").join(file)).ok()
 }
 
 fn main() {
@@ -154,6 +163,7 @@ fn main() {
                 see_ser_complex,
                 get_simple,
                 get_complex,
+                files,
             ],
         )
         .launch();
