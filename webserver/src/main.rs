@@ -78,7 +78,7 @@ fn see_de_complex() -> String {
 #[get("/see/ser/simple")]
 fn see_ser_simple() -> String {
     format!(
-        "Simple Table Serialization: {}",
+        "{}",
         serde_json::to_string_pretty(&tables::Table::Simple {
             die: String::from("2d6"),
             results: vec![
@@ -102,7 +102,7 @@ fn see_ser_simple() -> String {
 #[get("/see/ser/complex")]
 fn see_ser_complex() -> String {
     format!(
-        "Complex Table Serialization: {}",
+        "{}",
         serde_json::to_string_pretty(&tables::Table::Complex {
             die: Die { amount: 2, size: 6 },
             results: vec![
