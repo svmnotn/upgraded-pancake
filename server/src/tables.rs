@@ -1,5 +1,5 @@
-extern crate serde_json;
 extern crate rand;
+extern crate serde_json;
 
 use rocket_contrib::Json;
 use upgraded_pancake::{Table, TableResult};
