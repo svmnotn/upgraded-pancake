@@ -1,95 +1,80 @@
-mod complex_row;
-mod die;
+mod dice;
+pub use self::dice::Dice;
+
 mod range;
-mod simple_row;
-
-pub use self::complex_row::ComplexRow;
-pub use self::die::Die;
 pub use self::range::Range;
-pub use self::simple_row::SimpleRow;
 
-use rand::distributions::{Distribution, Standard};
+mod row;
+pub use self::row::Row;
+
+use rand::distributions::{Alphanumeric, Distribution, Standard};
 use rand::{thread_rng, Rng};
+use {RNG_DATA_SIZE, RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
 
 #[derive(Debug, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum Table {
-    Simple {
-        die: String,
-        results: Vec<SimpleRow>,
-    },
-    Complex {
-        die: Die,
-        results: Vec<ComplexRow>,
-    },
+pub struct Table {
+    dice: Dice,
+    results: Vec<Row>,
 }
 
 #[derive(Debug, Serialize)]
 pub struct TableResult {
-    roll: i64,
+    roll: u64,
     value: String,
 }
 
 impl Table {
     pub fn get(&self) -> Option<TableResult> {
-        let mut rng = thread_rng();
+        let roll = self.dice.roll();
 
-        match self {
-            Table::Simple { results: v, .. } => {
-                if let Some(r) = rng.choose(&v) {
-                    Some(TableResult {
-                        roll: r.roll,
-                        value: r.value.clone(),
-                    })
-                } else {
-                    None
-                }
-            }
-            Table::Complex { die, results: v } => {
-                let res = (0..die.amount).fold(0, |acc, _| rng.gen_range(0, die.size) + acc);
-                if let Some(val) = v
-                    .iter()
-                    .filter(|ComplexRow { range: r, .. }| r.contains(res))
-                    .next()
-                {
-                    Some(TableResult {
-                        roll: res,
-                        value: val.value.clone(),
-                    })
-                } else {
-                    None
-                }
-            }
-        }
+        self.results
+            .iter()
+            .filter(|row| row.is(roll))
+            .next()
+            .map(|row| TableResult {
+                roll,
+                value: row.value(),
+            })
     }
 }
 
 impl Distribution<Table> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Table {
-        if rng.gen() {
-            // Simple Table
-            Table::Simple {
-                die: format!("{}", rng.gen::<Die>()),
-                results: {
-                    let mut vec: Vec<SimpleRow> = Vec::with_capacity(10);
-                    for _ in 0..rng.gen_range(1, 10) {
-                        vec.push(rng.gen());
-                    }
-                    vec
-                },
-            }
-        } else {
-            // Complex Table
-            Table::Complex {
-                die: rng.gen(),
-                results: {
-                    let mut vec: Vec<ComplexRow> = Vec::with_capacity(10);
-                    for _ in 0..rng.gen_range(1, 10) {
-                        vec.push(rng.gen());
-                    }
-                    vec
-                },
-            }
+        let dice: Dice = rng.gen();
+        Table {
+            results: {
+                let mut vec: Vec<Row> = Vec::with_capacity(RNG_MAX_LIST_SIZE);
+                for _ in 0..rng.gen_range(RNG_MIN_LIST_SIZE, RNG_MAX_LIST_SIZE) {
+                    vec.push({
+                        let data = thread_rng()
+                            .sample_iter(&Alphanumeric)
+                            .take(RNG_DATA_SIZE)
+                            .collect();
+
+                        if rng.gen() {
+                            Row::Simple {
+                                roll: dice.roll(),
+                                value: data,
+                            }
+                        } else {
+                            Row::Complex {
+                                range: {
+                                    let init = rng.gen_range(dice.min(), dice.max() - 3);
+                                    let finish = rng.gen_range(init + 1, dice.max() - 1);
+
+                                    Range(
+                                        rng.gen_range(init, finish)
+                                            ..=rng.gen_range(finish + 1, dice.max()),
+                                    )
+                                },
+                                value: data,
+                            }
+                        }
+                    });
+                }
+                vec
+            },
+            dice,
         }
     }
 }

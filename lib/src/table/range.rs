@@ -1,15 +1,13 @@
-use rand::distributions::{Distribution, Standard};
-use rand::Rng;
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::fmt;
 use std::ops::RangeInclusive;
 
-#[derive(Debug)]
-pub struct Range(pub RangeInclusive<i64>);
+#[derive(Debug, Clone)]
+pub struct Range(pub RangeInclusive<u64>);
 
 impl Range {
-    pub fn contains(&self, v: i64) -> bool {
+    pub fn contains(&self, v: u64) -> bool {
         (v < *self.0.start() || v > *self.0.end()) == false
     }
 }
@@ -48,9 +46,9 @@ impl<'de> Deserialize<'de> for Range {
                 E: de::Error,
             {
                 if s.contains("-") {
-                    let v: Vec<i64> = s
+                    let v: Vec<u64> = s
                         .split('-')
-                        .map(|x| x.parse::<i64>().expect("not a number!"))
+                        .map(|x| x.parse::<u64>().expect("not a number!"))
                         .collect(); // TODO make into error
                     Ok(Range(v[0]..=v[1]))
                 } else {
@@ -59,11 +57,5 @@ impl<'de> Deserialize<'de> for Range {
             }
         }
         deserializer.deserialize_str(RangeVisitor)
-    }
-}
-
-impl Distribution<Range> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Range {
-        Range(rng.gen_range(1, 101)..=rng.gen_range(1, 101))
     }
 }
