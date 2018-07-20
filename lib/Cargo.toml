@@ -1,0 +1,10 @@
+[package]
+name = "upgraded-pancake"
+version = "0.1.0"
+authors = ["Victor M. Suarez <svmnotn@gmail.com>"]
+
+[dependencies]
+serde_json = "1.0.24"
+serde = "1.0.70"
+serde_derive = "1.0.70"
+rand = "0.5.4"
