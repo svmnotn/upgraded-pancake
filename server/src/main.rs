@@ -16,8 +16,6 @@ fn main() {
                 files::index,
                 tables::get,
                 tables::post,
-                tables::get_simple,
-                tables::get_complex,
                 files::get,
             ],
         )
