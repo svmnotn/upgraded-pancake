@@ -4,10 +4,10 @@ use std::path::{Path, PathBuf};
 
 #[get("/")]
 fn index() -> io::Result<NamedFile> {
-    NamedFile::open("../static/index.html")
+    NamedFile::open("static/index.html")
 }
 
 #[get("/<file..>")]
 fn get(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("../static/").join(file)).ok()
+    NamedFile::open(Path::new("static/").join(file)).ok()
 }
