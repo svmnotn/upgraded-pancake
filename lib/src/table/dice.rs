@@ -2,7 +2,7 @@ use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
 use std::fmt;
-use RNG_MAX_DICE_AMOUNT;
+use {RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
 
 #[derive(Debug, Serialize)]
 pub struct Dice {
@@ -126,11 +126,9 @@ impl fmt::Display for Dice {
 
 impl Distribution<Dice> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Dice {
-        let sizes: [u16; 8] = [4, 6, 8, 10, 12, 20, 100, 1000];
-
         Dice {
             amount: rng.gen_range(1, RNG_MAX_DICE_AMOUNT),
-            size: *rng.choose(&sizes).expect("sizes where empty?"),
+            size: *rng.choose(&RNG_DICE_SIZES).expect("sizes where empty?"),
         }
     }
 }
