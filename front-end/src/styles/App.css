@@ -1,0 +1,11 @@
+.btnRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.spaceRight {
+  margin-right: 8vw;
+}
+
+
