@@ -7,6 +7,9 @@ pub use self::range::Range;
 mod row;
 pub use self::row::Row;
 
+mod strings;
+pub use self::strings::Strings;
+
 use rand::distributions::{Alphanumeric, Distribution, Standard};
 use rand::{thread_rng, Rng};
 use {RNG_DATA_SIZE, RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
@@ -14,6 +17,7 @@ use {RNG_DATA_SIZE, RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Table {
     dice: Dice,
+    heading: Strings,
     results: Vec<Row>,
 }
 
@@ -42,6 +46,12 @@ impl Distribution<Table> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Table {
         let dice: Dice = rng.gen();
         Table {
+            heading: Strings::Single(
+                thread_rng()
+                    .sample_iter(&Alphanumeric)
+                    .take(RNG_DATA_SIZE)
+                    .collect::<String>(),
+            ),
             results: {
                 let mut vec: Vec<Row> = Vec::with_capacity(RNG_MAX_LIST_SIZE);
                 for _ in 0..rng.gen_range(RNG_MIN_LIST_SIZE, RNG_MAX_LIST_SIZE) {
