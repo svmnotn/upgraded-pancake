@@ -1,0 +1,4 @@
+I am another file?
+
+^
+This is an awesome secret file that I hijacked :D!
