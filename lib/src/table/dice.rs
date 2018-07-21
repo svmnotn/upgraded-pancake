@@ -34,6 +34,21 @@ impl Dice {
     }
 }
 
+impl fmt::Display for Dice {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}d{}", self.amount, self.size)
+    }
+}
+
+impl Distribution<Dice> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Dice {
+        Dice {
+            amount: rng.gen_range(1, RNG_MAX_DICE_AMOUNT),
+            size: *rng.choose(&RNG_DICE_SIZES).expect("sizes where empty?"),
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for Dice {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -115,20 +130,5 @@ impl<'de> Deserialize<'de> for Dice {
         }
 
         deserializer.deserialize_any(DiceVisitor)
-    }
-}
-
-impl fmt::Display for Dice {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}d{}", self.amount, self.size)
-    }
-}
-
-impl Distribution<Dice> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Dice {
-        Dice {
-            amount: rng.gen_range(1, RNG_MAX_DICE_AMOUNT),
-            size: *rng.choose(&RNG_DICE_SIZES).expect("sizes where empty?"),
-        }
     }
 }
