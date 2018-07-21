@@ -1,10 +1,10 @@
-use super::Range;
+use super::{Range, Strings};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum Row {
-    Simple { roll: u64, value: String },
-    Complex { range: Range, value: String },
+    Simple { roll: u64, value: Strings },
+    Complex { range: Range, value: Strings },
 }
 
 impl Row {
@@ -31,7 +31,7 @@ impl Row {
         }
     }
 
-    pub fn value(&self) -> String {
+    pub fn value(&self) -> Strings {
         match self {
             Row::Simple { value: v, .. } => v.clone(),
             Row::Complex { value: v, .. } => v.clone(),

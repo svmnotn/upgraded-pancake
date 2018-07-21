@@ -24,7 +24,7 @@ pub struct Table {
 #[derive(Debug, Serialize)]
 pub struct TableResult {
     roll: u64,
-    value: String,
+    value: Strings,
 }
 
 impl Table {
@@ -56,10 +56,12 @@ impl Distribution<Table> for Standard {
                 let mut vec: Vec<Row> = Vec::with_capacity(RNG_MAX_LIST_SIZE);
                 for _ in 0..rng.gen_range(RNG_MIN_LIST_SIZE, RNG_MAX_LIST_SIZE) {
                     vec.push({
-                        let data = thread_rng()
-                            .sample_iter(&Alphanumeric)
-                            .take(RNG_DATA_SIZE)
-                            .collect();
+                        let data = Strings::Single(
+                            thread_rng()
+                                .sample_iter(&Alphanumeric)
+                                .take(RNG_DATA_SIZE)
+                                .collect(),
+                        );
 
                         if rng.gen() {
                             Row::Simple {
