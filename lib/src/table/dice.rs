@@ -11,18 +11,18 @@ pub struct Dice {
 }
 
 impl Dice {
-    pub fn roll(&self) -> u64 {
+    pub fn roll(&self) -> u32 {
         (0..self.amount).fold(0, |acc, _| {
-            thread_rng().gen_range(1 as u64, (self.size + 1) as u64) + acc
+            thread_rng().gen_range(1 as u32, (self.size + 1) as u32) + acc
         })
     }
 
-    pub fn min(&self) -> u64 {
-        self.amount as u64
+    pub fn min(&self) -> u32 {
+        self.amount as u32
     }
 
-    pub fn max(&self) -> u64 {
-        (self.amount as u64) * (self.size as u64)
+    pub fn max(&self) -> u32 {
+        (self.amount as u32) * (self.size as u32)
     }
 
     pub fn amount(&self) -> u16 {

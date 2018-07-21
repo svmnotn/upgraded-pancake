@@ -4,10 +4,10 @@ use std::fmt;
 use std::ops::RangeInclusive;
 
 #[derive(Debug, Clone)]
-pub struct Range(pub RangeInclusive<u64>);
+pub struct Range(pub RangeInclusive<u32>);
 
 impl Range {
-    pub fn contains(&self, v: u64) -> bool {
+    pub fn contains(&self, v: u32) -> bool {
         (v < *self.0.start() || v > *self.0.end()) == false
     }
 }
@@ -46,9 +46,9 @@ impl<'de> Deserialize<'de> for Range {
                 E: de::Error,
             {
                 if s.contains("-") {
-                    let v: Vec<u64> = s
+                    let v: Vec<u32> = s
                         .split('-')
-                        .map(|x| x.parse::<u64>().expect("not a number!"))
+                        .map(|x| x.parse::<u32>().expect("not a number!"))
                         .collect(); // TODO make into error
                     Ok(Range(v[0]..=v[1]))
                 } else {
