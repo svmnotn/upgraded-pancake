@@ -13,9 +13,12 @@ pub use self::row::Row;
 mod strings;
 pub use self::strings::Strings;
 
-use rand::distributions::{Alphanumeric, Distribution, Standard};
-use rand::{thread_rng, Rng};
-use {RNG_DATA_SIZE, RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
+extern crate lipsum;
+use self::lipsum::lipsum_title;
+
+use rand::distributions::{Distribution, Standard};
+use rand::Rng;
+use {RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Table {
@@ -45,29 +48,25 @@ impl Table {
     }
 }
 
-fn gen_strings(columns: usize) -> Strings {
-    let mut thread_rng = thread_rng();
-
+fn gen_strings(columns: usize, heading: bool) -> Strings {
     if columns > 1 {
         Strings::Multiple({
             let mut vec: Vec<String> = Vec::with_capacity(columns);
             for _ in 0..columns {
-                vec.push(
-                    thread_rng
-                        .sample_iter(&Alphanumeric)
-                        .take(RNG_DATA_SIZE)
-                        .collect::<String>(),
-                );
+                vec.push(if heading {
+                    lipsum_title()
+                } else {
+                    lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()
+                });
             }
             vec
         })
     } else {
-        Strings::Single(
-            thread_rng
-                .sample_iter(&Alphanumeric)
-                .take(RNG_DATA_SIZE)
-                .collect::<String>(),
-        )
+        Strings::Single(if heading {
+            lipsum_title()
+        } else {
+            lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()
+        })
     }
 }
 
@@ -94,12 +93,12 @@ impl Distribution<Table> for Standard {
                                 )
                             })
                         },
-                        value: gen_strings(columns),
+                        value: gen_strings(columns, false),
                     });
                 }
                 vec
             },
-            heading: gen_strings(columns),
+            heading: gen_strings(columns, true),
             dice,
         }
     }
