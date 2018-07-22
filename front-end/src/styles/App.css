@@ -1,3 +1,5 @@
+.hidden { display:none; }
+
 .btnRow {
   display: flex;
   flex-direction: row;
