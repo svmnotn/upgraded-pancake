@@ -1,13 +1,42 @@
-.hidden { display:none; }
+
 
 .btnRow {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin-top: 5vh;
+}
+
+.btnTable {
+  display: flex;
+  flex-direction:column;
+  justify-content: center;
+}
+
+.squareBtn {
+  height: 2em;
+  width: 2em;
+  font-size: 5vh;
 }
 
 .spaceRight {
-  margin-right: 8vw;
+  margin-right: 5vw;
 }
 
+.leftAlign {
+  text-align: left;
+  padding-left: 1em;
+}
+
+.container {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 5vh;
+}
+
+.lastRow {
+  border-bottom: none;
+}
 
