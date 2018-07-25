@@ -8,7 +8,6 @@ class Roll extends React.Component {
         return(
             <div>
                 <Table/>
-
                 <div className="btnRow">
                     <Link to="/">
                         <button>Return</button>

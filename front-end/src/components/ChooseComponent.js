@@ -1,6 +1,7 @@
 import React from 'react';
-import '../styles/App.css';
+
 import { Link } from 'react-router-dom';
+import '../styles/App.css';
 
 class Choose extends React.Component {
     render() {
