@@ -13,16 +13,16 @@ pub struct Dice {
 impl Dice {
     pub fn roll(&self) -> u32 {
         (0..self.amount).fold(0, |acc, _| {
-            thread_rng().gen_range(1 as u32, (self.size + 1) as u32) + acc
+            thread_rng().gen_range(1, u32::from(self.size + 1)) + acc
         })
     }
 
     pub fn min(&self) -> u32 {
-        self.amount as u32
+        u32::from(self.amount)
     }
 
     pub fn max(&self) -> u32 {
-        (self.amount as u32) * (self.size as u32)
+        u32::from(self.amount) * u32::from(self.size)
     }
 
     pub fn amount(&self) -> u16 {
@@ -93,20 +93,20 @@ impl<'de> Deserialize<'de> for Dice {
                     match key {
                         Field::Amount => {
                             if amount.is_some() {
-                                return Err(de::Error::duplicate_field("secs"));
+                                return Err(de::Error::duplicate_field("amount"));
                             }
                             amount = Some(map.next_value()?);
                         }
                         Field::Size => {
                             if size.is_some() {
-                                return Err(de::Error::duplicate_field("nanos"));
+                                return Err(de::Error::duplicate_field("size"));
                             }
                             size = Some(map.next_value()?);
                         }
                     }
                 }
-                let amount = amount.ok_or_else(|| de::Error::missing_field("secs"))?;
-                let size = size.ok_or_else(|| de::Error::missing_field("nanos"))?;
+                let amount = amount.ok_or_else(|| de::Error::missing_field("amount"))?;
+                let size = size.ok_or_else(|| de::Error::missing_field("size"))?;
                 Ok(Dice { amount, size })
             }
 
@@ -114,7 +114,7 @@ impl<'de> Deserialize<'de> for Dice {
             where
                 E: de::Error,
             {
-                if s.contains("d") {
+                if s.contains('d') {
                     let v: Vec<u16> = s
                         .split('d')
                         .map(|x| x.parse::<u16>().expect("not a number!"))

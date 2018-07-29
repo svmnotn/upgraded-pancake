@@ -45,7 +45,7 @@ impl<'de> Deserialize<'de> for Range {
             where
                 E: de::Error,
             {
-                if s.contains("-") {
+                if s.contains('-') {
                     let v: Vec<u32> = s
                         .split('-')
                         .map(|x| x.parse::<u32>().expect("not a number!"))

@@ -39,8 +39,7 @@ impl Table {
 
         self.results
             .iter()
-            .filter(|row| row.is(roll))
-            .next()
+            .find(|row| row.is(roll))
             .map(|row| TableResult {
                 roll,
                 value: row.value(),
