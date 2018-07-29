@@ -282,7 +282,7 @@ dependencies = [
 [[package]]
 name = "rocket"
 version = "0.4.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket#aaad4f5c57bd4b4dcf8e564adabcf0d5aba46161"
+source = "git+https://github.com/SergioBenitez/Rocket#c04655f290c25055d4e3011be0034a2e5d3acbd0"
 dependencies = [
  "base64 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "isatty 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -302,7 +302,7 @@ dependencies = [
 [[package]]
 name = "rocket_codegen"
 version = "0.4.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket#aaad4f5c57bd4b4dcf8e564adabcf0d5aba46161"
+source = "git+https://github.com/SergioBenitez/Rocket#c04655f290c25055d4e3011be0034a2e5d3acbd0"
 dependencies = [
  "indexmap 1.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_http 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket)",
@@ -313,7 +313,7 @@ dependencies = [
 [[package]]
 name = "rocket_codegen_next"
 version = "0.4.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket#aaad4f5c57bd4b4dcf8e564adabcf0d5aba46161"
+source = "git+https://github.com/SergioBenitez/Rocket#c04655f290c25055d4e3011be0034a2e5d3acbd0"
 dependencies = [
  "proc-macro2 0.4.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "quote 0.6.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -323,7 +323,7 @@ dependencies = [
 [[package]]
 name = "rocket_contrib"
 version = "0.4.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket#aaad4f5c57bd4b4dcf8e564adabcf0d5aba46161"
+source = "git+https://github.com/SergioBenitez/Rocket#c04655f290c25055d4e3011be0034a2e5d3acbd0"
 dependencies = [
  "log 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket)",
@@ -334,7 +334,7 @@ dependencies = [
 [[package]]
 name = "rocket_http"
 version = "0.4.0-dev"
-source = "git+https://github.com/SergioBenitez/Rocket#aaad4f5c57bd4b4dcf8e564adabcf0d5aba46161"
+source = "git+https://github.com/SergioBenitez/Rocket#c04655f290c25055d4e3011be0034a2e5d3acbd0"
 dependencies = [
  "cookie 0.11.0-dev (git+https://github.com/alexcrichton/cookie-rs?rev=f191ca50)",
  "hyper 0.10.13 (registry+https://github.com/rust-lang/crates.io-index)",
