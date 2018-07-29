@@ -1,33 +1,29 @@
-
-
-.btnRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 5vh;
-}
-
-.btnTable {
-  display: flex;
-  flex-direction:column;
-  justify-content: center;
-}
-
+/*General CSS Classes*/
 .squareBtn {
   height: 2em;
   width: 2em;
   font-size: 5vh;
 }
 
-.spaceRight {
-  margin-right: 5vw;
+/*CSS for App.js*/
+.btnRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 3%;
 }
 
-.leftAlign {
-  text-align: left;
-  padding-left: 1em;
+/*CSS for ChooseComponent.js*/
+.btnTable td {
+  padding: 0.9em;
+  border-bottom: none;
 }
 
+.btnTable td:nth-child(odd) {
+  border-right: none;
+}
+
+/*CSS for CreateComponent.js*/
 .container {
   display: flex;
   justify-content: space-evenly;
@@ -36,7 +32,19 @@
   margin-top: 5vh;
 }
 
+/*CSS for Table.js*/
+.leftAlign {
+  text-align: left;
+  padding-left: 1em;
+}
+
 .lastRow {
   border-bottom: none;
 }
 
+.result {
+  font-size: 1.5em;
+  font-weight: 200;
+  margin-top: 5%;
+  margin-bottom: 5%;
+}

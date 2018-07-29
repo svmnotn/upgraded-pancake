@@ -5,11 +5,11 @@ import registerServiceWorker from './registerServiceWorker';
 
 import './styles/index.css';
 import Home from './App';
-import Choose from './components/ChooseComponent';
-import Create from './components/CreateComponent';
-import Roll from './components/RollComponent';
+import Choose from './components/routes/ChooseComponent';
+import Create from './components/routes/CreateComponent';
+import Roll from './components/routes/RollComponent';
 
-
+//<Route exact render={(props) => (<Home testStr="hi" {...props}/>)} path="/roll" component={Roll}/>
 ReactDOM.render(
     <BrowserRouter>
         <Switch>
