@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../../styles/App.css';
+import axios from 'axios';
 import {Link, withRouter } from 'react-router-dom';
 
 class Table extends React.Component {
@@ -8,36 +9,21 @@ class Table extends React.Component {
         this.state = {
             tableResult: this.getResult(),
         }
-
         this.getResult = this.getResult.bind(this);
     }
 
-    getResult () {
-        let temp = this.props.dice.split("d");
-        const range = temp[0] * temp[1];
-        const value = Math.floor(Math.random() * (range + 1 - 1) + 1);
-
-        for (let i = 0; i < this.props.results.length; i++) {
-            if (value === this.props.results[i].roll) {
-                console.log(this.props.results[i].value);
-                return this.props.results[i].value;
-            }
-
-            if (typeof this.props.results[i].roll === 'string') {
-                temp = this.props.results[i].roll.split("-");
-                if (value >= temp[0] && value <= temp[1]){
-                    console.log(this.props.results[i].value);
-                    return this.props.results[i].value;
-                }
-            }
-        }
-        return "Error, value can not be found!";
+    getResult() {
+        axios.post('http://localhost:8000/table', this.props.urlData).then((response) => {
+            this.setState({
+                tableResult: response.data.value,
+            })
+        }).catch(function(error) {
+            console.log(error);
+        })
     }
 
     reroll() {
-        this.setState({
-            tableResult: this.getResult(),
-        })
+        this.getResult();
     }
 
     render () {
