@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 import LinkBtn from './components/LinkBtn'
 class Choose extends React.Component {
-
     render() {
         return(
             <div>

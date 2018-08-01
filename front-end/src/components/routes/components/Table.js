@@ -13,11 +13,16 @@ class Table extends React.Component {
     }
 
     getResult() {
-        axios.post('http://localhost:8000/table', this.props.urlData).then((response) => {
+        console.log(this.props.results);
+        axios.post('http://localhost:8000/table', {
+            heading: this.props.heading,
+            dice: this.props.dice,
+            results:  this.props.results,
+        }).then ((response) => {
             this.setState({
-                tableResult: response.data.value,
+                tableResult: response.data.value
             })
-        }).catch(function(error) {
+        }).catch(function(error){
             console.log(error);
         })
     }

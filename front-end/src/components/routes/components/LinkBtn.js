@@ -7,7 +7,6 @@ class LinkBtn extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            url: "http:localhost:8000/table/static",
             heading:"Orbital Bodies",
             dice: "1d5",
             results: [{roll:1, value:"gas giant"}, {roll:2, value:"nebula"}, {roll:3, value:"star"}, {roll:4, value:"black hole"}, {roll:"5-6", value: "rangeTest"}]
@@ -18,7 +17,6 @@ class LinkBtn extends React.Component {
     getServerData(url) {
         axios.get(url).then((response) => {
             this.setState ({
-                urlData: response.data,
                 heading: response.data.heading,
                 dice: response.data.dice.amount + "d" + response.data.dice.size,
                 results: response.data.results,
@@ -37,7 +35,6 @@ class LinkBtn extends React.Component {
                                    heading: this.state.heading,
                                    dice: this.state.dice,
                                    results: this.state.results,
-                                   urlData: this.state.urlData,
                         }}}>
                 <button>
                     {this.props.btnName}
@@ -46,5 +43,4 @@ class LinkBtn extends React.Component {
         )
     }
 }
-// onClick={this.getFnct(this.props.url)}
 export default LinkBtn;
