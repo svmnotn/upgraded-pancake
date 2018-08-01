@@ -14,7 +14,7 @@ class Table extends React.Component {
 
     getResult() {
         console.log(this.props.results);
-        axios.post('http://localhost:8000/table', {
+        axios.post('/table', {
             heading: this.props.heading,
             dice: this.props.dice,
             results:  this.props.results,

@@ -19,37 +19,37 @@ class Choose extends React.Component {
 
                     <tr>
                         <td>
-                            <LinkBtn btnName="A-Star" url="http://localhost:8000/table/static"/>
+                            <LinkBtn btnName="A-Star" url="table/static"/>
                         </td>
                         <td>
-                            <LinkBtn btnName="B-Star" url="http://localhost:8000/table/static"/>
+                            <LinkBtn btnName="B-Star" url="table/static"/>
                         </td>
                         <td>
-                            <LinkBtn btnName="C-Star" url="http://localhost:8000/table/static"/>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <LinkBtn btnName="D-Star" url="http://localhost:8000/table/static"/>
-                        </td>
-                        <td>
-                            <LinkBtn btnName="E-Star" url="http://localhost:8000/table/static"/>
-                        </td>
-                        <td>
-                            <LinkBtn btnName="F-Star" url="http://localhost:8000/table/static"/>
+                            <LinkBtn btnName="C-Star" url="table/static"/>
                         </td>
                     </tr>
 
                     <tr>
                         <td>
-                            <LinkBtn btnName="G-Star" url="http://localhost:8000/table/static"/>
+                            <LinkBtn btnName="D-Star" url="table/static"/>
                         </td>
                         <td>
-                            <LinkBtn btnName="H-Star" url="http://localhost:8000/table/static"/>
+                            <LinkBtn btnName="E-Star" url="table/static"/>
                         </td>
                         <td>
-                            <LinkBtn btnName="I-Star" url="http://localhost:8000/table"/>
+                            <LinkBtn btnName="F-Star" url="table/static"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <LinkBtn btnName="G-Star" url="table/static"/>
+                        </td>
+                        <td>
+                            <LinkBtn btnName="H-Star" url="table/static"/>
+                        </td>
+                        <td>
+                            <LinkBtn btnName="I-Star" url="table"/>
                         </td>
                     </tr>
                     <tr>
