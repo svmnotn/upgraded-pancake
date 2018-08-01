@@ -6,10 +6,10 @@ class Roll extends React.Component {
     render() {
         return(
             <div>
-                <Table title={this.props.location.state.title}
-                       heading={this.props.location.state.heading}
-                       dice={this.props.location.state.dice}
-                       results={this.props.location.state.results}/>
+                <Table title = {this.props.location.state.title}
+                       heading = {this.props.location.state.heading}
+                       dice = {this.props.location.state.dice}
+                       results = {this.props.location.state.results}/>
             </div>
         )
     }
