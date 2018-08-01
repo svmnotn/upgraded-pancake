@@ -1,9 +1,5 @@
-#![feature(plugin, decl_macro)]
+#![feature(plugin, decl_macro, rust_2018_preview)]
 #![plugin(rocket_codegen)]
-extern crate rocket;
-extern crate rocket_contrib;
-
-extern crate upgraded_pancake;
 
 mod files;
 mod tables;

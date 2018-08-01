@@ -2,7 +2,7 @@ use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
 use std::fmt;
-use {RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
+use crate::{RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
 
 #[derive(Debug, Serialize)]
 pub struct Dice {
