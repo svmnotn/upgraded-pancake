@@ -1,7 +1,16 @@
+cargo-features = ["edition"]
+
 [package]
 name = "upgraded-pancake"
 version = "0.1.0"
 authors = ["Victor M. Suarez <svmnotn@gmail.com>"]
+description = "A library to create and roll on roll tables."
+homepage = "https://github.com/svmnotn/upgraded-pancake"
+repository = "https://github.com/svmnotn/upgraded-pancake"
+readme = "../README.md"
+keywords = ["table roller"]
+license = "MIT"
+edition = "2018"
 
 [dependencies]
 serde_json = "1.0.24"
