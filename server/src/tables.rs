@@ -1,6 +1,4 @@
-extern crate rand;
-extern crate serde_json;
-use self::rand::{thread_rng, Rng};
+use rand::{thread_rng, Rng};
 use rocket_contrib::Json;
 use upgraded_pancake::{Table, TableResult};
 

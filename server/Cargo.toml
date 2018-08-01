@@ -1,7 +1,21 @@
+cargo-features = ["edition"]
+
 [package]
 name = "upgraded-pancake-server"
 version = "0.1.0"
 authors = ["Victor M. Suarez <svmnotn@gmail.com>"]
+description = """
+An Http server for hosting a web application that allows \
+the user to roll a nth sided die on a table of their own \
+specification.
+"""
+homepage = "https://github.com/svmnotn/upgraded-pancake"
+repository = "https://github.com/svmnotn/upgraded-pancake"
+readme = "../README.md"
+keywords = ["upgraded-pancake", "server", "table roller"]
+categories = ["command-line-utilities", "web-programming::http-server"]
+license = "MIT"
+edition = "2018"
 
 [dependencies]
 upgraded-pancake = { path = "../lib" }
