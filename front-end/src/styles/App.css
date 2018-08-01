@@ -38,6 +38,12 @@
   padding-left: 1em;
 }
 
+.tableAlign {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
 .lastRow {
   border-bottom: none;
 }

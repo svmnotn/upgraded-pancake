@@ -21,16 +21,16 @@ class Create extends React.Component {
         this.saveRoll = this.saveRoll.bind(this);
     }
 
-    addRow(e) {
+    addRow(event) {
         this.setState((prevState) => {
             return {
                 results: prevState.results.concat({roll: 1, value: "Default Text"}),
             }
         })
-        e.preventDefault();
+        event.preventDefault();
     }
 
-   removeRow(key,e) {
+   removeRow(key,event) {
        console.log(key);
         this.setState(function (prevState) {
             return {
@@ -40,7 +40,7 @@ class Create extends React.Component {
                 })
             }
         })
-        e.preventDefault();
+        event.preventDefault();
     }
 
     /*saveTitle(event) {
