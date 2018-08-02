@@ -13,10 +13,10 @@ pub use self::row::Row;
 mod strings;
 pub use self::strings::Strings;
 
+use crate::{RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
 use lipsum::lipsum_title;
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
-use crate::{RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Table {

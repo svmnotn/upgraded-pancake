@@ -15,6 +15,5 @@ fn main() {
                 tables::get_static,
                 files::get,
             ],
-        )
-        .launch();
+        ).launch();
 }
