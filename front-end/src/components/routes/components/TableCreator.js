@@ -3,23 +3,35 @@ import '../../../styles/App.css';
 
 class TableCreator extends React.Component {
     render() {
-        const addRow = this.props.addRow,
-              removeRow = this.props.removeRow,
+        const removeRow = this.props.removeRow,
               saveValue = this.props.saveValue,
               saveRoll = this.props.saveRoll;
+
         let createRows = this.props.results.map(function(result, i) {
             return (
                 <tr key={i}>
-                    <td><input type="text" name="roll" value={result.roll} maxLength="10" onChange={(event) => saveRoll(i,event)}/></td>
-                    <td className="leftAlign">
-                        <input type="text" name="value" value={result.value} maxLength="32" onChange={(event) => saveValue(i, event)}/>
+                    <td style={{width:"20%"}}>
+                        <input type="text"
+                               name="roll"
+                               value={result.roll}
+                               maxLength="6"
+                               onChange={(event) => saveRoll(i,event)}/>
                     </td>
+
+                    <td style={{width:"80%"}}>
+                        <input type="text"
+                               name="value"
+                               value={result.value}
+                               maxLength="55"
+                               onChange={(event) => saveValue(i, event)}
+                               className="leftAlign"/>
+                    </td>
+
                     <td style={{borderRight:"none", borderTop:"1px solid white"}}>
-                        <button type="button" className="tinyBtn squareBtn" onClick={(e) => {removeRow(i, e)}}>
+                        <button type="button"
+                                className="tinyBtn squareBtn"
+                                onClick={(e) => {removeRow(i, e)}}>
                             <i className="fa fa-minus"></i>
-                        </button>
-                        <button type="button" className="tinyBtn squareBtn" onClick={(e) => {addRow(e)}}>
-                            <i className="fa fa-plus"></i>
                         </button>
                     </td>
                 </tr>
@@ -29,14 +41,34 @@ class TableCreator extends React.Component {
         return (
             <div>
                 <form>
-                    <h1><input type="text" name="title" value={this.props.title} maxLength="32" onChange={this.props.saveTable}/></h1>
+                    <h1>
+                        <input type="text"
+                               name="title"
+                               value={this.props.title}
+                               maxLength="21"
+                               onChange={this.props.saveTable}
+                               className="h1Input"/>
+                    </h1>
                     <hr/>
                     <table>
                         <tbody>
                             <tr>
-                                <th><input type="text" name="dice" value={this.props.dice} maxLength="10" onChange={this.props.saveTable}/></th>
-                                <th className='leftAlign'>
-                                    <input type="text" name="heading" value={this.props.heading} maxLength="32" onChange={this.props.saveTable}/>
+                                <th style={{width:"20%"}}>
+                                    <input type="text"
+                                           name="dice"
+                                           value={this.props.dice}
+                                           maxLength="6"
+                                           onChange={this.props.saveTable}
+                                           className="thInput"/>
+                                </th>
+
+                                <th style={{width:"80%"}}>
+                                    <input type="text"
+                                           name="heading"
+                                           value={this.props.heading}
+                                           maxLength="55"
+                                           onChange={this.props.saveTable}
+                                           className="leftAlign thInput"/>
                                 </th>
                             </tr>
                             {createRows}

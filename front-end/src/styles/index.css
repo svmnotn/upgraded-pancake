@@ -112,7 +112,7 @@ input {
   text-align: center;
   font-size: 3vh;
   border: none;
-  width: 100%;
+  width: 90%;
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */

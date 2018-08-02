@@ -62,3 +62,16 @@
   font-size: 0.8em;
   justify-items:"center";
 }
+
+.h1Input {
+  font-weight: 300;
+  font-size: 12vh;
+  line-height: 12vh;
+  text-align: center;
+}
+
+.thInput {
+  font-size: 3vh;
+  font-weight: 600;
+  font-family: "Montserrat", 'Courier New', Courier, monospace;
+}

@@ -7,11 +7,11 @@ class Create extends React.Component {
     constructor(){
         super();
         this.state = {
-            hasSaved: false,
             title: "Default Table",
             heading: "Categories",
             dice: "1d2",
             results: [{roll: 1, value:"Data",}, {roll:2, value: "Data1"}],
+            passedTest: false,
         }
 
         this.addRow = this.addRow.bind(this);
@@ -19,6 +19,7 @@ class Create extends React.Component {
         this.saveTable = this.saveTable.bind(this);
         this.saveValue = this.saveValue.bind(this);
         this.saveRoll = this.saveRoll.bind(this);
+        this.checkTable = this.checkTable.bind(this);
     }
 
     addRow(event) {
@@ -31,11 +32,9 @@ class Create extends React.Component {
     }
 
    removeRow(key,event) {
-       console.log(key);
         this.setState(function (prevState) {
             return {
                 results: prevState.results.filter(function(result, i){
-                    console.log("This is: "+ i);
                     return i !== key;
                 })
             }
@@ -43,39 +42,89 @@ class Create extends React.Component {
         event.preventDefault();
     }
 
-    /*saveTitle(event) {
-        this.setState ({
-            title:event.target.value,
-        });
-    }*/
-    /*handleChange = (e) => {
-    const items = this.state.items;
-    items[1].role = e.target.value;
-
-    // re-render
-    this.forceUpdate();
-};*/
-  /*result[key].value = event.target.value;
-        console.log("This is the value of i: " + key + " , value of change: " + result[key].value);*/
     saveValue(key, event) {
         const results = this.state.results;
         results[key].value = event.target.value;
-
         this.forceUpdate();
     }
 
     saveRoll(key, event) {
         const results = this.state.results;
-        results[key].roll = parseInt(event.target.value, 10);
+        if(event.target.value.trim() === "") {
+            results[key].roll = "";
+        }
 
+        else {
+            const alphaRegEx = /[A-Z][a-z]/,
+                  tempArr = event.target.value.split("-");
+
+            if(alphaRegEx.test(event.target.value)) {
+                return;
+            }
+
+            else {
+                if(tempArr > 1 || event.target.value.includes("-")) {
+                    results[key].roll = event.target.value;
+                }
+
+                else {
+                    results[key].roll = parseInt(event.target.value, 10);
+                }
+            }
+        }
         this.forceUpdate();
     }
 
     saveTable (event) {
-        console.log(event.target.name);
         this.setState({
             [event.target.name]: event.target.value,
         })
+    }
+
+    checkTable() {
+        const diceRegEx = /^\d*d\d+$/;
+        if(diceRegEx.test(this.state.dice)) {
+            let diceVal = this.state.dice.split("d");
+            if(diceVal.length !== 1) {
+                diceVal = diceVal[0] * diceVal[1];
+                console.log(diceVal);
+            }
+
+            else {
+                diceVal = diceVal[0];
+                console.log(diceVal);
+            }
+
+            for(let i = 0; i < this.state.results.length; i++) {
+                if(this.state.results[i].roll > diceVal || this.state.results[i].roll <= 0) {
+                    return;
+                }
+            }
+
+            this.setState({
+                passedTest: true,
+            })
+        }
+    }
+
+    confirmTable() {
+        if(this.state.passedTest) {
+            return (
+                <Link to = {{ pathname: "/roll",
+                              state: { title: this.state.title,
+                                       heading: this.state.heading,
+                                       dice: this.state.dice,
+                                       results: this.state.results,
+                }}}>
+                    <button className="squareBtn"><i className="fa fa-arrow-right"></i></button>
+                </Link>
+            )
+        }
+        else {
+            return (
+                <button onClick={() => this.checkTable()} className="squareBtn"><i className="fa fa-check"></i></button>
+            )
+        }
     }
 
     render() {
@@ -85,7 +134,6 @@ class Create extends React.Component {
                               heading={this.state.heading}
                               dice={this.state.dice}
                               results={this.state.results}
-                              addRow={this.addRow}
                               removeRow={this.removeRow}
                               saveTable={this.saveTable}
                               saveValue={this.saveValue}
@@ -95,19 +143,16 @@ class Create extends React.Component {
                     <Link to="/">
                         <button className="squareBtn"><i className="fa fa-times"></i></button>
                     </Link>
-                    <button className="squareBtn"><i className="fa fa-save"></i></button>
-                    <Link to={{ pathname: "/roll",
-                                state: { title: this.state.title,
-                                         heading: this.state.heading,
-                                         dice: this.state.dice,
-                                         results: this.state.results,
-                    }}}>
-                        <button className="squareBtn"><i className="fa fa-check"></i></button>
-                    </Link>
+                    <button type="button"
+                            className="squareBtn"
+                            onClick={(event) => this.addRow(event)}>
+                        <i className="fa fa-plus"></i>
+                    </button>
+                    {this.confirmTable()}
                 </div>
             </div>
         )
     }
 }
-//<div style={{marginLeft: '30%', marginRight: '45%'}}></div>
+
 export default Create;

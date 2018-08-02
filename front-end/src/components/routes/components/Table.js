@@ -45,7 +45,7 @@ class Table extends React.Component {
             <div>
                 <h1>{this.props.title}</h1>
                 <hr/>
-                <div style={{marginLeft: 'auto', marginRight: 'auto', width:'100%'}}>
+                <div className="tableAlign">
                     <table>
                         <tbody>
                             <tr>
