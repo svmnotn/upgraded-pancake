@@ -20,6 +20,17 @@ class Create extends React.Component {
         this.saveValue = this.saveValue.bind(this);
         this.saveRoll = this.saveRoll.bind(this);
         this.checkTable = this.checkTable.bind(this);
+        this.updateTable = this.updateTable.bind(this);
+    }
+
+    updateTable(title, heading, dice, results) {
+        this.setState ({
+            title: title,
+            heading: heading,
+            dice: dice,
+            results: results,
+        })
+        console.log("I have worked!");
     }
 
     addRow(event) {
@@ -27,6 +38,10 @@ class Create extends React.Component {
             return {
                 results: prevState.results.concat({roll: 1, value: "Default Text"}),
             }
+        })
+
+        this.setState({
+            passedTest: false,
         })
         event.preventDefault();
     }
@@ -39,12 +54,19 @@ class Create extends React.Component {
                 })
             }
         })
+
+        this.setState({
+            passedTest: false,
+        })
         event.preventDefault();
     }
 
     saveValue(key, event) {
         const results = this.state.results;
         results[key].value = event.target.value;
+        this.setState({
+            passedTest: false,
+        })
         this.forceUpdate();
     }
 
@@ -72,12 +94,16 @@ class Create extends React.Component {
                 }
             }
         }
+        this.setState({
+            passedTest: false,
+        })
         this.forceUpdate();
     }
 
     saveTable (event) {
         this.setState({
             [event.target.name]: event.target.value,
+            passedTest: false,
         })
     }
 
@@ -85,14 +111,13 @@ class Create extends React.Component {
         const diceRegEx = /^\d*d\d+$/;
         if(diceRegEx.test(this.state.dice)) {
             let diceVal = this.state.dice.split("d");
-            if(diceVal.length !== 1) {
+
+            if(diceVal[0].length > 1) {
                 diceVal = diceVal[0] * diceVal[1];
-                console.log(diceVal);
             }
 
             else {
-                diceVal = diceVal[0];
-                console.log(diceVal);
+                diceVal = diceVal[1];
             }
 
             for(let i = 0; i < this.state.results.length; i++) {
@@ -120,6 +145,7 @@ class Create extends React.Component {
                 </Link>
             )
         }
+
         else {
             return (
                 <button onClick={() => this.checkTable()} className="squareBtn"><i className="fa fa-check"></i></button>
