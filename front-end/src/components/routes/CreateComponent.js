@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 import TableCreator from './components/TableCreator';
 class Create extends React.Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             title: "Default Table",
             heading: "Categories",
@@ -20,17 +20,17 @@ class Create extends React.Component {
         this.saveValue = this.saveValue.bind(this);
         this.saveRoll = this.saveRoll.bind(this);
         this.checkTable = this.checkTable.bind(this);
-        this.updateTable = this.updateTable.bind(this);
     }
 
-    updateTable(title, heading, dice, results) {
-        this.setState ({
-            title: title,
-            heading: heading,
-            dice: dice,
-            results: results,
-        })
-        console.log("I have worked!");
+    componentDidMount(){
+        if(this.props.title) {
+            this.setState ({
+                title: this.props.title,
+                heading: this.props.heading,
+                dice: this.props.dice,
+                results: this.props.results,
+            })
+        }
     }
 
     addRow(event) {

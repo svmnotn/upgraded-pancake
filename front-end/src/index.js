@@ -8,6 +8,7 @@ import Home from './App';
 import Choose from './components/routes/ChooseComponent';
 import Create from './components/routes/CreateComponent';
 import Roll from './components/routes/RollComponent';
+import Edit from './components/routes/EditTableComponent';
 
 //<Route exact render={(props) => (<Home testStr="hi" {...props}/>)} path="/roll" component={Roll}/>
 ReactDOM.render(
@@ -17,6 +18,7 @@ ReactDOM.render(
             <Route path="/choose" component={Choose}/>
             <Route path="/create" component={Create}/>
             <Route path="/roll" component={Roll}/>
+            <Route path="/edit" component={Edit}/>
         </Switch>
     </BrowserRouter>
 , document.getElementById('root'));

@@ -62,7 +62,17 @@ class Table extends React.Component {
                 <div className="btnRow">
                     <button style= {{marginRight: '5%',}}
                             onClick={()=>{this.reroll()}}>Reroll</button>
-                    <Link to="/Choose">
+                    <Link to = {{pathname: "/edit",
+                                    state: {
+                                        title: this.props.title,
+                                        heading: this.props.heading,
+                                        dice: this.props.dice,
+                                        results: this.props.results
+                                    }
+                                }}>
+                        <button> Edit </button>
+                    </Link>
+                    <Link to="/choose">
                         <button>Return</button>
                     </Link>
                 </div>
