@@ -1,20 +1,32 @@
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::fmt;
-use std::ops::RangeInclusive;
+use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::ops::{Deref, RangeInclusive};
 
 #[derive(Debug, Clone)]
-pub struct Range(pub RangeInclusive<u32>);
+pub struct Range(RangeInclusive<u32>);
 
 impl Range {
+    pub fn new(r: RangeInclusive<u32>) -> Range {
+        Range(r)
+    }
+
     pub fn contains(&self, v: u32) -> bool {
-        (v < *self.0.start() || v > *self.0.end()) == false
+        v >= *self.start() && *self.end() >= v
     }
 }
 
-impl fmt::Display for Range {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl Display for Range {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
         write!(f, "{}-{}", self.0.start(), self.0.end())
+    }
+}
+
+impl Deref for Range {
+    type Target = RangeInclusive<u32>;
+
+    fn deref(&self) -> &RangeInclusive<u32> {
+        &self.0
     }
 }
 
@@ -37,7 +49,7 @@ impl<'de> Deserialize<'de> for Range {
         impl<'de> Visitor<'de> for RangeVisitor {
             type Value = Range;
 
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut Formatter) -> FmtResult {
                 formatter.write_str("struct Range")
             }
 

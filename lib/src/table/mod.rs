@@ -84,7 +84,7 @@ impl Distribution<Table> for Standard {
                                 let init = rng.gen_range(dice.min(), dice.max() - 3);
                                 let finish = rng.gen_range(init + 1, dice.max() - 1);
 
-                                Range(
+                                Range::new(
                                     rng.gen_range(init, finish)
                                         ..=rng.gen_range(finish + 1, dice.max()),
                                 )
