@@ -13,7 +13,6 @@ class Table extends React.Component {
     }
 
     getResult() {
-        console.log(this.props.results);
         axios.post('/table', {
             heading: this.props.heading,
             dice: this.props.dice,
@@ -60,21 +59,34 @@ class Table extends React.Component {
                 <p className="result">{this.state.tableResult}</p>
 
                 <div className="btnRow">
-                    <button style= {{marginRight: '5%',}}
-                            onClick={()=>{this.reroll()}}>Reroll</button>
-                    <Link to = {{pathname: "/edit",
-                                    state: {
-                                        title: this.props.title,
-                                        heading: this.props.heading,
-                                        dice: this.props.dice,
-                                        results: this.props.results
-                                    }
-                                }}>
-                        <button> Edit </button>
-                    </Link>
-                    <Link to="/choose">
-                        <button>Return</button>
-                    </Link>
+                <table style={{border: "none"}}>
+                    <tbody>
+                        <tr>
+                            <td style={{border: "none"}}>
+                                <button style= {{marginRight: '5%',}}
+                                        onClick={()=>{this.reroll()}}>Reroll</button>
+                            </td>
+
+                            <td style={{border: "none"}}>
+                                <Link to = {{ pathname: "/edit",
+                                              state: { title: this.props.title,
+                                                       heading: this.props.heading,
+                                                       dice: this.props.dice,
+                                                       results: this.props.results
+                                                    }
+                                            }}>
+                                    <button> Edit </button>
+                                </Link>
+                            </td>
+
+                            <td style={{border: "none"}}>
+                                <Link to="/">
+                                    <button>Return</button>
+                                </Link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 </div>
             </div>
         )

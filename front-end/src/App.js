@@ -14,7 +14,7 @@ class App extends React.Component {
               <button>Roll</button>
             </Link>
           </div>
-          <Link to = "/create">
+          <Link to = "/edit">
             <button> Generate Table </button>
           </Link>
         </div>

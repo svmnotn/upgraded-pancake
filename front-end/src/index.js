@@ -6,9 +6,8 @@ import registerServiceWorker from './registerServiceWorker';
 import './styles/index.css';
 import Home from './App';
 import Choose from './components/routes/ChooseComponent';
-import Create from './components/routes/CreateComponent';
 import Roll from './components/routes/RollComponent';
-import Edit from './components/routes/EditTableComponent';
+import Edit from './components/routes/EditComponent';
 
 //<Route exact render={(props) => (<Home testStr="hi" {...props}/>)} path="/roll" component={Roll}/>
 ReactDOM.render(
@@ -16,7 +15,6 @@ ReactDOM.render(
         <Switch>
             <Route exact path="/" component={Home}/>
             <Route path="/choose" component={Choose}/>
-            <Route path="/create" component={Create}/>
             <Route path="/roll" component={Roll}/>
             <Route path="/edit" component={Edit}/>
         </Switch>

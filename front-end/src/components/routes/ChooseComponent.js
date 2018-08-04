@@ -12,12 +12,6 @@ class Choose extends React.Component {
                 <table className="btnTable">
                     <tbody>
                         <tr>
-                            <td><button className="squareBtn"><i className="fa fa-file-upload"></i></button></td>
-                            <td><button className="squareBtn"><i className="fa fa-download"></i></button></td>
-                            <td><button className="squareBtn"><i className="fa fa-users"></i></button></td>
-                        </tr>
-
-                        <tr>
                             <td>
                                 <LinkBtn btnName="A-Star" url="table/static"/>
                             </td>
@@ -54,8 +48,13 @@ class Choose extends React.Component {
                         </tr>
 
                         <tr>
-                            <td></td>
+                            <td style={{textAlign: "right"}}>
+                            <button style={{height: "8vh", width: "8vh", fontSize:"1em"}}>
+                                    <i className="fa fa-file-upload"></i>
+                                </button>
+                                </td>
                             <td>
+
                                 <Link to="/"><button>Return</button></Link>
                             </td>
                         </tr>

@@ -23,14 +23,6 @@
   border-right: none;
 }
 
-/*CSS for CreateComponent.js*/
-.container {
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: row;
-  justify-content: center;
-  margin-top: 5vh;
-}
 
 /*CSS for Table.js*/
 .leftAlign {
@@ -55,7 +47,7 @@
   margin-bottom: 5%;
 }
 
-/*CSS for TableCreator.js*/
+/*CSS for TableEditor.js*/
 .tinyBtn {
   height: 1.5em;
   width: 1.5em;
@@ -74,4 +66,12 @@
   font-size: 3vh;
   font-weight: 600;
   font-family: "Montserrat", 'Courier New', Courier, monospace;
+}
+
+.container {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 5vh;
 }
