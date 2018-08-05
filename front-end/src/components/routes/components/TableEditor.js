@@ -20,6 +20,7 @@ class TableEditor extends React.Component {
         this.saveRoll = this.saveRoll.bind(this);
         this.testTable = this.testTable.bind(this);
         this.createRows = this.createRows.bind(this);
+        this.savePropValue = this.savePropValue.bind(this);
     }
 
     //If something was received by the component, update component values.
@@ -35,16 +36,34 @@ class TableEditor extends React.Component {
     }
 
     addRow(event) {
+        let newRow = Object.assign({}, this.state.results[0]);
+
         this.setState((prevState) => {
             return {
-                results: prevState.results.concat({roll: 1, value: "Default Text"}),
+                results: prevState.results.concat(newRow),
             }
         })
 
         this.setState({
             passedTest: false,
         })
+        event.preventDefault();
+    }
 
+    addCol(event) {
+        let tempArr = this.state.results,
+            propName = "Column" + Math.floor(10*Math.random());
+
+        for(let i = 0; i < tempArr.length; i++) {
+            tempArr[i][propName] = "Default Text";
+        }
+
+        this.setState({
+            results: tempArr,
+            passedTest: false,
+        })
+
+        console.log(this.state.results);
         event.preventDefault();
     }
 
@@ -66,6 +85,17 @@ class TableEditor extends React.Component {
     saveValue(key, event) {
         const results = this.state.results;
         results[key].value = event.target.value;
+
+        this.setState({
+            passedTest: false,
+        })
+
+        this.forceUpdate();
+    }
+
+    //placeholder={this.state.results[key][objProp]}
+    savePropValue(objProp, key, event) {
+        this.state.results[key][objProp] = event.target.value;
 
         this.setState({
             passedTest: false,
@@ -126,17 +156,17 @@ class TableEditor extends React.Component {
                 diceVal = diceVal[1];
             }
 
-            for(let i = 0; i < this.state.results.length; i++) {
-                if(typeof this.state.results[i].roll === "string") {
-                    let tempVal = this.state.results[i].roll.split("-");
-                    if((tempVal[0] > diceVal && tempVal[1] > diceVal) || (tempVal[0] <= 0 && tempVal[1] <= 0 )) {
-                        return
+            for (let roll in this.state.results) {
+                if(typeof roll === "string") {
+                    let tempVal = roll.split("-");
+                    if((tempVal[0] > diceVal && tempVal[1] > diceVal) || (tempVal[0] <= 0 && tempVal[1] <= 0)) {
+                        return;
                     }
                 }
 
                 else {
-                    if(this.state.results[i].roll > diceVal || this.state.results[i].roll <= 0) {
-                        return;
+                    if(roll > diceVal || roll <= 0) {
+                        return
                     }
                 }
             }
@@ -181,7 +211,7 @@ class TableEditor extends React.Component {
                                 onChange={(event) => this.saveRoll(i,event)}/>
                         </td>
 
-                        <td style={{width:"80%"}}>
+                        <td>
                             <input type="text"
                                 name="value"
                                 value={result.value}
@@ -189,6 +219,8 @@ class TableEditor extends React.Component {
                                 onChange={(event) => this.saveValue(i, event)}
                                 className="leftAlign"/>
                         </td>
+
+                        {this.createCols(i, true)}
 
                         <td style={{borderRight:"none", borderTop:"1px solid white"}}>
                             <button type="button"
@@ -198,12 +230,47 @@ class TableEditor extends React.Component {
                             </button>
                         </td>
                     </tr>
-
-
                 )
             }, this)
         )
     }
+
+    createCols(key, bool) {
+        return (
+            Object.keys(this.state.results[0]).map(function (objProp, i) {
+                if(i <= 1) {
+                    return;
+                }
+
+                else {
+                    if(bool) {
+                        return (
+                        <td key={i}>
+                            <input type="text"
+                                    value={this.state.results[key][objProp]}
+                                    onChange={(event) => this.savePropValue(objProp, key,event)}
+                                    maxLength="55"
+                                    className="leftAlign"/>
+                        </td>)
+                    }
+
+                    else {
+                        return (
+                            <td key={i}>
+                                <input type="text"
+                                       placeholder={objProp}
+                                       maxLength="55"
+                                       className="leftAlign thInput"/>
+                             </td>
+                        )
+                    }
+                }
+            }, this)
+        )
+    }
+
+
+
 
     render () {
         return (
@@ -231,7 +298,7 @@ class TableEditor extends React.Component {
                                             className="thInput"/>
                                     </th>
 
-                                    <th style={{width:"80%"}}>
+                                    <th>
                                         <input type="text"
                                             name="heading"
                                             value={this.state.heading}
@@ -239,7 +306,13 @@ class TableEditor extends React.Component {
                                             maxLength="55"
                                             className="leftAlign thInput"/>
                                     </th>
+                                    {this.createCols(0, false)}
+                                    <td><button style={{marginTop: "0.7em"}}className="tinyBtn squareBtn"
+                                                onClick={(event) => this.addCol( event)}>
+                                        <i className="fa fa-plus"></i>
+                                    </button></td>
                                 </tr>
+
                                 {this.createRows()}
                                 <tr>
                                     <td style={{borderBottom: "none", borderRight: "none"}}/>
