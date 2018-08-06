@@ -10,6 +10,7 @@ class Table extends React.Component {
             tableResult: this.getResult(),
         }
         this.getResult = this.getResult.bind(this);
+        this.createCols = this.createCols.bind(this);
     }
 
     getResult() {
@@ -30,15 +31,40 @@ class Table extends React.Component {
         this.getResult();
     }
 
+    createCols(key, bool) {
+        return(
+        Object.keys(this.props.results[0]).map(function (objProp, i) {
+            if (i <= 1) {
+                return;
+            }
+
+            else {
+                if(bool) {
+                    return (
+                        <td key={i}>{this.props.results[key][objProp]}</td>
+                    )
+                }
+
+                else {
+                    console.log("Hi!")
+                    return (
+                        <td key={i} className="thInput">{objProp}</td>
+                    )
+                }
+            }
+        }, this))
+    }
+
     render () {
         let createRows = this.props.results.map(function(result, i) {
             return (
-                <tr key={result.roll}>
+                <tr key={i}>
                     <td>{result.roll}</td>
                     <td className="leftAlign">{result.value}</td>
+                    {this.createCols(i, true)}
                 </tr>
             )
-        })
+        }, this)
 
         return (
             <div>
@@ -50,6 +76,7 @@ class Table extends React.Component {
                             <tr>
                                 <th>{this.props.dice}</th>
                                 <th className='leftAlign'>{this.props.heading}</th>
+                                {this.createCols(0, false)}
                             </tr>
                             {createRows}
                         </tbody>
