@@ -16,7 +16,7 @@ body {
   background: linear-gradient(
     rgba(0, 0, 0, 0.55),
     rgba(0, 0, 0, 0.55)
-  ), url("../assets/planetPic.jpg") no-repeat center center fixed;
+  ), url("../assets/pancakePic.png") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
