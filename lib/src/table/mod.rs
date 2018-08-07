@@ -13,7 +13,7 @@ pub use self::row::Row;
 mod strings;
 pub use self::strings::Strings;
 
-use crate::{RNG_MAX_LIST_SIZE, RNG_MIN_LIST_SIZE};
+use crate::{RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE, RNG_MIN_ROW_SIZE};
 use lipsum::lipsum_title;
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
@@ -70,12 +70,13 @@ fn gen_strings(columns: usize, heading: bool) -> Strings {
 impl Distribution<Table> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Table {
         let dice: Dice = rng.gen();
-        let columns = rng.gen_range(RNG_MIN_LIST_SIZE, RNG_MAX_LIST_SIZE);
+        let columns = rng.gen_range(RNG_MIN_COL_SIZE, RNG_MAX_COL_SIZE);
 
         Table {
             results: {
-                let mut vec: Vec<Row> = Vec::with_capacity(RNG_MAX_LIST_SIZE);
-                for _ in 0..rng.gen_range(RNG_MIN_LIST_SIZE, RNG_MAX_LIST_SIZE) {
+                let rows = rng.gen_range(RNG_MIN_ROW_SIZE, RNG_MAX_ROW_SIZE);
+                let mut vec: Vec<Row> = Vec::with_capacity(rows);
+                for _ in 0..rows {
                     vec.push(Row {
                         roll: if rng.gen() {
                             Roll::Single(dice.roll())
