@@ -28,7 +28,7 @@ pub struct Table {
 #[derive(Debug, Serialize)]
 pub struct TableResult {
     roll: u32,
-    value: Strings,
+    row: u64,
 }
 
 impl Table {
@@ -37,10 +37,11 @@ impl Table {
 
         self.results
             .iter()
-            .find(|row| row.is(roll))
-            .map(|row| TableResult {
+            .enumerate()
+            .find(|(_, row)| row.is(roll))
+            .map(|(i, _)| TableResult {
                 roll,
-                value: row.value(),
+                row: i as u64,
             })
     }
 }
