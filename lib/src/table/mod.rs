@@ -47,23 +47,19 @@ impl Table {
 
 fn gen_strings(columns: usize, heading: bool) -> Strings {
     if columns > 1 {
-        Strings::Multiple({
-            let mut vec: Vec<String> = Vec::with_capacity(columns);
-            for _ in 0..columns {
-                vec.push(if heading {
-                    lipsum_title()
-                } else {
-                    lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()
-                });
-            }
-            vec
-        })
+        let mut vec: Vec<String> = Vec::with_capacity(columns);
+        for _ in 0..columns {
+            vec.push(if heading {
+                lipsum_title()
+            } else {
+                lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()
+            });
+        }
+        vec.into()
+    } else if heading {
+        lipsum_title().into()
     } else {
-        Strings::Single(if heading {
-            lipsum_title()
-        } else {
-            lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()
-        })
+        (lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()).into()
     }
 }
 
@@ -79,17 +75,14 @@ impl Distribution<Table> for Standard {
                 for _ in 0..rows {
                     vec.push(Row {
                         roll: if rng.gen() {
-                            Roll::Single(dice.roll())
+                            dice.roll().into()
                         } else {
-                            Roll::Range({
-                                let init = rng.gen_range(dice.min(), dice.max() - 3);
-                                let finish = rng.gen_range(init + 1, dice.max() - 1);
+                            let init = rng.gen_range(dice.min(), dice.max() - 3);
+                            let finish = rng.gen_range(init + 1, dice.max() - 1);
 
-                                Range::new(
-                                    rng.gen_range(init, finish)
-                                        ..=rng.gen_range(finish + 1, dice.max()),
-                                )
-                            })
+                            Range::from(
+                                rng.gen_range(init, finish)..=rng.gen_range(finish + 1, dice.max()),
+                            ).into()
                         },
                         value: gen_strings(columns, false),
                     });

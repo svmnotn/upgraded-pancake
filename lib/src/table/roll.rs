@@ -31,3 +31,15 @@ impl Roll {
         }
     }
 }
+
+impl From<u32> for Roll {
+    fn from(r: u32) -> Self {
+        Roll::Single(r)
+    }
+}
+
+impl From<Range> for Roll {
+    fn from(r: Range) -> Self {
+        Roll::Range(r)
+    }
+}

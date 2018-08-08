@@ -7,12 +7,14 @@ use std::ops::{Deref, RangeInclusive};
 pub struct Range(RangeInclusive<u32>);
 
 impl Range {
-    pub fn new(r: RangeInclusive<u32>) -> Range {
-        Range(r)
-    }
-
     pub fn contains(&self, v: u32) -> bool {
         v >= *self.start() && *self.end() >= v
+    }
+}
+
+impl From<RangeInclusive<u32>> for Range {
+    fn from(r: RangeInclusive<u32>) -> Self {
+        Range(r)
     }
 }
 
