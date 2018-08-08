@@ -6,6 +6,7 @@ import {Link, withRouter } from 'react-router-dom';
 class Table extends React.Component {
     constructor(props) {
         super(props);
+        console.log(this.props.results);
         this.state = {
             tableResult: this.getResult(),
         }
@@ -31,39 +32,37 @@ class Table extends React.Component {
         this.getResult();
     }
 
-    createCols(key, bool) {
-        return(
-        Object.keys(this.props.results[0]).map(function (objProp, i) {
-            if (i <= 1) {
-                return;
-            }
-
-            else {
-                if(bool) {
-                    return (
-                        <td key={i}>{this.props.results[key][objProp]}</td>
-                    )
-                }
-
-                else {
-                    console.log("Hi!")
-                    return (
-                        <td key={i} className="thInput">{objProp}</td>
-                    )
-                }
-            }
-        }, this))
+    //Assumes that the value of results[key] is already an array of strings
+    createCols (valArr) {
+        return (
+           valArr.map (function (result, i){
+               return (
+                   <td key={i} className="leftAlign">{result}</td>
+               )
+           })
+        )
     }
 
     render () {
         let createRows = this.props.results.map(function(result, i) {
-            return (
-                <tr key={i}>
-                    <td>{result.roll}</td>
-                    <td className="leftAlign">{result.value}</td>
-                    {this.createCols(i, true)}
-                </tr>
-            )
+            if (typeof result.value === "string") {
+                return (
+                    <tr key={i}>
+                        <td>{result.roll}</td>
+                        <td className="leftAlign">{result.value}</td>
+                    </tr>
+                )
+            }
+
+            else {
+                return (
+                    <tr key={i}>
+                        <td>{result.roll}</td>
+                        {this.createCols(result.value)}
+                    </tr>
+
+                )
+            }
         }, this)
 
         return (
@@ -76,7 +75,6 @@ class Table extends React.Component {
                             <tr>
                                 <th>{this.props.dice}</th>
                                 <th className='leftAlign'>{this.props.heading}</th>
-                                {this.createCols(0, false)}
                             </tr>
                             {createRows}
                         </tbody>
