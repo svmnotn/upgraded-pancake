@@ -5,13 +5,16 @@ mod files;
 mod tables;
 
 fn main() {
+    // Do Rocket Things!
     rocket::ignite()
         .mount(
             "/",
             routes![
                 files::index,
+                tables::add,
                 tables::get,
-                tables::post,
+                tables::tables,
+                tables::roll,
                 tables::get_static,
                 files::get,
             ],
