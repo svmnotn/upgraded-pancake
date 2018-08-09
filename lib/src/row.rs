@@ -1,4 +1,4 @@
-use super::{Range, Roll, Strings};
+use crate::{Range, Roll, Strings};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Row {

@@ -1,20 +1,4 @@
-mod dice;
-pub use self::dice::Dice;
-
-mod range;
-pub use self::range::Range;
-
-mod roll;
-pub use self::roll::Roll;
-
-mod row;
-pub use self::row::Row;
-
-mod strings;
-pub use self::strings::Strings;
-
-use crate::{RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE, RNG_MIN_ROW_SIZE};
-use lipsum::lipsum_title;
+use crate::{RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE, RNG_MIN_ROW_SIZE, Dice, Strings, Row, TableResult, Range, gen_strings};
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 
@@ -23,12 +7,6 @@ pub struct Table {
     dice: Dice,
     heading: Strings,
     results: Vec<Row>,
-}
-
-#[derive(Debug, Serialize)]
-pub struct TableResult {
-    roll: u32,
-    row: u64,
 }
 
 impl Table {
@@ -46,23 +24,6 @@ impl Table {
     }
 }
 
-fn gen_strings(columns: usize, heading: bool) -> Strings {
-    if columns > 1 {
-        let mut vec: Vec<String> = Vec::with_capacity(columns);
-        for _ in 0..columns {
-            vec.push(if heading {
-                lipsum_title()
-            } else {
-                lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()
-            });
-        }
-        vec.into()
-    } else if heading {
-        lipsum_title().into()
-    } else {
-        (lipsum_title() + " " + &lipsum_title() + " " + &lipsum_title()).into()
-    }
-}
 
 impl Distribution<Table> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Table {
