@@ -86,19 +86,25 @@ th {
   font-weight: 600;
   font-family: "Montserrat", 'Courier New', Courier, monospace;
   border-bottom: 1px solid white;
+  border-right: 1px solid white;
 }
 
 td {
   padding: 0.5em;
   border-bottom: 1px solid white;
-}
-
-th:first-child {
   border-right: 1px solid white;
 }
 
-td:first-child {
-  border-right: 1px solid white;
+th:last-child {
+  border-right: none;
+}
+
+td:last-child {
+  border-right: none;
+}
+
+tr:last-child {
+  border-right: none;
 }
 
 

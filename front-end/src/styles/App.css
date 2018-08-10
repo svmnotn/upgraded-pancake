@@ -17,12 +17,8 @@
 .btnTable td {
   padding: 0.9em;
   border-bottom: none;
-}
-
-.btnTable td:nth-child(odd) {
   border-right: none;
 }
-
 
 /*CSS for Table.js*/
 .leftAlign {
