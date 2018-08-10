@@ -6,7 +6,6 @@ import {Link, withRouter } from 'react-router-dom';
 class Table extends React.Component {
     constructor(props) {
         super(props);
-        console.log(this.props.results);
         this.state = {
             tableResult: this.getResult(),
         }
@@ -21,11 +20,14 @@ class Table extends React.Component {
             results:  this.props.results,
         }).then ((response) => {
             this.setState({
-                tableResult: response.data.value
+                tableResult:<div>
+                                <b>Roll: </b>{response.data.roll},
+                                <b><br/>Value: </b>{this.props.results[response.data.row].value}
+                            </div>
             })
         }).catch(function(error){
             console.log(error);
-        })
+        }, this)
     }
 
     reroll() {
@@ -65,6 +67,20 @@ class Table extends React.Component {
             }
         }, this)
 
+        let createHeading = (headArr) => {
+            if (typeof headArr === "string") {
+                return (
+                    <th className='leftAlign thInput'>{headArr}</th>
+                )
+            }
+
+            else {
+                return (
+                    <th className='leftAlign thInput'>{this.createCols(headArr)}</th>
+                )
+            }
+        }
+
         return (
             <div>
                 <h1>{this.props.title}</h1>
@@ -74,7 +90,7 @@ class Table extends React.Component {
                         <tbody>
                             <tr>
                                 <th>{this.props.dice}</th>
-                                <th className='leftAlign'>{this.props.heading}</th>
+                                {createHeading(this.props.heading)}
                             </tr>
                             {createRows}
                         </tbody>

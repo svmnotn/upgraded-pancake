@@ -1,3 +1,4 @@
+//CSS looks stupid, multiple headers doesn't work
 import React from 'react';
 import '../../../styles/App.css';
 import { Link } from 'react-router-dom';
@@ -57,6 +58,19 @@ class TableEditor extends React.Component {
         let tempArr = this.state.results;
         this.state.results.map(function (result, i) {
             result.value.push("Default");
+        })
+
+        this.setState({
+            results: tempArr,
+            passedTest: false,
+        })
+        event.preventDefault();
+    }
+
+    removeCol(event) {
+        let tempArr = this.state.results;
+        this.state.results.map(function (result, i) {
+            result.value.pop();
         })
 
         this.setState({
@@ -285,6 +299,11 @@ class TableEditor extends React.Component {
                                                className="leftAlign thInput"/>
                                     </th>
                                     <td>
+                                        <button style={{marginTop: "0.7em"}}
+                                                className="tinyBtn squareBtn"
+                                                onClick={(event) => this.removeCol(event)}>
+                                            <i className="fa fa-minus"></i>
+                                        </button>
                                         <button style={{marginTop: "0.7em"}}
                                                 className="tinyBtn squareBtn"
                                                 onClick={(event) => this.addCol(event)}>
