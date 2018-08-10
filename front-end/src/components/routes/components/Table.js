@@ -39,7 +39,7 @@ class Table extends React.Component {
         return (
            valArr.map (function (result, i){
                return (
-                   <td key={i} className="leftAlign">{result}</td>
+                <td key={i} className="leftAlign">{result}</td>
                )
            })
         )
@@ -51,7 +51,7 @@ class Table extends React.Component {
                 return (
                     <tr key={i}>
                         <td>{result.roll}</td>
-                        <td className="leftAlign">{result.value}</td>
+                        <th>{result.value}</th>
                     </tr>
                 )
             }
@@ -62,7 +62,6 @@ class Table extends React.Component {
                         <td>{result.roll}</td>
                         {this.createCols(result.value)}
                     </tr>
-
                 )
             }
         }, this)
@@ -70,14 +69,18 @@ class Table extends React.Component {
         let createHeading = (headArr) => {
             if (typeof headArr === "string") {
                 return (
-                    <th className='leftAlign thInput'>{headArr}</th>
+                    <th>{headArr}</th>
                 )
             }
 
             else {
-                return (
-                    <th className='leftAlign thInput'>{this.createCols(headArr)}</th>
-                )
+                return(
+                    headArr.map (function (result, i){
+                        return (
+                        <th key={i} className="leftAlign">{result}</th>
+                        )
+                    }
+                ))
             }
         }
 
@@ -85,7 +88,7 @@ class Table extends React.Component {
             <div>
                 <h1>{this.props.title}</h1>
                 <hr/>
-                <div className="tableAlign">
+                <div>
                     <table>
                         <tbody>
                             <tr>
@@ -100,7 +103,7 @@ class Table extends React.Component {
                 <p className="result">{this.state.tableResult}</p>
 
                 <div className="btnRow">
-                <table style={{border: "none"}}>
+                <table>
                     <tbody>
                         <tr>
                             <td style={{border: "none"}}>

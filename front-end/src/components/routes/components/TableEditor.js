@@ -8,7 +8,7 @@ class TableEditor extends React.Component {
         super(props);
         this.state = {
             title: "Default Table",
-            heading: "Categories",
+            heading: ["Category 1", "Category 2"],
             dice: "1d2",
             results: [{roll: 1, value:["Data1", "New Data"]}, {roll:2, value:["Data1", "New Data"]}],
             passedTest: false,
@@ -55,12 +55,22 @@ class TableEditor extends React.Component {
     }
 
     addCol(event) {
-        let tempArr = this.state.results;
+        let tempArr = this.state.results,
+            tempHeader = this.state.heading;
         this.state.results.map(function (result, i) {
             result.value.push("Default");
         })
 
+        if (typeof tempHeader === "string") {
+            tempHeader = [tempHeader, "Category1"];
+        }
+
+        else {
+            tempHeader.push("Category");
+        }
+
         this.setState({
+            heading: tempHeader,
             results: tempArr,
             passedTest: false,
         })
@@ -73,10 +83,22 @@ class TableEditor extends React.Component {
             result.value.pop();
         })
 
-        this.setState({
-            results: tempArr,
-            passedTest: false,
-        })
+        if (typeof tempHeader === "string") {
+            this.setState({
+                heading: "",
+                results: tempArr,
+                passedTest: false,
+            });
+        }
+
+        else {
+            this.state.heading.pop();
+            this.setState({
+                results: tempArr,
+                passedTest: false,
+            });
+        }
+
         event.preventDefault();
     }
 
@@ -264,6 +286,37 @@ class TableEditor extends React.Component {
         }
     }
 
+    createHeading(headArr) {
+        if(typeof headArr === "string") {
+            return (
+                <th>
+                    <input type="text"
+                           name="heading"
+                           value={headArr}
+                           onChange={this.saveProp}
+                           maxLength="55"
+                           className="leftAlign thInput"/>
+                </th>
+            )
+        }
+
+        else {
+            return (
+                headArr.map(function (heading, i) {
+                    return (
+                    <th>
+                        <input type="text"
+                           name="heading"
+                           placeholder = {heading}
+                           maxLength="55"
+                           className="leftAlign thInput"/>
+                    </th>)
+                })
+            )
+        }
+
+    }
+/**/
     render () {
         return (
             <div>
@@ -290,14 +343,9 @@ class TableEditor extends React.Component {
                                                className="thInput"/>
                                     </th>
 
-                                    <th>
-                                        <input type="text"
-                                               name="heading"
-                                               value={this.state.heading}
-                                               onChange={this.saveProp}
-                                               maxLength="55"
-                                               className="leftAlign thInput"/>
-                                    </th>
+                                    {this.createHeading(this.state.heading)}
+
+
                                     <td>
                                         <button style={{marginTop: "0.7em"}}
                                                 className="tinyBtn squareBtn"
@@ -313,16 +361,13 @@ class TableEditor extends React.Component {
                                 </tr>
 
                                 {this.createRows()}
-
-                                <tr>
-                                    <td style={{borderBottom: "none", borderRight: "none"}}/>
-                                    <td style={{borderBottom: "none"}}/>
-                                    <td style={{borderRight: "none", borderBottom:"none"}}>
-                                        <button className="tinyBtn squareBtn"
+                                <button className="tinyBtn squareBtn"
                                                 onClick={(event) => this.addRow( event)}>
                                             <i className="fa fa-plus"></i>
                                         </button>
-                                    </td>
+                                <tr style={{alignItems: "right"}}>
+
+
                                 </tr>
                             </tbody>
                         </table>

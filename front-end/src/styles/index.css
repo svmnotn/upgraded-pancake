@@ -93,16 +93,12 @@ td {
   border-bottom: 1px solid white;
 }
 
-th:nth-child(odd) {
+th:first-child {
   border-right: 1px solid white;
 }
 
-td:nth-child(odd) {
+td:first-child {
   border-right: 1px solid white;
-}
-
-tr:last-child {
-  border-bottom: none;
 }
 
 
