@@ -9,6 +9,7 @@ class Table extends React.Component {
         this.state = {
             tableResult: this.getResult(),
         }
+
         this.getResult = this.getResult.bind(this);
         this.createCols = this.createCols.bind(this);
     }
@@ -23,6 +24,7 @@ class Table extends React.Component {
 
             if (typeof this.props.results[response.data.row].value === "object") {
                 str = "";
+
                 for (let i = 0; i < this.props.results[response.data.row].value.length; i++) {
                     if( i === this.props.results[response.data.row].value.length - 1 ) {
                         str += this.props.results[response.data.row].value[i];
@@ -35,10 +37,10 @@ class Table extends React.Component {
             }
 
             this.setState({
-                tableResult:<div>
-                                <b>Roll: </b>{response.data.roll},
-                                <b><br/>Value: </b>{str}
-                            </div>
+                tableResult: <div>
+                                 <b>Roll: </b>{response.data.roll},
+                                 <b><br/>Value: </b>{str}
+                             </div>
             })
         }).catch(function(error){
             console.log(error);
@@ -52,11 +54,11 @@ class Table extends React.Component {
     //Assumes that the value of results[key] is already an array of strings
     createCols (valArr) {
         return (
-           valArr.map (function (result, i){
-               return (
-                <td key={i} className="leftAlign">{result}</td>
-               )
-           })
+           valArr.map (function (result, i) {
+                return (
+                    <td key={i} className="leftAlign">{result}</td>
+                )
+            })
         )
     }
 
@@ -90,9 +92,9 @@ class Table extends React.Component {
 
             else {
                 return(
-                    headArr.map (function (result, i){
+                    headArr.map (function (result, i) {
                         return (
-                        <th key={i} className="leftAlign">{result}</th>
+                            <th key={i} className="leftAlign">{result}</th>
                         )
                     }
                 ))
@@ -118,34 +120,34 @@ class Table extends React.Component {
                 <p className="result">{this.state.tableResult}</p>
 
                 <div className="btnRow">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td style={{border: "none"}}>
-                                <button style= {{marginRight: '5%',}}
-                                        onClick={()=>{this.reroll()}}>Reroll</button>
-                            </td>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style={{border: "none"}}>
+                                    <button style= {{marginRight: '5%',}}
+                                            onClick={()=>{this.reroll()}}>Reroll</button>
+                                </td>
 
-                            <td style={{border: "none"}}>
-                                <Link to = {{ pathname: "/edit",
-                                              state: { title: this.props.title,
-                                                       heading: this.props.heading,
-                                                       dice: this.props.dice,
-                                                       results: this.props.results
-                                                    }
-                                            }}>
-                                    <button> Edit </button>
-                                </Link>
-                            </td>
+                                <td style={{border: "none"}}>
+                                    <Link to = {{ pathname: "/edit",
+                                                state: { title: this.props.title,
+                                                        heading: this.props.heading,
+                                                        dice: this.props.dice,
+                                                        results: this.props.results
+                                                        }
+                                                }}>
+                                        <button> Edit </button>
+                                    </Link>
+                                </td>
 
-                            <td style={{border: "none"}}>
-                                <Link to="/">
-                                    <button>Return</button>
-                                </Link>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                                <td style={{border: "none"}}>
+                                    <Link to="/">
+                                        <button>Return</button>
+                                    </Link>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         )

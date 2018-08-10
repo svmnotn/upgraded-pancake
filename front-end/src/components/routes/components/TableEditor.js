@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../../styles/App.css';
 import { Link } from 'react-router-dom';
-//["Cate1", "Cate2"]
+
 class TableEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -36,10 +36,12 @@ class TableEditor extends React.Component {
 
     addRow(event) {
         let tempCols = [];
+
         for (let i = 0; i < this.state.heading.length; i++) {
             tempCols.push("Default");
         }
-    const newRow = {roll: 1, value: tempCols}
+
+        const newRow = {roll: 1, value: tempCols}
 
         this.setState((prevState) => {
             return {
@@ -57,6 +59,7 @@ class TableEditor extends React.Component {
     addCol(event) {
         let tempArr = this.state.results,
             tempHeader = this.state.heading;
+
         this.state.results.map(function (result, i) {
             result.value.push("Default");
         })
@@ -79,11 +82,12 @@ class TableEditor extends React.Component {
 
     removeCol(event) {
         let tempArr = this.state.results;
+
         this.state.results.map(function (result, i) {
             result.value.pop();
         })
 
-        if (typeof tempHeader === "string") {
+        if (typeof tempArr === "string") {
             this.setState({
                 heading: "",
                 results: tempArr,
@@ -98,14 +102,13 @@ class TableEditor extends React.Component {
                 passedTest: false,
             });
         }
-
         event.preventDefault();
     }
 
     removeRow(key, event) {
         this.setState(function (prevState) {
             return {
-                results: prevState.results.filter(function(result, i){
+                results: prevState.results.filter(function (result, i) {
                     return i !== key;
                 })
             }
@@ -119,6 +122,7 @@ class TableEditor extends React.Component {
 
     saveValue(resKey, valKey, event) {
         const results = this.state.results[resKey];
+
         if (typeof results.value === "string") {
             results.value = event.target.value;
         }
@@ -135,6 +139,7 @@ class TableEditor extends React.Component {
 
     saveRoll(key, event) {
         const results = this.state.results;
+
         if(event.target.value.trim() === "") {
             results[key].roll = "";
         }
@@ -166,7 +171,7 @@ class TableEditor extends React.Component {
     }
 
     saveProp (event) {
-        this.setState({
+        this.setState ({
             [event.target.name]: event.target.value,
             passedTest: false,
         })
@@ -271,7 +276,7 @@ class TableEditor extends React.Component {
 
         else {
             return (
-                valArr.map (function (value, i){
+                valArr.map (function (value, i) {
                     return (
                         <td key={i}>
                             <input type="text"
@@ -287,62 +292,68 @@ class TableEditor extends React.Component {
     }
 
     createHeading(headArr) {
-            if(typeof headArr === "string") {
-                return (
-                    <th>
-                        <input type="text"
+        if(typeof headArr === "string") {
+            return (
+                <th>
+                    <input type="text"
                             name="heading"
                             value={headArr}
                             onChange={this.saveProp}
                             maxLength="55"
                             className="leftAlign thInput"/>
-                    </th>
-                )
-            }
+                </th>
+            )
+        }
 
-            else {
-                return (
-                    headArr.map(function (heading, i) {
-                        return (
+        else {
+            return (
+                headArr.map(function (heading, i) {
+                    return (
                         <th>
                             <input type="text"
-                            name="heading"
-                            placeholder = {heading}
-                            maxLength="55"
-                            className="leftAlign thInput"/>
-                        </th>)
-                    })
-                )
-            }
-
+                                   name="heading"
+                                   placeholder = {heading}
+                                   maxLength="55"
+                                   className="leftAlign thInput"/>
+                        </th>
+                    )
+                })
+            )
+        }
     }
 
     createEmptyCols() {
         if(typeof this.state.heading !== "string") {
             let tempVal = [];
+
             this.state.heading.map (function (header, i) {
                 tempVal.push(<td></td>);
             })
 
             return (
-                <tr>{tempVal}
-                <td></td>
-                <td></td>
-                <td style= {{borderRight: "none"}}><button className="tinyBtn squareBtn"
-                            onClick={(event) => this.addRow( event)}>
+                <tr>
+                    {tempVal}
+                    <td></td>
+                    <td style= {{borderRight: "none"}}><button className="tinyBtn squareBtn"
+                        onClick={(event) => this.addRow( event)}>
                             <i className="fa fa-plus"></i>
-                </button></td>
+                        </button>
+                    </td>
                 </tr>
             )
         }
+
         else {
             return (
                 <tr>
-                    <td></td>
-                    <button className="tinyBtn squareBtn"
-                            onClick={(event) => this.addRow( event)}>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <button className="tinyBtn squareBtn"
+                                onClick={(event) => this.addRow( event)}>
                             <i className="fa fa-plus"></i>
-                    </button>
+                        </button>
+                    </td>
                 </tr>
             )
         }
@@ -376,7 +387,6 @@ class TableEditor extends React.Component {
 
                                     {this.createHeading(this.state.heading)}
 
-
                                     <td style={{borderRight:"none"}}>
                                         <button style={{marginTop: "0.7em"}}
                                                 className="tinyBtn squareBtn"
@@ -394,8 +404,6 @@ class TableEditor extends React.Component {
                                 {this.createRows()}
 
                                 {this.createEmptyCols()}
-
-
                             </tbody>
                         </table>
                     </form>
