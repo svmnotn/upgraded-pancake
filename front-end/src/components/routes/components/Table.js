@@ -20,17 +20,18 @@ class Table extends React.Component {
             dice: this.props.dice,
             results:  this.props.results,
         }).then ((response) => {
-            let str = this.state.results;
+            let str = this.props.results[response.data.row].value;
 
             if (typeof this.props.results[response.data.row].value === "object") {
                 str = "";
+
                 for (let i = 0; i < this.props.results[response.data.row].value.length; i++) {
-                    if (i < this.props.results[response.data.row].value.length - 1) {
-                        str += this.props.results[response.data.row].value[i] + ", ";
+                    if( i === this.props.results[response.data.row].value.length - 1 ) {
+                        str += this.props.results[response.data.row].value[i];
                     }
 
                     else {
-                        str += this.props.results[response.data.row].value[i];
+                        str += this.props.results[response.data.row].value[i] + ", ";
                     }
                 }
             }
@@ -82,16 +83,16 @@ class Table extends React.Component {
             }
         }, this)
 
-        let createHeading = (heading) => {
-            if (typeof heading === "string") {
+        let createHeading = (headArr) => {
+            if (typeof headArr === "string") {
                 return (
-                    <th className="leftAlign">{heading}</th>
+                    <th className="leftAlign">{headArr}</th>
                 )
             }
 
             else {
                 return(
-                    heading.map (function (result, i) {
+                    headArr.map (function (result, i) {
                         return (
                             <th key={i} className="leftAlign">{result}</th>
                         )

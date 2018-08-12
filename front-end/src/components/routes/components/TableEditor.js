@@ -35,13 +35,13 @@ class TableEditor extends React.Component {
     }
 
     addRow(event) {
-        let tempValue = [];
+        let tempCols = [];
 
         for (let i = 0; i < this.state.heading.length; i++) {
-            tempValue.push("Default");
+            tempCols.push("Default");
         }
 
-        const newRow = {roll: 1, value: tempValue}
+        const newRow = {roll: 1, value: tempCols}
 
         this.setState((prevState) => {
             return {
@@ -58,18 +58,18 @@ class TableEditor extends React.Component {
 
     addCol(event) {
         let tempArr = this.state.results,
-            header = this.state.heading;
+            tempHeader = this.state.heading;
 
         this.state.results.map(function (result, i) {
             result.value.push("Default");
         })
 
-        if (typeof header === "string") {
-            header = [header, "Category1"];
+        if (typeof tempHeader === "string") {
+            tempHeader = [tempHeader, "Category1"];
         }
 
         else {
-            header.push("Category");
+            tempHeader.push("Category");
         }
 
         this.setState({
@@ -81,16 +81,16 @@ class TableEditor extends React.Component {
     }
 
     removeCol(event) {
-        let results = this.state.results;
+        let tempArr = this.state.results;
 
         this.state.results.map(function (result, i) {
             result.value.pop();
         })
 
-        if (typeof results === "string") {
+        if (typeof tempArr === "string") {
             this.setState({
                 heading: "",
-                results: results,
+                results: tempArr,
                 passedTest: false,
             });
         }
@@ -98,7 +98,7 @@ class TableEditor extends React.Component {
         else {
             this.state.heading.pop();
             this.setState({
-                results: results,
+                results: tempArr,
                 passedTest: false,
             });
         }
@@ -138,10 +138,10 @@ class TableEditor extends React.Component {
     }
 
     saveRoll(key, event) {
-        const resultArr = this.state.results;
+        const results = this.state.results;
 
         if(event.target.value.trim() === "") {
-            resultArr[key].roll = "";
+            results[key].roll = "";
         }
 
         else {
@@ -154,11 +154,11 @@ class TableEditor extends React.Component {
 
             else {
                 if(tempArr > 1 || event.target.value.includes("-")) {
-                    resultArr[key].roll = event.target.value;
+                    results[key].roll = event.target.value;
                 }
 
                 else {
-                    resultArr[key].roll = parseInt(event.target.value, 10);
+                    results[key].roll = parseInt(event.target.value, 10);
                 }
             }
         }
@@ -166,6 +166,7 @@ class TableEditor extends React.Component {
         this.setState({
             passedTest: false,
         })
+
         this.forceUpdate();
     }
 
@@ -218,8 +219,7 @@ class TableEditor extends React.Component {
                                        heading: this.state.heading,
                                        dice: this.state.dice,
                                        results: this.state.results,
-                                     }
-                }}>
+                }}}>
                     <button className="squareBtn"><i className="fa fa-arrow-right"></i></button>
                 </Link>
             )
@@ -261,12 +261,12 @@ class TableEditor extends React.Component {
     }
 
     //Checks whether the value is a string or an array before returning
-    createCols(resKey, value) {
-        if(typeof value === "string") {
+    createCols(resKey, valArr) {
+        if(typeof valArr === "string") {
             return (
                 <td>
                     <input type="text"
-                           value={value}
+                           value={valArr}
                            maxLength="55"
                            onChange={(event) => {this.saveValue(resKey, 0, event)}}
                            className="leftAlign"/>
@@ -276,11 +276,11 @@ class TableEditor extends React.Component {
 
         else {
             return (
-                value.map (function (valAtI, i) {
+                valArr.map (function (value, i) {
                     return (
                         <td key={i}>
                             <input type="text"
-                                   placeholder={valAtI}
+                                   placeholder={value}
                                    maxLength="55"
                                    className="leftAlign"
                                    onChange = {(event) => this.saveValue (resKey, i, event)}/>
@@ -291,13 +291,13 @@ class TableEditor extends React.Component {
         }
     }
 
-    createHeading(heading) {
-        if(typeof heading === "string") {
+    createHeading(headArr) {
+        if(typeof headArr === "string") {
             return (
                 <th>
                     <input type="text"
                             name="heading"
-                            value={heading}
+                            value={headArr}
                             onChange={this.saveProp}
                             maxLength="55"
                             className="leftAlign thInput"/>
@@ -307,12 +307,12 @@ class TableEditor extends React.Component {
 
         else {
             return (
-                heading.map(function (headingAtI, i) {
+                headArr.map(function (heading, i) {
                     return (
                         <th>
                             <input type="text"
                                    name="heading"
-                                   placeholder = {headingAtI}
+                                   placeholder = {heading}
                                    maxLength="55"
                                    className="leftAlign thInput"/>
                         </th>
@@ -402,8 +402,8 @@ class TableEditor extends React.Component {
                                 </tr>
 
                                 {this.createRows()}
-                                {this.createEmptyCols()}
 
+                                {this.createEmptyCols()}
                             </tbody>
                         </table>
                     </form>
@@ -415,7 +415,6 @@ class TableEditor extends React.Component {
                     </Link>
 
                     {this.confirmTable()}
-
                 </div>
             </div>
         )
