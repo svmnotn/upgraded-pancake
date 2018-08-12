@@ -23,15 +23,13 @@ class Table extends React.Component {
             let str = this.props.results[response.data.row].value;
 
             if (typeof this.props.results[response.data.row].value === "object") {
-                str = "";
-
                 for (let i = 0; i < this.props.results[response.data.row].value.length; i++) {
-                    if( i === this.props.results[response.data.row].value.length - 1 ) {
-                        str += this.props.results[response.data.row].value[i];
+                    if (i < this.props.results[response.data.row].value.length - 1) {
+                        str += this.props.results[response.data.row].value[i] + ", ";
                     }
 
                     else {
-                        str += this.props.results[response.data.row].value[i] + ", ";
+                        str += this.props.results[response.data.row].value[i];
                     }
                 }
             }

@@ -57,12 +57,17 @@ class TableEditor extends React.Component {
     }
 
     addCol(event) {
-        let tempArr = this.state.results,
+        let tempResult = this.state.results,
             tempHeader = this.state.heading;
 
-        this.state.results.map(function (result, i) {
-            result.value.push("Default");
-        })
+        this.state.results.map (function (result, i) {
+            if(typeof result.value !== "string") {
+                result.value.push("Default");
+            }
+            else {
+                result.value = [result.value, "Default"];
+            }
+        }, this)
 
         if (typeof tempHeader === "string") {
             tempHeader = [tempHeader, "Category1"];
@@ -74,35 +79,41 @@ class TableEditor extends React.Component {
 
         this.setState({
             heading: tempHeader,
-            results: tempArr,
+            results: tempResult,
             passedTest: false,
         })
         event.preventDefault();
     }
 
     removeCol(event) {
-        let tempArr = this.state.results;
+        event.preventDefault();
+        let tempResults = this.state.results;
 
-        this.state.results.map(function (result, i) {
-            result.value.pop();
-        })
+        tempResults.map(function (result, i) {
+            if(typeof result.value !== "string") {
+                result.value.pop();
+            }
 
-        if (typeof tempArr === "string") {
+            else {
+                result.value = "";
+            }
+        }, this)
+
+        if (typeof this.state.heading !== "string") {
+            this.state.heading.pop();
             this.setState({
-                heading: "",
-                results: tempArr,
+                results: tempResults,
                 passedTest: false,
             });
         }
 
         else {
-            this.state.heading.pop();
             this.setState({
-                results: tempArr,
+                heading: "",
+                results: tempResults,
                 passedTest: false,
             });
         }
-        event.preventDefault();
     }
 
     removeRow(key, event) {
@@ -261,12 +272,12 @@ class TableEditor extends React.Component {
     }
 
     //Checks whether the value is a string or an array before returning
-    createCols(resKey, valArr) {
-        if(typeof valArr === "string") {
+    createCols(resKey, val) {
+        if(typeof val === "string") {
             return (
                 <td>
                     <input type="text"
-                           value={valArr}
+                           value={val}
                            maxLength="55"
                            onChange={(event) => {this.saveValue(resKey, 0, event)}}
                            className="leftAlign"/>
@@ -276,7 +287,7 @@ class TableEditor extends React.Component {
 
         else {
             return (
-                valArr.map (function (value, i) {
+                val.map (function (value, i) {
                     return (
                         <td key={i}>
                             <input type="text"
@@ -291,13 +302,13 @@ class TableEditor extends React.Component {
         }
     }
 
-    createHeading(headArr) {
-        if(typeof headArr === "string") {
+    createHeading(header) {
+        if(typeof header === "string") {
             return (
                 <th>
                     <input type="text"
                             name="heading"
-                            value={headArr}
+                            value={header}
                             onChange={this.saveProp}
                             maxLength="55"
                             className="leftAlign thInput"/>
@@ -307,7 +318,7 @@ class TableEditor extends React.Component {
 
         else {
             return (
-                headArr.map(function (heading, i) {
+                header.map(function (heading, i) {
                     return (
                         <th>
                             <input type="text"
