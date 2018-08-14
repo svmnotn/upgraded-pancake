@@ -23,15 +23,14 @@ class Table extends React.Component {
             let str = this.props.results[response.data.row].value;
 
             if (typeof this.props.results[response.data.row].value === "object") {
-                for (let i = 0; i < this.props.results[response.data.row].value.length; i++) {
-                    if (i < this.props.results[response.data.row].value.length - 1) {
-                        str += this.props.results[response.data.row].value[i] + ", ";
-                    }
+                str = "";
 
-                    else {
-                        str += this.props.results[response.data.row].value[i];
-                    }
+                for (val in this.props.results[response.data.row].value) {
+                    str += val + ", ";
                 }
+
+                // Remove the trailing ", "
+                str.slice(0, -2);
             }
 
             this.setState({
@@ -69,9 +68,7 @@ class Table extends React.Component {
                         <td className="leftAlign">{result.value}</td>
                     </tr>
                 )
-            }
-
-            else {
+            } else {
                 return (
                     <tr key={i}>
                         <td>{result.roll}</td>
@@ -81,16 +78,14 @@ class Table extends React.Component {
             }
         }, this)
 
-        let createHeading = (headArr) => {
-            if (typeof headArr === "string") {
+        let createHeading = (heading) => {
+            if (typeof heading === "string") {
                 return (
-                    <th className="leftAlign">{headArr}</th>
+                    <th className="leftAlign">{heading}</th>
                 )
-            }
-
-            else {
+            } else {
                 return(
-                    headArr.map (function (result, i) {
+                    heading.map (function (result, i) {
                         return (
                             <th key={i} className="leftAlign">{result}</th>
                         )
