@@ -11,9 +11,7 @@ class Edit extends React.Component {
                              dice = {this.props.location.state.dice}
                              results = {this.props.location.state.results}/>
             )
-        }
-
-        else {
+        } else {
             return (
                 <TableEditor/>
             )

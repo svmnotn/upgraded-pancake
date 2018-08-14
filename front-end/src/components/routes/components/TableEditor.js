@@ -92,9 +92,7 @@ class TableEditor extends React.Component {
         tempResults.map(function (result, i) {
             if(typeof result.value !== "string") {
                 result.value.pop();
-            }
-
-            else {
+            } else {
                 result.value = "";
             }
         }, this)
@@ -105,9 +103,7 @@ class TableEditor extends React.Component {
                 results: tempResults,
                 passedTest: false,
             });
-        }
-
-        else {
+        } else {
             this.setState({
                 heading: "",
                 results: tempResults,
@@ -136,9 +132,7 @@ class TableEditor extends React.Component {
 
         if (typeof results.value === "string") {
             results.value = event.target.value;
-        }
-
-        else {
+        } else {
             results.value[valKey] = event.target.value;
         }
 
@@ -153,24 +147,16 @@ class TableEditor extends React.Component {
 
         if(event.target.value.trim() === "") {
             results[key].roll = "";
-        }
-
-        else {
+        } else {
             const alphaRegEx = /[A-Z][a-z]/,
                   tempArr = event.target.value.split("-");
 
             if(alphaRegEx.test(event.target.value)) {
                 return;
-            }
-
-            else {
-                if(tempArr > 1 || event.target.value.includes("-")) {
-                    results[key].roll = event.target.value;
-                }
-
-                else {
-                    results[key].roll = parseInt(event.target.value, 10);
-                }
+            } else if(tempArr > 1 || event.target.value.includes("-")) {
+                results[key].roll = event.target.value;
+            } else {
+                results[key].roll = parseInt(event.target.value, 10);
             }
         }
 
@@ -195,9 +181,7 @@ class TableEditor extends React.Component {
 
             if(diceVal[0].length > 1) {
                 diceVal = diceVal[0] * diceVal[1];
-            }
-
-            else {
+            } else {
                 diceVal = diceVal[1];
             }
 
@@ -207,12 +191,8 @@ class TableEditor extends React.Component {
                     if((tempVal[0] > diceVal && tempVal[1] > diceVal) || (tempVal[0] <= 0 && tempVal[1] <= 0)) {
                         return;
                     }
-                }
-
-                else {
-                    if(roll > diceVal || roll <= 0) {
-                        return
-                    }
+                } else if(roll > diceVal || roll <= 0) {
+                    return
                 }
             }
 
@@ -283,9 +263,7 @@ class TableEditor extends React.Component {
                            className="leftAlign"/>
                 </td>
             )
-        }
-
-        else {
+        } else {
             return (
                 val.map (function (value, i) {
                     return (
@@ -314,9 +292,7 @@ class TableEditor extends React.Component {
                             className="leftAlign thInput"/>
                 </th>
             )
-        }
-
-        else {
+        } else {
             return (
                 header.map(function (heading, i) {
                     return (
@@ -352,9 +328,7 @@ class TableEditor extends React.Component {
                     </td>
                 </tr>
             )
-        }
-
-        else {
+        } else {
             return (
                 <tr>
                     <td> </td>
