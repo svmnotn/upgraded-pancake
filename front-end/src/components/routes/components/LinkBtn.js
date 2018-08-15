@@ -1,9 +1,12 @@
 import React from 'react';
-import { Link} from 'react-router-dom';
 import '../../../styles/App.css';
+
 import axios from 'axios';
+import { Link} from 'react-router-dom';
 
 class LinkBtn extends React.Component {
+
+    //Default values displayed when the server is unable to send data over
     constructor(props) {
         super(props);
         this.state = {
@@ -11,9 +14,11 @@ class LinkBtn extends React.Component {
             dice: "1d5",
             results: [{roll:1, value:"gas giant"}, {roll:2, value:"nebula"}, {roll:3, value:"star"}, {roll:4, value:"black hole"}, {roll:"5-6", value: "rangeTest"}]
         }
+
         this.getServerData = this.getServerData.bind(this);
     }
 
+    //Receives data from server and sets table values to the received data
     getServerData(url) {
         axios.get(url).then((response) => {
             this.setState ({
@@ -24,6 +29,7 @@ class LinkBtn extends React.Component {
         })
     }
 
+    //Sets the URL where the data is received from
     componentDidMount() {
         this.getServerData(this.props.url);
     }

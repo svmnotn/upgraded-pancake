@@ -2,7 +2,10 @@ import React from 'react';
 import '../../styles/App.css';
 
 import TableEditor from './components/TableEditor';
+
 class Edit extends React.Component {
+
+    /*Checks if the user is editing a pre-existing table or a completely new table*/
     editTable() {
         if(this.props.location.state) {
             return (

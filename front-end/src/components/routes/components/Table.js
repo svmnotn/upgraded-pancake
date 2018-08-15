@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../../styles/App.css';
+
 import axios from 'axios';
 import {Link, withRouter } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ class Table extends React.Component {
         this.createCols = this.createCols.bind(this);
     }
 
+    //Gets a random result on the table from the server and displays it
     getResult() {
         axios.post('/table', {
             heading: this.props.heading,
@@ -44,11 +46,12 @@ class Table extends React.Component {
         }, this)
     }
 
+    //Allows the user to get another result if they do not like the one they received
     reroll() {
         this.getResult();
     }
 
-    //Assumes that the value of results[key] is already an array of strings
+    //Adds columns to create a multi-column table under the assumption that the value of results[key] is already an array of strings.
     createCols (valArr) {
         return (
            valArr.map (function (result, i) {
@@ -60,6 +63,7 @@ class Table extends React.Component {
     }
 
     render () {
+        //Creates rows and displays them differently depending on the number of columns
         let createRows = this.props.results.map(function(result, i) {
             if (typeof result.value === "string") {
                 return (
@@ -78,6 +82,7 @@ class Table extends React.Component {
             }
         }, this)
 
+        //Creates the columns for the heading depenind on the table's number of columns
         let createHeading = (heading) => {
             if (typeof heading === "string") {
                 return (

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import './styles/App.css';
+
+import { Link } from 'react-router-dom';
 
 class App extends React.Component {
   render() {
@@ -14,6 +15,7 @@ class App extends React.Component {
               <button>Roll</button>
             </Link>
           </div>
+
           <Link to = "/edit">
             <button> Generate Table </button>
           </Link>

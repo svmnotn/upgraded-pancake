@@ -2,6 +2,7 @@ import React from 'react';
 import '../../styles/App.css';
 
 import Table from './components/Table';
+
 class Roll extends React.Component {
     render() {
         return(

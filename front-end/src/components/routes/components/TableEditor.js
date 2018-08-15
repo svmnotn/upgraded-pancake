@@ -22,7 +22,7 @@ class TableEditor extends React.Component {
         this.createRows = this.createRows.bind(this);
     }
 
-    //If something was received by the component, update component values.
+    //If the user wanted to edit a preexisting table, update the table's values to the prexisting one.
     componentDidMount() {
         if(this.props.title) {
             this.setState({
@@ -34,6 +34,7 @@ class TableEditor extends React.Component {
         }
     }
 
+    //Add a new row to the table by adding a new object into the results.values array
     addRow(event) {
         let tempCols = [];
 
@@ -56,24 +57,23 @@ class TableEditor extends React.Component {
         event.preventDefault();
     }
 
+    //Add a new column to the table by checking whether or not if the value is a string/array and adjusting accordingly
     addCol(event) {
+        event.preventDefault();
         let tempResult = this.state.results,
             tempHeader = this.state.heading;
 
         this.state.results.map (function (result, i) {
             if(typeof result.value !== "string") {
                 result.value.push("Default");
-            }
-            else {
+            } else {
                 result.value = [result.value, "Default"];
             }
         }, this)
 
         if (typeof tempHeader === "string") {
             tempHeader = [tempHeader, "Category1"];
-        }
-
-        else {
+        } else {
             tempHeader.push("Category");
         }
 
@@ -82,9 +82,9 @@ class TableEditor extends React.Component {
             results: tempResult,
             passedTest: false,
         })
-        event.preventDefault();
     }
 
+    //Removes a column from the table by checking whether or not if the value is a string/array and adjusting accordingly
     removeCol(event) {
         event.preventDefault();
         let tempResults = this.state.results;
@@ -112,7 +112,9 @@ class TableEditor extends React.Component {
         }
     }
 
+    //Removes a row from the table by checking whether the key matches an element in the array
     removeRow(key, event) {
+        event.preventDefault();
         this.setState(function (prevState) {
             return {
                 results: prevState.results.filter(function (result, i) {
@@ -124,9 +126,9 @@ class TableEditor extends React.Component {
         this.setState({
             passedTest: false,
         })
-        event.preventDefault();
     }
 
+    //Saves the user's typed value to the correct text input
     saveValue(resKey, valKey, event) {
         const results = this.state.results[resKey];
 
@@ -142,6 +144,7 @@ class TableEditor extends React.Component {
         this.forceUpdate();
     }
 
+    //Saves the user's typed value to the correct text input. User is limited to numerical characters and the letter d.
     saveRoll(key, event) {
         const results = this.state.results;
 
@@ -167,6 +170,7 @@ class TableEditor extends React.Component {
         this.forceUpdate();
     }
 
+    //Saves the user's typed value to the correct text input. Used for table name and dice.
     saveProp (event) {
         this.setState ({
             [event.target.name]: event.target.value,
@@ -174,6 +178,7 @@ class TableEditor extends React.Component {
         })
     }
 
+    //Tests if the table is in valid dice notation and it does not break any set logic
     testTable() {
         const diceRegEx = /^\d*d\d+$/;
         if(diceRegEx.test(this.state.dice)) {
@@ -202,6 +207,7 @@ class TableEditor extends React.Component {
         }
     }
 
+    //Forces the user to check their table before being able to roll on it. If a change it made on the table, the user is forced to recheck their table.
     confirmTable() {
         if(this.state.passedTest) {
             return (

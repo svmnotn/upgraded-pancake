@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../styles/App.css';
-import { Link } from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
 import LinkBtn from './components/LinkBtn'
 class Choose extends React.Component {
     render() {
@@ -9,6 +9,7 @@ class Choose extends React.Component {
             <div>
                 <h1>Roll for: </h1>
                 <hr/>
+
                 <table className="btnTable">
                     <tbody>
                         <tr>
@@ -49,17 +50,17 @@ class Choose extends React.Component {
 
                         <tr>
                             <td style={{textAlign: "right"}}>
-                            <button style={{height: "8vh", width: "8vh", fontSize:"1em"}}>
+                                <button style={{height: "8vh", width: "8vh", fontSize:"1em"}}>
                                     <i className="fa fa-file-upload"></i>
                                 </button>
-                                </td>
+                            </td>
                             <td>
-
                                 <Link to="/"><button>Return</button></Link>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+
             </div>
         )
     }
