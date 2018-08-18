@@ -1,13 +1,8 @@
-#![feature(rust_2018_preview)]
-
 #[macro_use]
 extern crate serde_derive;
 
 mod table;
-pub use self::table::Table;
-
-mod table_result;
-pub use self::table_result::TableResult;
+pub use self::table::{Table, TableResult};
 
 mod dice;
 pub use self::dice::Dice;

@@ -27,7 +27,7 @@ impl Display for Range {
 impl Deref for Range {
     type Target = RangeInclusive<u32>;
 
-    fn deref(&self) -> &RangeInclusive<u32> {
+    fn deref(&self) -> &Self::Target {
         &self.0
     }
 }

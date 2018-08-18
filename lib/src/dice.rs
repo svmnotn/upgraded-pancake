@@ -4,13 +4,17 @@ use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
 use std::fmt;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone, Copy)]
 pub struct Dice {
     amount: u16,
     size: u16,
 }
 
 impl Dice {
+    pub fn new(amount: u16, size: u16) -> Self {
+        Dice { amount, size }
+    }
+
     pub fn roll(&self) -> u32 {
         (0..self.amount).fold(0, |acc, _| {
             thread_rng().gen_range(1, u32::from(self.size + 1)) + acc
