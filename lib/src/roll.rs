@@ -45,21 +45,25 @@ impl Roll {
             Roll::Single(v) => {
                 if *v < lowest || *v > highest {
                     // Out of Bounds
+                    eprintln!("Single out of bounds!");
                     return false;
                 }
 
                 if *v < *val {
                     // Out of Order
+                    eprintln!("Single out of order!");
                     return false;
                 }
 
                 if range.contains(*v) {
                     // Inside a defined range
+                    eprintln!("Single inside range!");
                     return false;
                 }
 
                 if values.contains(&v) == false {
                     // Duplicated value
+                    eprintln!("Single duplicate!");
                     return false;
                 }
 
@@ -70,20 +74,24 @@ impl Roll {
             Roll::Range(r) => {
                 if *r.start() < lowest || *r.end() > highest {
                     // Out of Bounds
+                    eprintln!("Range out of bounds!");
                     return false;
                 }
                 if *r.start() < *val {
                     // Start of range is under the last value
+                    eprintln!("Range less than last val!");
                     return false;
                 }
 
                 if *r.start() < *range.start() {
                     // Out of Order
+                    eprintln!("Range out of order!");
                     return false;
                 }
 
                 if range.contains(*r.start()) || range.contains(*r.end()) {
-                    // Inside another range!
+                    // Inside last range!
+                    eprintln!("Range inside last range!");
                     return false;
                 }
 
@@ -93,6 +101,10 @@ impl Roll {
 
                 if vals.is_empty() == false {
                     // Range contains past duplicates!
+                    eprintln!(
+                        "Range contains past dupes!\n\tvals: {:?}\n\tvalues: {:?}",
+                        vals, values
+                    );
                     return false;
                 }
 

@@ -1,6 +1,9 @@
 mod table_result;
 pub use self::table_result::TableResult;
 
+#[cfg(test)]
+mod tests;
+
 use crate::{
     gen_strings, Dice, Range, Row, Strings, RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE,
     RNG_MIN_ROW_SIZE,
@@ -42,9 +45,23 @@ impl Table {
         let mut val = 0;
 
         for row in &self.results {
+            eprintln!(
+                "PreCheck\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
+                values, range, val
+            );
+
             if row.valid(self.dice, &mut values, &mut range, &mut val) == false {
+                eprintln!(
+                    "Failure Condition\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
+                    values, range, val
+                );
                 return false;
             }
+
+            eprintln!(
+                "PostCheck\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
+                values, range, val
+            );
         }
 
         true
