@@ -1,4 +1,4 @@
-#![feature(plugin, decl_macro, rust_2018_preview)]
+#![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
 mod files;

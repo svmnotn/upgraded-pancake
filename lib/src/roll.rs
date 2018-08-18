@@ -1,4 +1,4 @@
-use super::Range;
+use crate::Range;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]

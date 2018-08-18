@@ -9,7 +9,7 @@ fn get() -> Json<Table> {
 
 #[post("/table", format = "application/json", data = "<table>")]
 fn post(table: Option<Json<Table>>) -> Option<Json<TableResult>> {
-    table.and_then(|t| t.0.get()).map(Json)
+    table.and_then(|t| t.roll()).map(Json)
 }
 
 #[get("/table/static")]

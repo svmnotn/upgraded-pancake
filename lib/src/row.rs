@@ -1,12 +1,16 @@
-use super::{Range, Roll, Strings};
+use crate::{Range, Roll, Strings};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Row {
-    pub roll: Roll,
-    pub value: Strings,
+    roll: Roll,
+    value: Strings,
 }
 
 impl Row {
+    pub fn new(roll: Roll, value: Strings) -> Self {
+        Row { roll, value }
+    }
+
     pub fn is(&self, val: u32) -> bool {
         self.roll.is(val)
     }
