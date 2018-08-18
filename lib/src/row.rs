@@ -1,4 +1,4 @@
-use crate::{Range, Roll, Strings};
+use crate::{Dice, Range, Roll, Strings};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Row {
@@ -25,5 +25,15 @@ impl Row {
 
     pub fn value(&self) -> Strings {
         self.value.clone()
+    }
+
+    pub fn valid(
+        &self,
+        dice: Dice,
+        values: &mut Vec<u32>,
+        range: &mut Range,
+        val: &mut u32,
+    ) -> bool {
+        self.roll.valid(dice, values, range, val)
     }
 }

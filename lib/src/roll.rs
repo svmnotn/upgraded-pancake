@@ -1,4 +1,4 @@
-use crate::Range;
+use crate::{Dice, Range};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
@@ -29,6 +29,83 @@ impl Roll {
         } else {
             None
         }
+    }
+
+    pub fn valid(
+        &self,
+        dice: Dice,
+        values: &mut Vec<u32>,
+        range: &mut Range,
+        val: &mut u32,
+    ) -> bool {
+        let lowest = dice.min();
+        let highest = dice.max();
+
+        match self {
+            Roll::Single(v) => {
+                if *v < lowest || *v > highest {
+                    // Out of Bounds
+                    return false;
+                }
+
+                if *v < *val {
+                    // Out of Order
+                    return false;
+                }
+
+                if range.contains(*v) {
+                    // Inside a defined range
+                    return false;
+                }
+
+                if values.contains(&v) == false {
+                    // Duplicated value
+                    return false;
+                }
+
+                values.retain(|x| *x != *v);
+
+                *val = *v;
+            }
+            Roll::Range(r) => {
+                if *r.start() < lowest || *r.end() > highest {
+                    // Out of Bounds
+                    return false;
+                }
+                if *r.start() < *val {
+                    // Start of range is under the last value
+                    return false;
+                }
+
+                if *r.start() < *range.start() {
+                    // Out of Order
+                    return false;
+                }
+
+                if range.contains(*r.start()) || range.contains(*r.end()) {
+                    // Inside another range!
+                    return false;
+                }
+
+                let vals: Vec<u32> = (*r.start()..=*r.end())
+                    .filter(|v| values.contains(&v) == false)
+                    .collect();
+
+                if vals.is_empty() == false {
+                    // Range contains past duplicates!
+                    return false;
+                }
+
+                // TODO check to see if there are more checks that need be done
+
+                // TODO redo this bit, the value should be the end of the
+                // range
+                *range = r.clone();
+                *val = r.end() + 1;
+            }
+        }
+
+        true
     }
 }
 
