@@ -1,6 +1,9 @@
 mod table_result;
 pub use self::table_result::TableResult;
 
+#[cfg(test)]
+mod tests;
+
 use crate::{
     gen_strings, Dice, Range, Row, Strings, RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE,
     RNG_MIN_ROW_SIZE,
@@ -32,6 +35,36 @@ impl Table {
             .enumerate()
             .find(|(_, row)| row.is(roll))
             .map(|(i, _)| TableResult::new(roll, i))
+    }
+
+    // EXPECTING results to be sorted such that the lowest value
+    // is at the lowest index (for ranges what is taken is the start value)
+    pub fn is_valid(&self) -> bool {
+        let mut values: Vec<u32> = (self.dice.min()..=self.dice.max()).collect();
+        let mut range = Range::from(0..=0);
+        let mut val = 0;
+
+        for row in &self.results {
+            eprintln!(
+                "PreCheck\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
+                values, range, val
+            );
+
+            if row.valid(self.dice, &mut values, &mut range, &mut val) == false {
+                eprintln!(
+                    "Failure Condition\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
+                    values, range, val
+                );
+                return false;
+            }
+
+            eprintln!(
+                "PostCheck\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
+                values, range, val
+            );
+        }
+
+        true
     }
 }
 

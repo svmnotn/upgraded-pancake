@@ -1,24 +1,4 @@
-use rand::{thread_rng, Rng};
-use rocket_contrib::Json;
-use upgraded_pancake::{Table, TableResult};
-
-#[get("/table")]
-fn get() -> Json<Table> {
-    Json(rand::random())
-}
-
-#[post("/table", format = "application/json", data = "<table>")]
-fn post(table: Option<Json<Table>>) -> Option<Json<TableResult>> {
-    table.and_then(|t| t.roll()).map(Json)
-}
-
-#[get("/table/static")]
-fn get_static() -> Json<Table> {
-    Json(
-        serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
-            .expect("wrong json"),
-    )
-}
+use super::Table;
 
 const CHOICES: [&str; 6] = [
     r#"{"dice":"1d6","heading":"Test Data","results":[{"roll":1,"value":"DATA"},{"roll":2,"value":"DATA1"},{"roll":3,"value":"DATA2"},{"roll":4,"value":"DATA3"},{"roll":5,"value":"DATA4"},{"roll":6,"value":"DATA5"}]}"#,
@@ -28,3 +8,57 @@ const CHOICES: [&str; 6] = [
     r#"{"dice":"1d4","heading":"Hi it is Test Data","results":[{"roll":1,"value":"DATA"},{"roll":2,"value":"DATA1"},{"roll":3,"value":"DATA3"},{"roll":4,"value":"DATA4"}]}"#,
     r#"{"dice":"1d6","heading":["Cool things","Stuffy stuff","is it all a lie?"],"results":[{"roll":1,"value":["I am cake","but that's a lie","cus the cake is a lie"]},{"roll":2,"value":["jerky","is neat","very neat"]},{"roll":3,"value":["cookies","very neat","we must eat"]},{"roll":4,"value":["we do","what we must","because we cam"]},{"roll":5,"value":["we all","lift","together"]},{"roll":6,"value":["we lift","for the grind","together"]}]}"#,
 ];
+
+#[test]
+fn valid_works_0() {
+    assert!(
+        serde_json::from_str::<Table>(CHOICES[0])
+            .expect("can't become table?")
+            .is_valid()
+    );
+}
+
+#[test]
+fn valid_works_1() {
+    assert!(
+        serde_json::from_str::<Table>(CHOICES[1])
+            .expect("can't become table?")
+            .is_valid()
+    );
+}
+
+#[test]
+fn valid_works_2() {
+    assert!(
+        serde_json::from_str::<Table>(CHOICES[2])
+            .expect("can't become table?")
+            .is_valid()
+    );
+}
+
+#[test]
+fn valid_works_3() {
+    assert!(
+        serde_json::from_str::<Table>(CHOICES[3])
+            .expect("can't become table?")
+            .is_valid()
+    );
+}
+
+#[test]
+fn valid_works_4() {
+    assert!(
+        serde_json::from_str::<Table>(CHOICES[4])
+            .expect("can't become table?")
+            .is_valid()
+    );
+}
+
+#[test]
+fn valid_works_5() {
+    assert!(
+        serde_json::from_str::<Table>(CHOICES[5])
+            .expect("can't become table?")
+            .is_valid()
+    );
+}
