@@ -15,7 +15,7 @@ fn main() {
                 tables::get,
                 tables::tables,
                 tables::roll,
-                tables::get_static,
+                tables::static_tables,
                 files::get,
             ],
         ).launch();

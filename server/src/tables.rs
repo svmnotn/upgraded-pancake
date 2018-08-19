@@ -8,11 +8,16 @@ use upgraded_pancake::{Table, TableResult};
     format = "application/json",
     data = "<table>"
 )]
-fn add(name: String, table: Json<Table>, mut cookies: Cookies) {
-    cookies.add(Cookie::new(
-        name,
-        base64::encode(&serde_json::to_string(&table.0).expect("Unable to JSONify json?")),
-    ));
+fn add(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
+    Json(if table.is_valid() {
+        cookies.add(Cookie::new(
+            name,
+            base64::encode(&serde_json::to_string(&table.0).expect("Unable to JSONify JSON?")),
+        ));
+        true
+    } else {
+        false
+    })
 }
 
 #[get("/table/<name>")]
@@ -39,7 +44,7 @@ fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
 }
 
 #[get("/table/static")]
-fn get_static() -> Json<Table> {
+fn static_tables() -> Json<Table> {
     Json(
         serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
             .expect("wrong json"),
