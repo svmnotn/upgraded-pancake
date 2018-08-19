@@ -650,6 +650,7 @@ dependencies = [
 name = "upgraded-pancake-server"
 version = "0.1.0"
 dependencies = [
+ "base64 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.5.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket)",
  "rocket_codegen 0.4.0-dev (git+https://github.com/SergioBenitez/Rocket)",

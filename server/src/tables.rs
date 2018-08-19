@@ -1,19 +1,50 @@
 use rand::{thread_rng, Rng};
+use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Json;
 use upgraded_pancake::{Table, TableResult};
 
+#[post(
+    "/table/<name>",
+    format = "application/json",
+    data = "<table>"
+)]
+fn add(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
+    Json(if table.is_valid() {
+        cookies.add(Cookie::new(
+            name,
+            base64::encode(&serde_json::to_string(&table.0).expect("Unable to JSONify JSON?")),
+        ));
+        true
+    } else {
+        false
+    })
+}
+
+#[get("/table/<name>")]
+fn get(name: String, cookies: Cookies) -> Option<Json<Table>> {
+    cookies
+        .get(&name)
+        .and_then(|c| base64::decode(c.value()).ok())
+        .and_then(|b| serde_json::from_slice(&b).ok())
+        .map(Json)
+}
+
 #[get("/table")]
-fn get() -> Json<Table> {
-    Json(rand::random())
+fn tables(cookies: Cookies) -> Json<Vec<String>> {
+    Json(cookies.iter().map(|c| c.name().to_owned()).collect())
 }
 
 #[post("/table", format = "application/json", data = "<table>")]
-fn post(table: Option<Json<Table>>) -> Option<Json<TableResult>> {
-    table.and_then(|t| t.roll()).map(Json)
+fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
+    if table.is_valid() {
+        table.roll().map(Json)
+    } else {
+        None
+    }
 }
 
 #[get("/table/static")]
-fn get_static() -> Json<Table> {
+fn static_tables() -> Json<Table> {
     Json(
         serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
             .expect("wrong json"),
