@@ -67,7 +67,8 @@ impl Ord for Roll {
             (Roll::Single(s), Roll::Single(o)) => s.cmp(o),
             (Roll::Single(s), Roll::Range(o)) => o
                 .partial_cmp(s)
-                .expect("Other Range couldn't compare to Single").reverse(),
+                .expect("Other Range couldn't compare to Single")
+                .reverse(),
             (Roll::Range(s), Roll::Single(o)) => s
                 .partial_cmp(o)
                 .expect("Range couldn't compare to Other Single"),
