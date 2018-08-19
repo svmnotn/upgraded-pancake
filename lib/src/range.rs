@@ -1,16 +1,11 @@
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use std::cmp::Ordering;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, RangeInclusive};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Range(RangeInclusive<u32>);
-
-impl Range {
-    pub fn contains(&self, v: u32) -> bool {
-        v >= *self.start() && *self.end() >= v
-    }
-}
 
 impl From<RangeInclusive<u32>> for Range {
     fn from(r: RangeInclusive<u32>) -> Self {
@@ -29,6 +24,43 @@ impl Deref for Range {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl PartialEq<u32> for Range {
+    fn eq(&self, other: &u32) -> bool {
+        self.contains(other)
+    }
+}
+
+impl PartialOrd<u32> for Range {
+    fn partial_cmp(&self, other: &u32) -> Option<Ordering> {
+        Some(if *self.end() < *other {
+            Ordering::Less
+        } else if *self.start() > *other {
+            Ordering::Greater
+        } else {
+            Ordering::Equal
+        })
+    }
+}
+
+impl PartialOrd for Range {
+    fn partial_cmp(&self, other: &Range) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Range {
+    // TODO double check this is correct
+    fn cmp(&self, other: &Range) -> Ordering {
+        if self == other {
+            Ordering::Equal
+        } else if *self.start() < *other.start() {
+            Ordering::Less
+        } else {
+            Ordering::Greater
+        }
     }
 }
 

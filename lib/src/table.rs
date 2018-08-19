@@ -33,7 +33,7 @@ impl Table {
         self.results
             .iter()
             .enumerate()
-            .find(|(_, row)| row.is(roll))
+            .find(|(_, row)| **row == roll)
             .map(|(i, _)| TableResult::new(roll, i))
     }
 
