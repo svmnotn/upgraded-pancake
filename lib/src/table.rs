@@ -101,7 +101,7 @@ impl Distribution<Table> for Standard {
 
         let heading = gen_strings(columns, true);
 
-        let mut t = Table::new(dice, heading.clone(), gen_results(rng, dice, columns, rows);
+        let mut t = Table::new(dice, heading.clone(), gen_results(rng, dice, columns, rows));
 
         while t.is_none() {
             t = Table::new(dice, heading.clone(), gen_results(rng, dice, columns, rows));
