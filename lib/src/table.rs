@@ -19,11 +19,17 @@ pub struct Table {
 }
 
 impl Table {
-    pub fn new(dice: Dice, heading: Strings, results: Vec<Row>) -> Self {
-        Table {
+    pub fn new(dice: Dice, heading: Strings, results: Vec<Row>) -> Option<Self> {
+        let t = Table {
             dice,
             heading,
             results,
+        };
+
+        if t.is_valid() {
+            Some(t)
+        } else {
+            None
         }
     }
 
@@ -45,51 +51,62 @@ impl Table {
         let mut val = 0;
 
         for row in &self.results {
-            eprintln!(
-                "PreCheck\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
-                values, range, val
-            );
-
             if row.valid(self.dice, &mut values, &mut range, &mut val) == false {
-                eprintln!(
-                    "Failure Condition\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
-                    values, range, val
-                );
                 return false;
             }
-
-            eprintln!(
-                "PostCheck\n\tvalues: {:?}\n\trange: {}\n\tval: {}",
-                values, range, val
-            );
         }
 
-        true
+        if values.is_empty() {
+            true
+        } else {
+            eprintln!("Not all values used!\n\t values: {:?}", values);
+            false
+        }
     }
 }
 
 impl Distribution<Table> for Standard {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Table {
+        fn gen_results<R: Rng + ?Sized>(
+            rng: &mut R,
+            dice: Dice,
+            columns: usize,
+            rows: usize,
+        ) -> Vec<Row> {
+            let mut results: Vec<Row> = Vec::with_capacity(rows);
+            for _ in 0..rows {
+                results.push(Row::new(
+                    if rng.gen() {
+                        dice.roll().into()
+                    } else {
+                        let init = rng.gen_range(dice.min(), dice.max() - 3);
+                        let finish = rng.gen_range(init + 1, dice.max() - 1);
+
+                        Range::from(
+                            rng.gen_range(init, finish)..=rng.gen_range(finish + 1, dice.max()),
+                        ).into()
+                    },
+                    gen_strings(columns, false),
+                ));
+            }
+
+            results.sort_unstable();
+
+            results
+        }
+
         let dice: Dice = rng.gen();
         let columns = rng.gen_range(RNG_MIN_COL_SIZE, RNG_MAX_COL_SIZE);
         let rows = rng.gen_range(RNG_MIN_ROW_SIZE, RNG_MAX_ROW_SIZE);
 
-        let mut results: Vec<Row> = Vec::with_capacity(rows);
-        for _ in 0..rows {
-            results.push(Row::new(
-                if rng.gen() {
-                    dice.roll().into()
-                } else {
-                    let init = rng.gen_range(dice.min(), dice.max() - 3);
-                    let finish = rng.gen_range(init + 1, dice.max() - 1);
+        let heading = gen_strings(columns, true);
 
-                    Range::from(rng.gen_range(init, finish)..=rng.gen_range(finish + 1, dice.max()))
-                        .into()
-                },
-                gen_strings(columns, false),
-            ));
+        let mut t = Table::new(dice, heading.clone(), gen_results(rng, dice, columns, rows);
+
+        while t.is_none() {
+            t = Table::new(dice, heading.clone(), gen_results(rng, dice, columns, rows));
         }
 
-        Table::new(dice, gen_strings(columns, true), results)
+        t.expect("Loop broken before a valid Table was created?")
     }
 }
