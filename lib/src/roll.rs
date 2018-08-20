@@ -91,18 +91,16 @@ impl From<Range> for Roll {
 
 impl Roll {
     pub fn single(&self) -> Option<u32> {
-        if let Roll::Single(r) = self {
-            Some(*r)
-        } else {
-            None
+        match self {
+            Roll::Single(v) => Some(*v),
+            _ => None
         }
     }
 
     pub fn range(&self) -> Option<Range> {
-        if let Roll::Range(r) = self {
-            Some(r.clone())
-        } else {
-            None
+        match self {
+            Roll::Range(v) => Some(v.clone()),
+            _ => None
         }
     }
 
