@@ -11,12 +11,8 @@ impl Row {
         Row { roll, value }
     }
 
-    pub fn roll(&self) -> Option<u32> {
-        self.roll.single()
-    }
-
-    pub fn range(&self) -> Option<Range> {
-        self.roll.range()
+    pub fn roll(&self) -> Roll {
+        self.roll.clone()
     }
 
     pub fn value(&self) -> Strings {
