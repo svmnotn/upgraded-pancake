@@ -1,6 +1,8 @@
 use crate::{Dice, Range};
 use std::cmp::Ordering;
 
+/// Either a single value or a range of values
+/// that can be rolled on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, Eq)]
 #[serde(untagged)]
 pub enum Roll {
@@ -90,34 +92,40 @@ impl From<Range> for Roll {
 }
 
 impl Roll {
+    /// The value that his `Roll` covers
     pub fn single(&self) -> Option<u32> {
         match self {
             Roll::Single(v) => Some(*v),
-            _ => None
+            _ => None,
         }
     }
 
+    /// Is this `Roll` a single value?
     pub fn is_single(&self) -> bool {
         match self {
             Roll::Single(_) => true,
-            _ => false
+            _ => false,
         }
     }
 
+    /// The range of values that this
+    /// `Roll` covers
     pub fn range(&self) -> Option<Range> {
         match self {
             Roll::Range(v) => Some(v.clone()),
-            _ => None
+            _ => None,
         }
     }
 
+    /// Is this `Roll` a range of values?
     pub fn is_range(&self) -> bool {
         match self {
             Roll::Range(_) => true,
-            _ => false
+            _ => false,
         }
     }
 
+    /// Is this a valid roll?
     crate fn valid(
         &self,
         dice: Dice,
@@ -197,8 +205,6 @@ impl Roll {
 
                 // TODO check to see if there are more checks that need be done
 
-                // TODO redo this bit, the value should be the end of the
-                // range
                 *range = r.clone();
                 *val = r.end() + 1;
             }

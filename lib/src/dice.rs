@@ -4,35 +4,47 @@ use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
 use std::fmt;
 
+/// A dice for determining what to
+/// roll on a table
 #[derive(Debug, Serialize, Clone, Copy)]
 pub struct Dice {
     amount: u16,
     size: u16,
+    // TODO add optional modifier +X where
+    // X: i8/16/32?
 }
 
 impl Dice {
+    /// Create a new Dice
     pub fn new(amount: u16, size: u16) -> Self {
         Dice { amount, size }
     }
 
+    /// Roll the dice
     pub fn roll(&self) -> u32 {
         (0..self.amount).fold(0, |acc, _| {
             thread_rng().gen_range(1, u32::from(self.size + 1)) + acc
         })
     }
 
+    /// The minimum value that this dice
+    /// can give
     pub fn min(&self) -> u32 {
         u32::from(self.amount)
     }
 
+    /// The maximum value that this dice
+    /// can give
     pub fn max(&self) -> u32 {
         u32::from(self.amount) * u32::from(self.size)
     }
 
+    /// The amount of dice rolled
     pub fn amount(&self) -> u16 {
         self.amount
     }
 
+    /// The size of the dice rolled
     pub fn size(&self) -> u16 {
         self.size
     }

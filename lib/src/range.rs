@@ -4,6 +4,8 @@ use std::cmp::Ordering;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, RangeInclusive};
 
+/// An inclusive range of values that can be rolled
+/// on a `Table`
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Range(RangeInclusive<u32>);
 

@@ -6,6 +6,7 @@ mod tests;
 
 use crate::{Column, Dice, Range, Row};
 
+/// A table that can be rolled on
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Table {
     dice: Dice,
@@ -14,6 +15,7 @@ pub struct Table {
 }
 
 impl Table {
+    /// Crate a new table
     pub fn new(dice: Dice, heading: Column, results: Vec<Row>) -> Option<Self> {
         let t = Table {
             dice,
@@ -28,6 +30,7 @@ impl Table {
         }
     }
 
+    /// Perform a roll on this table
     pub fn roll(&self) -> Option<TableResult> {
         let roll = self.dice.roll();
 
@@ -38,6 +41,11 @@ impl Table {
             .map(|(i, _)| TableResult::new(roll, i))
     }
 
+    /// Check that the table is valid, this is used internally
+    /// as well as when making sure that deserialized tables
+    /// are correct
+    // TODO impl deserialize so that this function becomes part of the
+    // Deserialization step
     // EXPECTING results to be sorted such that the lowest value
     // is at the lowest index (for ranges what is taken is the start value)
     pub fn is_valid(&self) -> bool {
