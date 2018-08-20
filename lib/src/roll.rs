@@ -97,10 +97,24 @@ impl Roll {
         }
     }
 
+    pub fn is_single(&self) -> bool {
+        match self {
+            Roll::Single(_) => true,
+            _ => false
+        }
+    }
+
     pub fn range(&self) -> Option<Range> {
         match self {
             Roll::Range(v) => Some(v.clone()),
             _ => None
+        }
+    }
+
+    pub fn is_range(&self) -> bool {
+        match self {
+            Roll::Range(_) => true,
+            _ => false
         }
     }
 
