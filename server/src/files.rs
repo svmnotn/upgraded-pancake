@@ -7,7 +7,7 @@ fn index() -> io::Result<NamedFile> {
     NamedFile::open("front-end/build/index.html")
 }
 
-#[get("/<file..>")]
+#[get("/<file..>", rank = 2)]
 fn get(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("front-end/build").join(file)).ok()
 }
