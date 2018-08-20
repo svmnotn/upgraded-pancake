@@ -106,7 +106,7 @@ impl Roll {
         }
     }
 
-    pub fn valid(
+    crate fn valid(
         &self,
         dice: Dice,
         values: &mut Vec<u32>,

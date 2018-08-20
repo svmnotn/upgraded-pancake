@@ -23,7 +23,7 @@ impl Row {
         self.value.clone()
     }
 
-    pub fn valid(
+    crate fn valid(
         &self,
         dice: Dice,
         values: &mut Vec<u32>,

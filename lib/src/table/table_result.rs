@@ -5,7 +5,7 @@ pub struct TableResult {
 }
 
 impl TableResult {
-    pub fn new(roll: u32, row: usize) -> Self {
+    crate fn new(roll: u32, row: usize) -> Self {
         TableResult { roll, row }
     }
 
