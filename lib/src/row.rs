@@ -1,13 +1,13 @@
-use crate::{Dice, Range, Roll, Strings};
+use crate::{Dice, Range, Roll, Column};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Row {
     roll: Roll,
-    value: Strings,
+    value: Column,
 }
 
 impl Row {
-    pub fn new(roll: Roll, value: Strings) -> Self {
+    pub fn new(roll: Roll, value: Column) -> Self {
         Row { roll, value }
     }
 
@@ -15,7 +15,7 @@ impl Row {
         self.roll.clone()
     }
 
-    pub fn value(&self) -> Strings {
+    pub fn value(&self) -> Column {
         self.value.clone()
     }
 

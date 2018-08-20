@@ -3,8 +3,8 @@
 #[macro_use]
 extern crate serde_derive;
 
-mod table;
-pub use self::table::{Table, TableResult};
+mod column;
+pub use self::column::Column;
 
 mod dice;
 pub use self::dice::Dice;
@@ -18,8 +18,8 @@ pub use self::roll::Roll;
 mod row;
 pub use self::row::Row;
 
-mod strings;
-pub use self::strings::Strings;
+mod table;
+pub use self::table::{Table, TableResult};
 
 mod utils;
 use self::utils::*;

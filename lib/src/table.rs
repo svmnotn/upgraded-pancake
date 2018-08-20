@@ -5,7 +5,7 @@ pub use self::table_result::TableResult;
 mod tests;
 
 use crate::{
-    gen_strings, Dice, Range, Row, Strings, RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE,
+    gen_strings, Dice, Range, Row, Column, RNG_MAX_COL_SIZE, RNG_MAX_ROW_SIZE, RNG_MIN_COL_SIZE,
     RNG_MIN_ROW_SIZE,
 };
 use rand::distributions::{Distribution, Standard};
@@ -14,12 +14,12 @@ use rand::Rng;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Table {
     dice: Dice,
-    heading: Strings,
+    heading: Column,
     results: Vec<Row>,
 }
 
 impl Table {
-    pub fn new(dice: Dice, heading: Strings, results: Vec<Row>) -> Option<Self> {
+    pub fn new(dice: Dice, heading: Column, results: Vec<Row>) -> Option<Self> {
         let t = Table {
             dice,
             heading,
