@@ -1,0 +1,68 @@
+{
+    "dice": {
+        "amount": 3,
+        "size": 6
+    },
+    "heading": [
+        "Complex",
+        "Mixed",
+        "Multiple",
+        "Test Data"
+    ],
+    "results": [
+        {
+            "roll": 3,
+            "value": [
+                "DATA-a",
+                "DATA-b",
+                "DATA-c",
+                "DATA-d"
+            ]
+        },
+        {
+            "roll": "4-7",
+            "value": [
+                "DATA1-a",
+                "DATA1-b",
+                "DATA1-c",
+                "DATA1-d"
+            ]
+        },
+        {
+            "roll": 8,
+            "value": [
+                "DATA3-a",
+                "DATA3-b",
+                "DATA3-c",
+                "DATA3-d"
+            ]
+        },
+        {
+            "roll": "9-16",
+            "value": [
+                "DATA4-a",
+                "DATA4-b",
+                "DATA4-c",
+                "DATA4-d"
+            ]
+        },
+        {
+            "roll": 17,
+            "value": [
+                "DATA5-a",
+                "DATA5-b",
+                "DATA5-c",
+                "DATA5-d"
+            ]
+        },
+        {
+            "roll": 18,
+            "value": [
+                "DATA6-a",
+                "DATA6-b",
+                "DATA6-c",
+                "DATA6-d"
+            ]
+        }
+    ]
+}

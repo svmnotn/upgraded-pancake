@@ -1,0 +1,54 @@
+{
+    "dice": {
+        "amount": 3,
+        "size": 4
+    },
+    "heading": ["Complex", "Ranges", "Multiple", "Test Data"],
+    "results": [
+        {
+            "roll": "3-4",
+            "value": [
+                "DATA-a",
+                "DATA-b",
+                "DATA-c",
+                "DATA-d"
+            ]
+        },
+        {
+            "roll": "5-6",
+            "value": [
+                "DATA1-a",
+                "DATA1-b",
+                "DATA1-c",
+                "DATA1-d"
+            ]
+        },
+        {
+            "roll": "7-8",
+            "value": [
+                "DATA2-a",
+                "DATA2-b",
+                "DATA2-c",
+                "DATA2-d"
+            ]
+        },
+        {
+            "roll": "9-10",
+            "value": [
+                "DATA3-a",
+                "DATA3-b",
+                "DATA3-c",
+                "DATA3-d"
+            ]
+        },
+        {
+            "roll": "11-12",
+            "value": [
+                "DATA4-a",
+                "DATA4-b",
+                "DATA4-c",
+                "DATA4-d"
+            ]
+        }
+    ]
+}

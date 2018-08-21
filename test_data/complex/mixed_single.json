@@ -1,0 +1,33 @@
+{
+    "dice": {
+        "amount": 2,
+        "size": 6
+    },
+    "heading": "Complex Mixed Single, Test Data",
+    "results": [
+        {
+            "roll": 2,
+            "value": "DATA"
+        },
+        {
+            "roll": "3-4",
+            "value": "DATA1"
+        },
+        {
+            "roll": 5,
+            "value": "DATA3"
+        },
+        {
+            "roll": "6-10",
+            "value": "DATA4"
+        },
+        {
+            "roll": 11,
+            "value": "DATA5"
+        },
+        {
+            "roll": 12,
+            "value": "DATA6"
+        }
+    ]
+}

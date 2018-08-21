@@ -1,0 +1,63 @@
+{
+    "dice": {
+        "amount": 1,
+        "size": 6
+    },
+    "heading": ["Complex", "Value", "Multiple", "Test Data"],
+    "results": [
+        {
+            "roll": 1,
+            "value": [
+                "DATA-a",
+                "DATA-b",
+                "DATA-c",
+                "DATA-d"
+            ]
+        },
+        {
+            "roll": 2,
+            "value": [
+                "DATA1-a",
+                "DATA1-b",
+                "DATA1-c",
+                "DATA1-d"
+            ]
+        },
+        {
+          "roll": 3,
+          "value": [
+            "DATA2-a",
+            "DATA2-b",
+            "DATA2-c",
+            "DATA2-d"
+        ]
+        },
+        {
+          "roll": 4,
+          "value": [
+            "DATA3-a",
+            "DATA3-b",
+            "DATA3-c",
+            "DATA3-d"
+        ]
+        },
+        {
+          "roll": 5,
+          "value": [
+            "DATA4-a",
+            "DATA4-b",
+            "DATA4-c",
+            "DATA4-d"
+        ]
+        },
+        {
+          "roll": 6,
+          "value": [
+            "DATA5-a",
+            "DATA5-b",
+            "DATA5-c",
+            "DATA5-d"
+        ]
+        }
+    ]
+}

@@ -1,0 +1,29 @@
+{
+    "dice": {
+        "amount": 3,
+        "size": 4
+    },
+    "heading": "Complex Range Single, Test Data",
+    "results": [
+        {
+            "roll": "3-4",
+            "value": "DATA"
+        },
+        {
+            "roll": "5-6",
+            "value": "DATA1"
+        },
+        {
+            "roll": "7-8",
+            "value": "DATA3"
+        },
+        {
+            "roll": "9-10",
+            "value": "DATA4"
+        },
+        {
+            "roll": "11-12",
+            "value": "DATA5"
+        }
+    ]
+}
