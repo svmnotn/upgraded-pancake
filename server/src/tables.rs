@@ -72,6 +72,15 @@ fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
     }
 }
 
+#[post(
+    "/table/validate",
+    format = "application/json",
+    data = "<table>"
+)]
+fn validate(table: Json<Table>) -> Json<bool> {
+    Json(table.is_valid())
+}
+
 #[get("/table/static")]
 fn static_tables() -> Json<Table> {
     Json(

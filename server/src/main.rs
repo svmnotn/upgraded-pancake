@@ -19,6 +19,7 @@ fn main() {
                 tables::roll_saved,
                 tables::roll,
                 tables::static_tables,
+                tables::validate,
                 files::get,
             ],
         ).launch();
