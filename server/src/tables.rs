@@ -3,12 +3,19 @@ use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Json;
 use upgraded_pancake::{Table, TableResult};
 
-#[post(
+fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
+    cookies
+        .get(name)
+        .and_then(|c| base64::decode(c.value()).ok())
+        .and_then(|b| serde_json::from_slice(&b).ok())
+}
+
+#[put(
     "/table/<name>",
     format = "application/json",
     data = "<table>"
 )]
-fn add(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
+fn put(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
     Json(if table.is_valid() {
         cookies.add(Cookie::new(
             name,
@@ -22,16 +29,38 @@ fn add(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
 
 #[get("/table/<name>")]
 fn get(name: String, cookies: Cookies) -> Option<Json<Table>> {
-    cookies
-        .get(&name)
-        .and_then(|c| base64::decode(c.value()).ok())
-        .and_then(|b| serde_json::from_slice(&b).ok())
-        .map(Json)
+    get_table(&name, &cookies).map(Json)
 }
 
-#[get("/table")]
-fn tables(cookies: Cookies) -> Json<Vec<String>> {
+#[delete("/table/<name>")]
+fn delete(name: String, mut cookies: Cookies) {
+    cookies.remove(Cookie::named(name));
+}
+
+#[get("/table/all/name")]
+fn table_name(cookies: Cookies) -> Json<Vec<String>> {
     Json(cookies.iter().map(|c| c.name().to_owned()).collect())
+}
+
+#[get("/table/all/data")]
+fn table_data(cookies: Cookies) -> Json<Vec<Table>> {
+    Json(
+        cookies
+            .iter()
+            .map(|c| get_table(c.name(), &cookies))
+            .filter(Option::is_some)
+            // The following is only ok because of the filter above
+            .map(Option::unwrap)
+            .collect(),
+    )
+}
+
+#[get("/table/<name>/roll")]
+fn roll_saved(name: String, cookies: Cookies) -> Option<Json<TableResult>> {
+    match get_table(&name, &cookies) {
+        Some(ref t) if t.is_valid() => t.roll().map(Json),
+        _ => None,
+    }
 }
 
 #[post("/table", format = "application/json", data = "<table>")]
