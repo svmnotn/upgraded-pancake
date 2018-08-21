@@ -3,7 +3,9 @@ use crate::{Column, Dice, Range, Roll};
 /// A row on a Table
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Row {
+    #[doc(hidden)]
     roll: Roll,
+    #[doc(hidden)]
     value: Column,
 }
 

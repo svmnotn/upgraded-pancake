@@ -6,7 +6,11 @@ use std::cmp::Ordering;
 #[derive(Debug, Serialize, Deserialize, Clone, Eq)]
 #[serde(untagged)]
 pub enum Roll {
+    /// This roll is determined by a single value
+    /// of the dice
     Single(u32),
+    /// This roll is determined by a range of values
+    /// of the dice
     Range(Range),
 }
 

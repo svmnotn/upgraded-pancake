@@ -7,7 +7,7 @@ use std::ops::{Deref, RangeInclusive};
 /// An inclusive range of values that can be rolled
 /// on a `Table`
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Range(RangeInclusive<u32>);
+pub struct Range(#[doc(hidden)] RangeInclusive<u32>);
 
 impl From<RangeInclusive<u32>> for Range {
     fn from(r: RangeInclusive<u32>) -> Self {

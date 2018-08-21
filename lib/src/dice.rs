@@ -8,7 +8,9 @@ use std::fmt;
 /// roll on a table
 #[derive(Debug, Serialize, Clone, Copy)]
 pub struct Dice {
+    #[doc(hidden)]
     amount: u16,
+    #[doc(hidden)]
     size: u16,
     // TODO add optional modifier +X where
     // X: i8/16/32?

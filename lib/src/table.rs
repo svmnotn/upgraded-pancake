@@ -9,8 +9,11 @@ use crate::{Column, Dice, Range, Row};
 /// A table that can be rolled on
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Table {
+    #[doc(hidden)]
     dice: Dice,
+    #[doc(hidden)]
     heading: Column,
+    #[doc(hidden)]
     results: Vec<Row>,
 }
 

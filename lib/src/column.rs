@@ -2,7 +2,9 @@
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(untagged)]
 pub enum Column {
+    #[doc(hidden)]
     Single(String),
+    #[doc(hidden)]
     Multiple(Vec<String>),
 }
 
