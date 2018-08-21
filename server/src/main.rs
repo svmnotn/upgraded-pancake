@@ -10,7 +10,8 @@
 //!
 //! The following HTTP methods are supported by the server, with `<name>` being replaced
 //! by the table's name:
-//! * **PUT** `/table/<name>`: Used to add and update tables
+//! * **PUT** `/table/<name>`: Used to add and update tables. For more information check
+//! [here](#adding-a-table).
 //! * **GET** `/table/<name>`: Used to obtain the JSON representation of a table
 //! * **GET** `/table/<name>/roll`: Used to roll on the specifed table
 //! * **DELETE** `/table/<name>`: Used to delete the specifed table
