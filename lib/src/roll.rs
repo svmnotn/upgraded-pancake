@@ -207,6 +207,8 @@ impl Roll {
                     return false;
                 }
 
+                values.retain(|x| r.contains(x) == false);
+
                 // TODO check to see if there are more checks that need be done
 
                 *range = r.clone();
