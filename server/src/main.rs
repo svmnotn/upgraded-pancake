@@ -1,6 +1,34 @@
 #![feature(plugin, decl_macro)]
 #![plugin(rocket_codegen)]
 
+//! # Upgraded Pancake Server
+//!
+//! This is the default backend for the upgraded-pancakes library. The library was made
+//! with this project as its goal, but left aside for use by others.
+//!
+//! ## Methods
+//!
+//! The following HTTP methods are supported by the server, with `<name>` being replaced
+//! by the table's name:
+//! * **PUT** `/table/<name>`: Used to add and update tables
+//! * **GET** `/table/<name>`: Used to obtain the JSON representation of a table
+//! * **GET** `/table/<name>/roll`: Used to roll on the specifed table
+//! * **DELETE** `/table/<name>`: Used to delete the specifed table
+//! * **GET** `/table/all/name`: Used to retrieve all available table names
+//! * **GET** `/table/all/data`: Used to retrieve all available tables as JSON
+//! * **POST** `/table/validate`: Used to make sure the included table is valid
+//!
+//! The following are methods that _might_ be removed in the future
+//! * **GET** `/table/static`: Used to obtain a table from a selection of premade tables,
+//! useful for having sane defaults
+//! * **POST** `/table`: Used to roll on the included table
+//!
+//! ### Adding a table
+//!
+//! To add a table to the storage one must make a **HTTP PUT** method call to `/table/<name>`
+//! where `name` is the desired identifier for the table. _Furthermore_, the table to add
+//! must be sent as JSON in the data portion of the HTTP method call.
+
 mod files;
 mod tables;
 
