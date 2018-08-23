@@ -44,7 +44,7 @@ class Choose extends React.Component {
                                 <LinkBtn btnName="H-Star" url="table/static"/>
                             </td>
                             <td>
-                                <LinkBtn btnName="I-Star" url="table"/>
+                                <LinkBtn btnName="I-Star" url="table/static"/>
                             </td>
                         </tr>
 
