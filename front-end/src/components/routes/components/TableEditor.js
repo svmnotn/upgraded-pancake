@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../../styles/App.css';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 class TableEditor extends React.Component {
@@ -179,32 +180,21 @@ class TableEditor extends React.Component {
     }
 
     //Tests if the table is in valid dice notation and it does not break any set logic
-    testTable() {
-        const diceRegEx = /^\d*d\d+$/;
-        if(diceRegEx.test(this.state.dice)) {
-            let diceVal = this.state.dice.split("d");
-
-            if(diceVal[0].length > 1) {
-                diceVal = diceVal[0] * diceVal[1];
-            } else {
-                diceVal = diceVal[1];
+    testTable () {
+        axios.post ('/table/validate', {
+            heading: this.state.heading,
+            dice: this.state.dice,
+            results:  this.state.results,
+        }).then ((response) => {
+            console.log(response);
+            if (response.data) {
+                this.setState({
+                    passedTest: true,
+                })
             }
-
-            for (let roll in this.state.results) {
-                if(typeof roll === "string") {
-                    let tempVal = roll.split("-");
-                    if((tempVal[0] > diceVal && tempVal[1] > diceVal) || (tempVal[0] <= 0 && tempVal[1] <= 0)) {
-                        return;
-                    }
-                } else if(roll > diceVal || roll <= 0) {
-                    return
-                }
-            }
-
-            this.setState({
-                passedTest: true,
-            })
-        }
+        }).catch (function (error) {
+            console.log(error);
+        }, this)
     }
 
     //Forces the user to check their table before being able to roll on it. If a change it made on the table, the user is forced to recheck their table.
