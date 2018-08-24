@@ -133,14 +133,22 @@ impl<'de> Deserialize<'de> for Dice {
                 E: de::Error,
             {
                 if s.contains('d') {
-                    let v: Vec<u16> = s
-                        .split('d')
-                        .map(|x| x.parse::<u16>().expect("not a number!"))
-                        .collect(); // TODO make into error
-                    Ok(Dice {
-                        amount: v[0],
-                        size: v[1],
-                    })
+                    let v: Vec<&str> = s.split('d').collect();
+                    if v.len() == 2 {
+                        let amount = v[0].parse::<u16>().map_err(|_| {
+                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
+                        })?;
+                        let size = v[1].parse::<u16>().map_err(|_| {
+                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
+                        })?;
+
+                        Ok(Dice { amount, size })
+                    } else {
+                        Err(de::Error::invalid_value(
+                            Unexpected::Str(s),
+                            &"two integers separated by a 'd'",
+                        ))
+                    }
                 } else {
                     Err(de::Error::invalid_value(Unexpected::Str(s), &self))
                 }

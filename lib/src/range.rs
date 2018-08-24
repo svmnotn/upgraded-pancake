@@ -94,11 +94,22 @@ impl<'de> Deserialize<'de> for Range {
                 E: de::Error,
             {
                 if s.contains('-') {
-                    let v: Vec<u32> = s
-                        .split('-')
-                        .map(|x| x.parse::<u32>().expect("not a number!"))
-                        .collect(); // TODO make into error
-                    Ok(Range(v[0]..=v[1]))
+                    let v: Vec<&str> = s.split('-').collect();
+                    if v.len() == 2 {
+                        let start = v[0].parse::<u32>().map_err(|_| {
+                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
+                        })?;
+                        let end = v[1].parse::<u32>().map_err(|_| {
+                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
+                        })?;
+
+                        Ok(Range(start..=end))
+                    } else {
+                        Err(de::Error::invalid_value(
+                            Unexpected::Str(s),
+                            &"two integers separated by a '-'",
+                        ))
+                    }
                 } else {
                     Err(de::Error::invalid_value(Unexpected::Str(s), &self))
                 }
