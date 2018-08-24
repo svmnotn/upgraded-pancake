@@ -12,6 +12,9 @@ use self::constants::*;
 mod dice;
 pub use self::dice::Dice;
 
+pub mod error;
+pub use self::error::Result;
+
 mod range;
 pub use self::range::Range;
 

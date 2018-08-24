@@ -1,7 +1,7 @@
 use rand::{thread_rng, Rng};
 use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Json;
-use upgraded_pancake::{Table, TableResult};
+use upgraded_pancake::{Table, TableResult, Result};
 
 fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
     cookies
@@ -16,7 +16,7 @@ fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
     data = "<table>"
 )]
 fn put(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
-    Json(if table.is_valid() {
+    Json(if table.validate().is_ok() {
         cookies.add(Cookie::new(
             name,
             base64::encode(&serde_json::to_string(&table.0).expect("Unable to JSONify JSON?")),
@@ -58,14 +58,14 @@ fn table_data(cookies: Cookies) -> Json<Vec<Table>> {
 #[get("/table/<name>/roll")]
 fn roll_saved(name: String, cookies: Cookies) -> Option<Json<TableResult>> {
     match get_table(&name, &cookies) {
-        Some(ref t) if t.is_valid() => t.roll().map(Json),
+        Some(ref t) if t.validate().is_ok() => t.roll().map(Json),
         _ => None,
     }
 }
 
 #[post("/table", format = "application/json", data = "<table>")]
 fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
-    if table.is_valid() {
+    if table.validate().is_ok() {
         table.roll().map(Json)
     } else {
         None
@@ -77,15 +77,15 @@ fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
     format = "application/json",
     data = "<table>"
 )]
-fn validate(table: Json<Table>) -> Json<bool> {
-    Json(table.is_valid())
+fn validate(table: Json<Table>) -> Json<Result<()>> {
+    Json(table.validate())
 }
 
 #[get("/table/static")]
 fn static_tables() -> Json<Table> {
     Json(
         serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
-            .expect("wrong json"),
+            .expect("malformed json"),
     )
 }
 

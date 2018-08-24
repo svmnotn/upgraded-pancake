@@ -1,4 +1,5 @@
-use crate::{Dice, Range};
+use crate::{Dice, Range, Result};
+use crate::error::Error::*;
 use std::cmp::Ordering;
 
 /// Either a single value or a range of values
@@ -137,34 +138,26 @@ impl Roll {
         values: &mut Vec<u32>,
         range: &mut Range,
         val: &mut u32,
-    ) -> bool {
+    ) -> Result<()> {
         let lowest = dice.min();
         let highest = dice.max();
 
         match self {
             Roll::Single(v) => {
                 if *v < lowest || *v > highest {
-                    // Out of Bounds
-                    eprintln!("Single out of bounds!");
-                    return false;
+                    return Err(SingleOutOfBounds(*v, lowest, highest));
                 }
 
                 if *v < *val {
-                    // Out of Order
-                    eprintln!("Single out of order!");
-                    return false;
+                    return Err(SingleOutOfOrder(*v, *val));
                 }
 
                 if range.contains(v) {
-                    // Inside a defined range
-                    eprintln!("Single inside range!");
-                    return false;
+                    return Err(SingleInsidePrevRange(*v, range.clone()));
                 }
 
                 if values.contains(&v) == false {
-                    // Duplicated value
-                    eprintln!("Single duplicate!");
-                    return false;
+                    return Err(SingleDuplicatedValue(*v));
                 }
 
                 values.retain(|x| *x != *v);
@@ -173,26 +166,19 @@ impl Roll {
             }
             Roll::Range(r) => {
                 if *r.start() < lowest || *r.end() > highest {
-                    // Out of Bounds
-                    eprintln!("Range out of bounds!");
-                    return false;
+                    return Err(RangeOutOfBounds(r.clone(), lowest, highest));
                 }
+
                 if *r.start() < *val {
-                    // Start of range is under the last value
-                    eprintln!("Range less than last val!");
-                    return false;
+                    return Err(RangeLTLastVal(r.clone(), *val));
                 }
 
                 if *r.start() < *range.start() {
-                    // Out of Order
-                    eprintln!("Range out of order!");
-                    return false;
+                    return Err(RangeOutOfOrder(r.clone(), range.clone()));
                 }
 
                 if range.contains(r.start()) || range.contains(r.end()) {
-                    // Inside last range!
-                    eprintln!("Range inside last range!");
-                    return false;
+                    return Err(RangeInsideAnother(r.clone(), range.clone()));
                 }
 
                 let vals: Vec<u32> = (*r.start()..=*r.end())
@@ -200,12 +186,7 @@ impl Roll {
                     .collect();
 
                 if vals.is_empty() == false {
-                    // Range contains past duplicates!
-                    eprintln!(
-                        "Range contains past dupes!\n\tvals: {:?}\n\tvalues: {:?}",
-                        vals, values
-                    );
-                    return false;
+                    return Err(RangeHasDuplicates(r.clone(), vals));
                 }
 
                 values.retain(|x| r.contains(x) == false);
@@ -217,6 +198,6 @@ impl Roll {
             }
         }
 
-        true
+        Ok(())
     }
 }

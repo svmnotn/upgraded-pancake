@@ -1,4 +1,4 @@
-use crate::{Column, Dice, Range, Roll};
+use crate::{Column, Dice, Range, Roll, Result};
 
 /// A row on a Table
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -34,8 +34,8 @@ impl Row {
         values: &mut Vec<u32>,
         range: &mut Range,
         val: &mut u32,
-    ) -> bool {
-        self.roll.valid(dice, values, range, val)
+    ) -> Result<()> {
+        self.roll.validate(dice, values, range, val)
     }
 }
 
