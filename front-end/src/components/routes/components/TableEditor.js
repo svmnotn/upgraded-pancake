@@ -187,12 +187,12 @@ class TableEditor extends React.Component {
         if(event.target.value.trim() === "") {
             results[key].roll = "";
         } else {
-            const alphaRegEx = /[A-Z][a-z]/,
-                  tempArr = event.target.value.split("-");
+            const alphaRegEx = /[A-Z][a-z]/;
+            const tempArr = event.target.value.split("-");
 
             if(alphaRegEx.test(event.target.value)) {
                 return;
-            } else if(tempArr > 1 || event.target.value.includes("-")) {
+            } else if(tempArr.length > 1 || event.target.value.includes("-")) {
                 results[key].roll = event.target.value;
             } else {
                 results[key].roll = parseInt(event.target.value, 10);
