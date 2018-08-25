@@ -139,7 +139,7 @@ impl<'de> Deserialize<'de> for Dice {
                             de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
                         })?;
                         let size = v[1].parse::<u16>().map_err(|_| {
-                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
+                            de::Error::invalid_value(Unexpected::Str(v[1]), &"an integer")
                         })?;
 
                         Ok(Dice { amount, size })

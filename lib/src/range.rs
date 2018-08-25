@@ -100,7 +100,7 @@ impl<'de> Deserialize<'de> for Range {
                             de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
                         })?;
                         let end = v[1].parse::<u32>().map_err(|_| {
-                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
+                            de::Error::invalid_value(Unexpected::Str(v[1]), &"an integer")
                         })?;
 
                         Ok(Range(start..=end))
