@@ -1,10 +1,10 @@
-use crate::{Column, Dice, Range, Roll, Result};
+use crate::{Column, Roll};
 
-/// A row on a Table
+/// A row on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Row {
     #[doc(hidden)]
-    roll: Roll,
+    pub(super) roll: Roll,
     #[doc(hidden)]
     value: Column,
 }
@@ -24,18 +24,6 @@ impl Row {
     /// The text value of this row
     pub fn value(&self) -> Column {
         self.value.clone()
-    }
-
-    /// Is this row valid?
-    // TODO: Change to just crate once issue #45388 is cleared
-    pub(crate) fn valid(
-        &self,
-        dice: Dice,
-        values: &mut Vec<u32>,
-        range: &mut Range,
-        val: &mut u32,
-    ) -> Result<()> {
-        self.roll.validate(dice, values, range, val)
     }
 }
 

@@ -22,7 +22,8 @@ mod roll;
 pub use self::roll::Roll;
 
 mod row;
-pub use self::row::Row;
+use self::row::RowValidation;
+pub use self::row::{Row, Rows};
 
 mod table;
 pub use self::table::{Table, TableResult};

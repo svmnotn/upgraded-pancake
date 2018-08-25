@@ -4,8 +4,7 @@ pub use self::table_result::TableResult;
 #[cfg(test)]
 mod tests;
 
-use crate::{Column, Dice, Range, Row, Result};
-use crate::error::Error::UnusedValuesInRange;
+use crate::{Column, Dice, Result, Rows};
 
 /// A table that can be rolled on
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -15,21 +14,19 @@ pub struct Table {
     #[doc(hidden)]
     heading: Column,
     #[doc(hidden)]
-    results: Vec<Row>,
+    results: Rows,
 }
 
 impl Table {
     /// Crate a new table
-    pub fn new(dice: Dice, heading: Column, results: Vec<Row>) -> Result<Self> {
-        let t = Table {
+    pub fn new(dice: Dice, heading: Column, results: Rows) -> Result<Self> {
+        results.validate(&dice)?;
+
+        Ok(Table {
             dice,
             heading,
             results,
-        };
-
-        t.validate()?;
-
-        Ok(t)
+        })
     }
 
     /// Perform a roll on this table
@@ -48,21 +45,7 @@ impl Table {
     /// are correct
     // TODO impl deserialize so that this function becomes part of the
     // Deserialization step
-    // EXPECTING results to be sorted such that the lowest value
-    // is at the lowest index (for ranges what is taken is the start value)
     pub fn validate(&self) -> Result<()> {
-        let mut values: Vec<u32> = (self.dice.min()..=self.dice.max()).collect();
-        let mut range = Range::from(0..=0);
-        let mut val = 0;
-
-        for row in &self.results {
-            row.validate(self.dice, &mut values, &mut range, &mut val)?;
-        }
-
-        if values.is_empty() {
-            Ok(())
-        } else {
-            Err(UnusedValuesInRange(values))
-        }
+        self.results.validate(&self.dice)
     }
 }

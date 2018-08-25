@@ -1,5 +1,5 @@
-use crate::{Dice, Range, Result};
 use crate::error::Error::*;
+use crate::{Range, Result, RowValidation};
 use std::cmp::Ordering;
 
 /// Either a single value or a range of values
@@ -132,69 +132,60 @@ impl Roll {
 
     /// Is this a valid roll?
     // TODO: Change to just crate once issue #45388 is cleared
-    pub(crate) fn valid(
-        &self,
-        dice: Dice,
-        values: &mut Vec<u32>,
-        range: &mut Range,
-        val: &mut u32,
-    ) -> Result<()> {
-        let lowest = dice.min();
-        let highest = dice.max();
-
+    pub(crate) fn validate(&self, valid: &mut RowValidation) -> Result<()> {
         match self {
             Roll::Single(v) => {
-                if *v < lowest || *v > highest {
-                    return Err(SingleOutOfBounds(*v, lowest, highest));
+                if *v < valid.min() || *v > valid.max() {
+                    return Err(SingleOutOfBounds(*v, valid.min(), valid.max()));
                 }
 
-                if *v < *val {
-                    return Err(SingleOutOfOrder(*v, *val));
+                if *v < valid.val {
+                    return Err(SingleOutOfOrder(*v, valid.val));
                 }
 
-                if range.contains(v) {
-                    return Err(SingleInsidePrevRange(*v, range.clone()));
+                if valid.range.contains(v) {
+                    return Err(SingleInsidePrevRange(*v, valid.range.clone()));
                 }
 
-                if values.contains(&v) == false {
+                if valid.vals.contains(&v) == false {
                     return Err(SingleDuplicatedValue(*v));
                 }
 
-                values.retain(|x| *x != *v);
+                valid.vals.retain(|x| *x != *v);
 
-                *val = *v;
+                valid.val = *v;
             }
             Roll::Range(r) => {
-                if *r.start() < lowest || *r.end() > highest {
-                    return Err(RangeOutOfBounds(r.clone(), lowest, highest));
+                if *r.start() < valid.min() || *r.end() > valid.max() {
+                    return Err(RangeOutOfBounds(r.clone(), valid.min(), valid.max()));
                 }
 
-                if *r.start() < *val {
-                    return Err(RangeLTLastVal(r.clone(), *val));
+                if *r.start() < valid.val {
+                    return Err(RangeLTLastVal(r.clone(), valid.val));
                 }
 
-                if *r.start() < *range.start() {
-                    return Err(RangeOutOfOrder(r.clone(), range.clone()));
+                if *r.start() < *valid.range.start() {
+                    return Err(RangeOutOfOrder(r.clone(), valid.range.clone()));
                 }
 
-                if range.contains(r.start()) || range.contains(r.end()) {
-                    return Err(RangeInsideAnother(r.clone(), range.clone()));
+                if valid.range.contains(r.start()) || valid.range.contains(r.end()) {
+                    return Err(RangeInsideAnother(r.clone(), valid.range.clone()));
                 }
 
                 let vals: Vec<u32> = (*r.start()..=*r.end())
-                    .filter(|v| values.contains(&v) == false)
+                    .filter(|v| valid.vals.contains(&v) == false)
                     .collect();
 
                 if vals.is_empty() == false {
                     return Err(RangeHasDuplicates(r.clone(), vals));
                 }
 
-                values.retain(|x| r.contains(x) == false);
+                valid.vals.retain(|x| r.contains(x) == false);
 
                 // TODO check to see if there are more checks that need be done
 
-                *range = r.clone();
-                *val = r.end() + 1;
+                valid.range = r.clone();
+                valid.val = r.end() + 1;
             }
         }
 
