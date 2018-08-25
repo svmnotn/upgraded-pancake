@@ -8,9 +8,9 @@ class TableEditor extends React.Component {
         super(props);
         this.state = {
             title: "Default Table",
-            heading: ["Cate1", "Cate2"],
+            heading: "Category",
             dice: "1d2",
-            results: [{roll: 1, value:["Data1", "New Data"]}, {roll:2, value:["Data1", "New Data"]}],
+            results: [{roll: 1, value:"Some Data"}, {roll:2, value:"Some More Data"}],
             passedTest: false,
         }
 
@@ -23,7 +23,7 @@ class TableEditor extends React.Component {
         this.createRows = this.createRows.bind(this);
     }
 
-    //If the user wanted to edit a preexisting table, update the table's values to the prexisting one.
+    // If the user wanted to edit a preexisting table, update the table's values to the prexisting one.
     componentDidMount() {
         if(this.props.title) {
             this.setState({
@@ -35,12 +35,18 @@ class TableEditor extends React.Component {
         }
     }
 
-    //Add a new row to the table by adding a new object into the results.values array
+    // Add a new row to the table by adding a new object into the results.values array
     addRow(event) {
-        let tempCols = [];
+        let tempCols;
 
-        for (let i = 0; i < this.state.heading.length; i++) {
-            tempCols.push("Default");
+        if (typeof this.state.heading !== "string") {
+            tempCols = [];
+
+            this.state.heading.forEach(function () {
+                tempCols.push("Default");
+            });
+        } else {
+            tempCols = "Default";
         }
 
         const newRow = {roll: 1, value: tempCols}
@@ -58,29 +64,29 @@ class TableEditor extends React.Component {
         event.preventDefault();
     }
 
-    //Add a new column to the table by checking whether or not if the value is a string/array and adjusting accordingly
+    // Add a new column to the table by checking whether or not if the value is a string/array and adjusting accordingly
     addCol(event) {
         event.preventDefault();
-        let tempResult = this.state.results,
-            tempHeader = this.state.heading;
+        let results = this.state.results;
+        let header = this.state.heading;
 
-        this.state.results.map (function (result, i) {
+        results.forEach (function (result) {
             if(typeof result.value !== "string") {
                 result.value.push("Default");
             } else {
                 result.value = [result.value, "Default"];
             }
-        }, this)
+        });
 
-        if (typeof tempHeader === "string") {
-            tempHeader = [tempHeader, "Category1"];
+        if (typeof header !== "string") {
+            header.push("Category");
         } else {
-            tempHeader.push("Category");
+            header = [header, "Cate1"];
         }
 
         this.setState({
-            heading: tempHeader,
-            results: tempResult,
+            heading: header,
+            results: results,
             passedTest: false,
         })
     }
@@ -88,26 +94,55 @@ class TableEditor extends React.Component {
     //Removes a column from the table by checking whether or not if the value is a string/array and adjusting accordingly
     removeCol(event) {
         event.preventDefault();
-        let tempResults = this.state.results;
+        let results = this.state.results;
 
-        tempResults.map(function (result, i) {
+        results.forEach(function (result) {
             if(typeof result.value !== "string") {
+                if (result.value.length === 1) {
+                    // TODO Better error
+                    // This should **NOT** happen. Make sure of it.
+                    console.log("ERROR: THIS SHOULD BE A STRING ALREADY!");
+                }
+
                 result.value.pop();
+
+                if (result.value.length === 1) {
+                    // If there is only one value,
+                    // convert it to a single string
+                    result.value = result.value[0];
+                }
             } else {
+                // Clear the last column
                 result.value = "";
             }
-        }, this)
+        });
 
-        if (typeof this.state.heading !== "string") {
-            this.state.heading.pop();
+        let header = this.state.heading;
+
+        if (typeof header !== "string") {
+            if (header.length === 1) {
+                // This should **NOT** happen. Make sure of it.
+                console.log("ERROR: THIS SHOULD BE A STRING ALREADY!");
+            }
+
+            header.pop();
+
+            if (header.length === 1) {
+                // If there is only one value, convert
+                // it to a single string
+                header = header[0];
+            }
+
             this.setState({
-                results: tempResults,
+                heading: header,
+                results: results,
                 passedTest: false,
             });
         } else {
+            // Clear the last column
             this.setState({
                 heading: "",
-                results: tempResults,
+                results: results,
                 passedTest: false,
             });
         }
@@ -126,7 +161,7 @@ class TableEditor extends React.Component {
 
         this.setState({
             passedTest: false,
-        })
+        });
     }
 
     //Saves the user's typed value to the correct text input
@@ -141,7 +176,7 @@ class TableEditor extends React.Component {
 
         this.setState ({
             passedTest: false,
-        })
+        });
         this.forceUpdate();
     }
 
@@ -166,7 +201,7 @@ class TableEditor extends React.Component {
 
         this.setState({
             passedTest: false,
-        })
+        });
 
         this.forceUpdate();
     }
@@ -309,9 +344,9 @@ class TableEditor extends React.Component {
         if(typeof this.state.heading !== "string") {
             let tempVal = [];
 
-            this.state.heading.map (function (header, i) {
+            this.state.heading.forEach (function () {
                 tempVal.push(<td></td>);
-            })
+            });
 
             return (
                 <tr>
