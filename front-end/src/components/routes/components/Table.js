@@ -39,6 +39,21 @@ class Table extends React.Component {
         }, this)
     }
 
+//axios.put(url[, data[, config]])
+    saveTable() {
+        let tempStr = "table/".concat(this.props.title);
+        axios.put(tempStr, {
+            title: this.props.title,
+            heading: this.props.heading,
+            dice: this.props.dice,
+            results:  this.props.results,
+        }).then ((response) => {
+            console.log("Table Successfully Saved!");
+        }).catch (function (error) {
+            console.log(error);
+        }, this);
+    }
+
     //Allows the user to get another result if they do not like the one they received
     reroll() {
         this.getResult();
@@ -117,6 +132,10 @@ class Table extends React.Component {
                                 <td style={{border: "none"}}>
                                     <button style= {{marginRight: '5%',}}
                                             onClick={()=>{this.reroll()}}>Reroll</button>
+                                </td>
+
+                                <td style={{border:"none"}}>
+                                    <button onClick={()=> {this.saveTable()}}>Save</button>
                                 </td>
 
                                 <td style={{border: "none"}}>

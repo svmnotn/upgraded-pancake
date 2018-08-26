@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import LinkBtn from './components/LinkBtn'
 class Choose extends React.Component {
     render() {
+        console.log(this.props.location.state.savedTables);
         return(
             <div>
                 <h1>Roll for: </h1>
