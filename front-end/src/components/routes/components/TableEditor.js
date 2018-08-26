@@ -164,14 +164,20 @@ class TableEditor extends React.Component {
         });
     }
 
-    //Saves the user's typed value to the correct text input
+    //Saves the user's typed value to the correct text input in an array of values
     saveValue(resKey, valKey, event) {
-        const results = this.state.results[resKey];
-
-        if (typeof results.value === "string") {
-            results.value = event.target.value;
+        if (resKey !== null) {
+            console.log("Results");
+            let results = this.state.results[resKey];
+            if (typeof results.value === "string") {
+                results.value = event.target.value;
+            } else {
+                results.value[valKey] = event.target.value;
+            }
         } else {
-            results.value[valKey] = event.target.value;
+            console.log("Heading");
+            let heading = this.state.heading;
+            heading[valKey] = event.target.value;
         }
 
         this.setState ({
@@ -331,11 +337,12 @@ class TableEditor extends React.Component {
                             <input type="text"
                                    name="heading"
                                    placeholder = {heading}
+                                   onChange={(event) => this.saveValue(null, i, event)}
                                    maxLength="55"
                                    className="leftAlign thInput"/>
                         </th>
                     )
-                })
+                },this)
             )
         }
     }
