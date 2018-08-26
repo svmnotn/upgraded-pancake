@@ -25,14 +25,7 @@ class Table extends React.Component {
             let str = this.props.results[response.data.row].value;
 
             if (typeof this.props.results[response.data.row].value === "object") {
-                str = "";
-
-                for (let val in this.props.results[response.data.row].value) {
-                    str += this.props.results[response.data.row].value[val] + ", ";
-                }
-
-                // Remove the trailing ", "
-                str.slice(0, str.length - 1);
+                str = this.props.results[response.data.row].value.join(", ");
             }
 
             this.setState({
