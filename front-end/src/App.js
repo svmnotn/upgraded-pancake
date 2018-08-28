@@ -11,20 +11,19 @@ class App extends React.Component {
         savedTables: ["static"],
     }
     this.getSavedTables = this.getSavedTables.bind(this);
-}
+  }
 
-componentDidMount() {
+  componentDidMount() {
     this.getSavedTables();
-}
+  }
 
-getSavedTables() {
+  getSavedTables() {
     axios.get("/table/all/name").then((response) => {
-        let tempTables = this.state.savedTables.concat(response.data);
         this.setState({
-            savedTables: tempTables,
+            savedTables: this.state.savedTables.concat(response.data),
         })
     })
-}
+  }
 
   render() {
     return (

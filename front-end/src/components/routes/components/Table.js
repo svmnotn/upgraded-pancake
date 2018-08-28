@@ -41,7 +41,7 @@ class Table extends React.Component {
 
 //axios.put(url[, data[, config]])
     saveTable() {
-        let tempStr = "table/".concat(this.props.title);
+        let tempStr = "/table/".concat(this.props.title);
         axios.put(tempStr, {
             title: this.props.title,
             heading: this.props.heading,

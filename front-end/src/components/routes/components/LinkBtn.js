@@ -5,7 +5,6 @@ import axios from 'axios';
 import { Link} from 'react-router-dom';
 
 class LinkBtn extends React.Component {
-
     //Default values displayed when the server is unable to send data over
     constructor(props) {
         super(props);
