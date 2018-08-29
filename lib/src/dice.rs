@@ -1,8 +1,11 @@
+use crate::error::Error;
+use crate::error::Error::{InvalidDice, InvalidDiceSection};
 use crate::{RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
 use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
 use std::fmt;
+use std::str::FromStr;
 
 /// A dice for determining what to
 /// roll on a table
@@ -63,6 +66,30 @@ impl Distribution<Dice> for Standard {
         Dice {
             amount: rng.gen_range(1, RNG_MAX_DICE_AMOUNT),
             size: *rng.choose(&RNG_DICE_SIZES).expect("sizes where empty?"),
+        }
+    }
+}
+
+impl FromStr for Dice {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains('d') {
+            let v: Vec<&str> = s.split('d').collect();
+            if v.len() == 2 {
+                let amount = v[0]
+                    .parse::<u16>()
+                    .map_err(|_| InvalidDiceSection(String::from(v[0]), 0))?;
+                let size = v[1]
+                    .parse::<u16>()
+                    .map_err(|_| InvalidDiceSection(String::from(v[1]), 1))?;
+
+                Ok(Dice { amount, size })
+            } else {
+                Err(InvalidDice(String::from(s)))
+            }
+        } else {
+            Err(InvalidDice(String::from(s)))
         }
     }
 }
@@ -132,6 +159,7 @@ impl<'de> Deserialize<'de> for Dice {
             where
                 E: de::Error,
             {
+                // TODO Simply call FromStr
                 if s.contains('d') {
                     let v: Vec<&str> = s.split('d').collect();
                     if v.len() == 2 {

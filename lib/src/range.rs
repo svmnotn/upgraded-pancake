@@ -1,8 +1,11 @@
+use crate::error::Error;
+use crate::error::Error::{InvalidRange, InvalidRangeSection};
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, RangeInclusive};
+use std::str::FromStr;
 
 /// An inclusive range of values that can be rolled
 /// on a `Table`
@@ -75,6 +78,30 @@ impl Serialize for Range {
     }
 }
 
+impl FromStr for Range {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains('-') {
+            let v: Vec<&str> = s.split('-').collect();
+            if v.len() == 2 {
+                let start = v[0]
+                    .parse::<u32>()
+                    .map_err(|_| InvalidRangeSection(String::from(v[0]), 0))?;
+                let end = v[1]
+                    .parse::<u32>()
+                    .map_err(|_| InvalidRangeSection(String::from(v[1]), 1))?;
+
+                Ok(Range(start..=end))
+            } else {
+                Err(InvalidRange(String::from(s)))
+            }
+        } else {
+            Err(InvalidRange(String::from(s)))
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for Range {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -93,6 +120,7 @@ impl<'de> Deserialize<'de> for Range {
             where
                 E: de::Error,
             {
+                // Simply call FromStr
                 if s.contains('-') {
                     let v: Vec<&str> = s.split('-').collect();
                     if v.len() == 2 {

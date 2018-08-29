@@ -6,9 +6,6 @@ extern crate serde_derive;
 mod column;
 pub use self::column::Column;
 
-mod constants;
-use self::constants::*;
-
 mod dice;
 pub use self::dice::Dice;
 
@@ -27,3 +24,6 @@ pub use self::row::{Row, Rows};
 
 mod table;
 pub use self::table::{Table, TableResult};
+
+mod utils;
+use self::utils::*;
