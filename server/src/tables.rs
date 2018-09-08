@@ -1,13 +1,26 @@
+use crate::error::*;
 use rand::{thread_rng, Rng};
 use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Json;
-use upgraded_pancake::{Result, Table, TableResult};
+use upgraded_pancake::Table;
 
-fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
-    cookies
+fn from_cookies(name: &str, cookies: &Cookies) -> Result {
+    match cookies
         .get(name)
-        .and_then(|c| base64::decode(c.value()).ok())
-        .and_then(|b| serde_json::from_slice(&b).ok())
+        .ok_or_else(|| Error::TableNotFound(String::from(name)))
+        .and_then(|c| base64::decode(c.value()).map_err(Into::into))
+        .and_then(|b| serde_json::from_slice(&b).map_err(Into::into))
+    {
+        Ok(t) => Result::Table(t),
+        Err(e) => Result::Error(e),
+    }
+}
+
+fn from_str(table: &str) -> Result {
+    match serde_json::from_str(table) {
+        Ok(t) => Result::Table(t),
+        Err(e) => Result::Error(e.into()),
+    }
 }
 
 #[put(
@@ -15,17 +28,21 @@ fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
     format = "application/json",
     data = "<table>"
 )]
-fn put(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
-    cookies.add(Cookie::new(
-        name,
-        base64::encode(&serde_json::to_string(&table.0).expect("Unable to JSONify JSON?")),
-    ));
-    Json(true)
+fn put(name: String, table: String, mut cookies: Cookies) -> Json<Result> {
+    let t = from_str(&table);
+
+    Json(if t.is_err() {
+        t
+    } else {
+        cookies.add(Cookie::new(name, base64::encode(&table)));
+
+        Result::Sucess
+    })
 }
 
 #[get("/table/<name>")]
-fn get(name: String, cookies: Cookies) -> Option<Json<Table>> {
-    get_table(&name, &cookies).map(Json)
+fn get(name: String, cookies: Cookies) -> Json<Result> {
+    Json(from_cookies(&name, &cookies))
 }
 
 #[delete("/table/<name>")]
@@ -39,45 +56,66 @@ fn table_name(cookies: Cookies) -> Json<Vec<String>> {
 }
 
 #[get("/table/all/data")]
-fn table_data(cookies: Cookies) -> Json<Vec<Table>> {
+fn table_data(cookies: Cookies) -> Json<Vec<Result>> {
     Json(
         cookies
             .iter()
-            .map(|c| get_table(c.name(), &cookies))
-            .filter(Option::is_some)
-            // The following is only ok because of the filter above
-            .map(Option::unwrap)
+            .map(|c| from_cookies(c.name(), &cookies))
             .collect(),
     )
 }
 
 #[get("/table/<name>/roll")]
-fn roll_saved(name: String, cookies: Cookies) -> Option<Json<TableResult>> {
-    match get_table(&name, &cookies) {
-        Some(ref t) => t.roll().map(Json),
-        _ => None,
-    }
-}
-
-#[post("/table", format = "application/json", data = "<table>")]
-fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
-    table.roll().map(Json)
+fn roll_saved(name: String, cookies: Cookies) -> Json<Result> {
+    let table = from_cookies(&name, &cookies);
+    Json(if let Result::Table(t) = table {
+        if let Some(r) = t.roll() {
+            Result::Roll(r)
+        } else {
+            Result::Error(Error::RollNotFound)
+        }
+    } else {
+        table
+    })
 }
 
 #[post(
     "/table/validate",
     format = "application/json",
-    data = "<_table>"
+    data = "<table>"
 )]
-fn validate(_table: Json<Table>) -> Json<Result<()>> {
-    Json(Ok(()))
+fn validate(table: String) -> Json<Result> {
+    Json(if let Result::Error(e) = from_str(&table) {
+        Result::Error(e)
+    } else {
+        Result::Sucess
+    })
+}
+
+#[post("/table", format = "application/json", data = "<table>")]
+fn roll(table: String) -> Json<Result> {
+    let t = from_str(&table);
+
+    Json(if t.is_err() {
+        t
+    } else {
+        if let Result::Table(ta) = t {
+            if let Some(r) = ta.roll() {
+                Result::Roll(r)
+            } else {
+                Result::Error(Error::RollNotFound)
+            }
+        } else {
+            Result::Error(Error::TableNotFound(table))
+        }
+    })
 }
 
 #[get("/table/static")]
 fn static_tables() -> Json<Table> {
     Json(
         serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
-            .expect("malformed json"),
+            .expect("malformed test json"),
     )
 }
 

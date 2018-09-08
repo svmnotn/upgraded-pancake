@@ -1,6 +1,7 @@
 #![feature(plugin, decl_macro, proc_macro_non_items)]
 #![plugin(rocket_codegen)]
 
+// TODO update docs
 //! # Upgraded Pancake Server
 //!
 //! This is the default backend for the upgraded-pancakes library. The library was made
@@ -41,26 +42,35 @@
 //! not. As of writting this documentation, the only way for a table to be denied is for it
 //! to not be valid.
 
+#[macro_use]
+extern crate serde_derive;
+
+mod error;
 mod files;
 mod tables;
+#[cfg(test)]
+mod test;
+
+fn rocket() -> rocket::Rocket {
+    rocket::ignite().mount(
+        "/",
+        rocket::routes![
+            files::index,
+            tables::put,
+            tables::get,
+            tables::delete,
+            tables::table_name,
+            tables::table_data,
+            tables::roll_saved,
+            tables::roll,
+            tables::static_tables,
+            tables::validate,
+            files::get,
+        ],
+    )
+}
 
 fn main() {
     // Do Rocket Things!
-    rocket::ignite()
-        .mount(
-            "/",
-            rocket::routes![
-                files::index,
-                tables::put,
-                tables::get,
-                tables::delete,
-                tables::table_name,
-                tables::table_data,
-                tables::roll_saved,
-                tables::roll,
-                tables::static_tables,
-                tables::validate,
-                files::get,
-            ],
-        ).launch();
+    rocket().launch();
 }

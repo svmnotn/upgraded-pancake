@@ -18,7 +18,7 @@ impl Rows {
         Rows(rows)
     }
 
-    crate fn validate(&self, dice: &Dice) -> Result<()> {
+    pub(crate) fn validate(&self, dice: &Dice) -> Result<()> {
         let mut val = RowValidation::new(dice);
 
         for row in &self.0 {
