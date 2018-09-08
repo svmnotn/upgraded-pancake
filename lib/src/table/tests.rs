@@ -17,120 +17,60 @@ const CHOICES: [&str; 12] = [
 
 #[test]
 fn simple_value_single_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[0])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[0]).is_ok());
 }
 
 #[test]
 fn simple_value_multiple_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[1])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[1]).is_ok());
 }
 
 #[test]
 fn simple_ranges_single_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[2])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[2]).is_ok());
 }
 
 #[test]
 fn simple_ranges_multiple_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[3])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[3]).is_ok());
 }
 
 #[test]
 fn simple_mixed_single_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[4])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[4]).is_ok());
 }
 
 #[test]
 fn simple_mixed_multiple_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[5])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[5]).is_ok());
 }
 
 #[test]
 fn complex_value_single_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[6])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[6]).is_ok());
 }
 
 #[test]
 fn complex_value_multiple_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[7])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[7]).is_ok());
 }
 
 #[test]
 fn complex_ranges_single_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[8])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[8]).is_ok());
 }
 
 #[test]
 fn complex_ranges_multiple_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[9])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[9]).is_ok());
 }
 
 #[test]
 fn complex_mixed_single_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[10])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[10]).is_ok());
 }
 
 #[test]
 fn complex_mixed_multiple_is_valid() {
-    assert!(
-        serde_json::from_str::<Table>(CHOICES[11])
-            .expect("can't become table?")
-            .validate()
-            .is_ok()
-    );
+    assert!(serde_json::from_str::<Table>(CHOICES[11]).is_ok());
 }
