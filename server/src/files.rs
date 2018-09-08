@@ -8,6 +8,6 @@ fn index() -> io::Result<NamedFile> {
 }
 
 #[get("/<file..>", rank = 2)]
-fn get(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("front-end/build").join(file)).ok()
+fn get(file: PathBuf) -> io::Result<NamedFile> {
+    NamedFile::open(Path::new("front-end/build").join(file))
 }

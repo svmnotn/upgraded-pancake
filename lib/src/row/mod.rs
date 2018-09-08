@@ -1,5 +1,5 @@
 use crate::error::Error::UnusedValuesInRange;
-use crate::{Dice, Range, Result};
+use crate::{Dice, Result};
 use std::ops::Deref;
 
 mod row;
@@ -19,13 +19,7 @@ impl Rows {
     }
 
     crate fn validate(&self, dice: &Dice) -> Result<()> {
-        let mut val = RowValidation {
-            max: dice.max(),
-            min: dice.min(),
-            vals: (dice.min()..=dice.max()).collect(),
-            range: Range::from(0..=0),
-            val: 0,
-        };
+        let mut val = RowValidation::new(dice);
 
         for row in &self.0 {
             row.roll.validate(&mut val)?;
