@@ -24,27 +24,12 @@ pub enum Error {
     /// Out of Bounds
     // eprintln!("Single out of bounds!");
     SingleOutOfBounds(u32, u32, u32),
-    /// Out of Order
-    // eprintln!("Single out of order!");
-    SingleOutOfOrder(u32, u32),
-    /// Inside a defined range
-    // eprintln!("Single inside previous range!");
-    SingleInsidePrevRange(u32, Range),
     /// Duplicated value
     // eprintln!("Single duplicate!");
     SingleDuplicatedValue(u32),
     /// Out of Bounds
     // eprintln!("Range out of bounds!");
     RangeOutOfBounds(Range, u32, u32),
-    /// Start of range is under the last value
-    // eprintln!("Range less than last val!");
-    RangeLTLastVal(Range, u32),
-    /// Out of Order
-    // eprintln!("Range out of order!");
-    RangeOutOfOrder(Range, Range),
-    /// Inside last range!
-    // eprintln!("Range inside last range!");
-    RangeInsideAnother(Range, Range),
     /// Range contains past duplicates!
     // eprintln!("Range contains past dupes!\n\tvals: {:?}\n\tvalues: {:?}", vals, values);
     RangeHasDuplicates(Range, Vec<u32>),
@@ -69,23 +54,10 @@ impl fmt::Display for Error {
             Error::SingleOutOfBounds(v, min, max) => {
                 write!(f, "{} is out of bounds. min:{}, max:{}", v, min, max)
             }
-            Error::SingleOutOfOrder(v, last) => write!(
-                f,
-                "{} is out of order, {} was before, but is larger",
-                v, last
-            ),
-            Error::SingleInsidePrevRange(v, r) => write!(f, "{} is inside of {}", v, r),
             Error::SingleDuplicatedValue(v) => write!(f, "{} is already represented", v),
             Error::RangeOutOfBounds(r, min, max) => {
                 write!(f, "{} is out of bounds. min:{}, max:{}", r, min, max)
             }
-            Error::RangeLTLastVal(r, last) => {
-                write!(f, "the start of {} is less than the last val: {}", r, last)
-            }
-            Error::RangeOutOfOrder(r, r_last) => {
-                write!(f, "the start of {} is less than the start of {}", r, r_last)
-            }
-            Error::RangeInsideAnother(r, r_last) => write!(f, "{} is inside of {}", r, r_last),
             Error::RangeHasDuplicates(r, dups) => {
                 write!(f, "{} has the following duplicates: {:?}", r, dups)
             }

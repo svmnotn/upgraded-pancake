@@ -1,6 +1,5 @@
 #![feature(plugin, decl_macro, proc_macro_non_items)]
 #![plugin(rocket_codegen)]
-
 // TODO update docs
 //! # Upgraded Pancake Server
 //!

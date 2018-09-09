@@ -135,60 +135,43 @@ impl Roll {
     pub(crate) fn validate(&self, valid: &mut RowValidation) -> Result<()> {
         match self {
             Roll::Single(v) => {
-                if *v < valid.min() || *v > valid.max() {
-                    return Err(SingleOutOfBounds(*v, valid.min(), valid.max()));
+                // Check if the value is valid
+                if valid.is_valid_val(v) == false {
+                    Err(SingleOutOfBounds(*v, valid.min(), valid.max()))
+                } else if valid.contains(v) == false {
+                    // Check if it has appered before
+                    Err(SingleDuplicatedValue(*v))
+                } else {
+                    // This is fine, since the values
+                    // are sorted in reverse, but
+                    // we step through in order
+                    valid.remove_last_val();
+
+                    Ok(())
                 }
-
-                if *v < valid.val {
-                    return Err(SingleOutOfOrder(*v, valid.val));
-                }
-
-                if valid.range.contains(v) {
-                    return Err(SingleInsidePrevRange(*v, valid.range.clone()));
-                }
-
-                if valid.vals.contains(&v) == false {
-                    return Err(SingleDuplicatedValue(*v));
-                }
-
-                valid.vals.retain(|x| *x != *v);
-
-                valid.val = *v;
             }
             Roll::Range(r) => {
-                if *r.start() < valid.min() || *r.end() > valid.max() {
-                    return Err(RangeOutOfBounds(r.clone(), valid.min(), valid.max()));
+                // Check that the range is within our bounds
+                if valid.is_valid_range(r) == false {
+                    Err(RangeOutOfBounds(r.clone(), valid.min(), valid.max()))
+                } else {
+                    // Get all the vaules that are not in our current set of values
+                    // A.K.A. duplicates
+                    let duplicates: Vec<u32> = (*r.start()..=*r.end())
+                        .filter(|v| valid.contains(v) == false)
+                        .collect();
+
+                    // Check if we have duplicates
+                    if duplicates.is_empty() == false {
+                        Err(RangeHasDuplicates(r.clone(), duplicates))
+                    } else {
+                        // Remove all values in our range
+                        valid.remove_range(r);
+
+                        Ok(())
+                    }
                 }
-
-                if *r.start() < valid.val {
-                    return Err(RangeLTLastVal(r.clone(), valid.val));
-                }
-
-                if *r.start() < *valid.range.start() {
-                    return Err(RangeOutOfOrder(r.clone(), valid.range.clone()));
-                }
-
-                if valid.range.contains(r.start()) || valid.range.contains(r.end()) {
-                    return Err(RangeInsideAnother(r.clone(), valid.range.clone()));
-                }
-
-                let vals: Vec<u32> = (*r.start()..=*r.end())
-                    .filter(|v| valid.vals.contains(&v) == false)
-                    .collect();
-
-                if vals.is_empty() == false {
-                    return Err(RangeHasDuplicates(r.clone(), vals));
-                }
-
-                valid.vals.retain(|x| r.contains(x) == false);
-
-                // TODO check to see if there are more checks that need be done
-
-                valid.range = r.clone();
-                valid.val = r.end() + 1;
             }
         }
-
-        Ok(())
     }
 }
