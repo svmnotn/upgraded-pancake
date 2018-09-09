@@ -36,7 +36,7 @@ fn put(name: String, table: String, mut cookies: Cookies) -> Json<Result> {
     } else {
         cookies.add(Cookie::new(name, base64::encode(&table)));
 
-        Result::Sucess
+        Result::Status(0)
     })
 }
 
@@ -88,7 +88,7 @@ fn validate(table: String) -> Json<Result> {
     Json(if let Result::Error(e) = from_str(&table) {
         Result::Error(e)
     } else {
-        Result::Sucess
+        Result::Status(0)
     })
 }
 

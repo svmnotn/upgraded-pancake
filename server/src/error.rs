@@ -11,7 +11,7 @@ pub enum Result {
     Table(Table),
     Roll(TableResult),
     Error(Error),
-    Sucess,
+    Status(u8),
 }
 
 impl Result {
@@ -38,6 +38,12 @@ impl From<TableResult> for Result {
 impl From<Error> for Result {
     fn from(e: Error) -> Self {
         Result::Error(e)
+    }
+}
+
+impl From<u8> for Result {
+    fn from(r: u8) -> Self {
+        Result::Status(r)
     }
 }
 
