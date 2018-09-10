@@ -47,7 +47,7 @@ impl From<Vec<Row>> for Rows {
 }
 
 impl Deref for Rows {
-    type Target = Vec<Row>;
+    type Target = [Row];
 
     fn deref(&self) -> &Self::Target {
         &self.0

@@ -21,7 +21,14 @@ pub struct Table {
 
 impl Table {
     /// Crate a new table
-    pub fn new(dice: Dice, heading: Column, results: Rows) -> Result<Self> {
+    pub fn new<C, R>(dice: Dice, heading: C, results: R) -> Result<Self>
+    where
+        C: Into<Column>,
+        R: Into<Rows>,
+    {
+        let heading: Column = heading.into();
+        let results: Rows = results.into();
+
         results.validate(&dice)?;
 
         Ok(Table {
@@ -69,13 +76,13 @@ impl<'de> Deserialize<'de> for Table {
             where
                 V: SeqAccess<'de>,
             {
-                let dice = seq
+                let dice: Dice = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-                let heading = seq
+                let heading: Column = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-                let results = seq
+                let results: Rows = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(1, &self))?;
                 Table::new(dice, heading, results).map_err(de::Error::custom)
@@ -110,9 +117,9 @@ impl<'de> Deserialize<'de> for Table {
                         }
                     }
                 }
-                let dice = dice.ok_or_else(|| de::Error::missing_field("dice"))?;
-                let heading = heading.ok_or_else(|| de::Error::missing_field("heading"))?;
-                let results = results.ok_or_else(|| de::Error::missing_field("results"))?;
+                let dice: Dice = dice.ok_or_else(|| de::Error::missing_field("dice"))?;
+                let heading: Column = heading.ok_or_else(|| de::Error::missing_field("heading"))?;
+                let results: Rows = results.ok_or_else(|| de::Error::missing_field("results"))?;
                 Table::new(dice, heading, results).map_err(de::Error::custom)
             }
         }

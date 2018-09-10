@@ -11,7 +11,9 @@ pub struct Row {
 
 impl Row {
     // Create a new row
-    pub fn new(roll: Roll, value: Column) -> Self {
+    pub fn new<C: Into<Column>>(roll: Roll, value: C) -> Self {
+        let value: Column = value.into();
+
         Row { roll, value }
     }
 
