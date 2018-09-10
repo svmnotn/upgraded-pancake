@@ -33,6 +33,19 @@ impl Rows {
     }
 }
 
+impl From<Row> for Rows {
+    fn from(row: Row) -> Self {
+        Rows(vec![row])
+    }
+}
+
+impl From<Vec<Row>> for Rows {
+    fn from(mut rows: Vec<Row>) -> Self {
+        rows.sort_unstable();
+        Rows(rows)
+    }
+}
+
 impl Deref for Rows {
     type Target = Vec<Row>;
 
