@@ -1,4 +1,4 @@
-use crate::error::Error::UnusedValuesInRange;
+use crate::error::Error;
 use crate::{Dice, Result};
 use std::ops::Deref;
 
@@ -28,7 +28,7 @@ impl Rows {
         if val.vals.is_empty() {
             Ok(())
         } else {
-            Err(UnusedValuesInRange(val.vals))
+            Err(Error::unused_values(val.vals))
         }
     }
 }

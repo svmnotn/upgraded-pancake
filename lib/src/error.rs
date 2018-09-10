@@ -11,13 +11,13 @@ pub enum Error {
     InvalidRange(String),
     /// This part of the Range is not valid
     // TODO make better
-    InvalidRangeSection(String, u32),
+    InvalidRangeSection(String, String),
     /// This is not a valid Dice
     // TODO make better
     InvalidDice(String),
     /// This part of the Dice is not valid
     // TODO make better
-    InvalidDiceSection(String, u32),
+    InvalidDiceSection(String, String),
     /// Not all values possible values were occupied
     // eprintln!("Not all values used!\n\t values: {:?}", values);
     UnusedValuesInRange(Vec<u32>),
@@ -33,6 +33,66 @@ pub enum Error {
     /// Range contains past duplicates!
     // eprintln!("Range contains past dupes!\n\tvals: {:?}\n\tvalues: {:?}", vals, values);
     RangeHasDuplicates(Range, Vec<u32>),
+}
+
+impl Error {
+    pub fn invalid_range<S: Into<String>>(s: S) -> Self {
+        Error::InvalidRange(s.into())
+    }
+
+    pub fn invalid_range_section<S1, S2>(data: S1, section: S2) -> Self
+    where
+        S1: Into<String>,
+        S2: Into<String>,
+    {
+        Error::InvalidRangeSection(data.into(), section.into())
+    }
+
+    pub fn invalid_dice<S: Into<String>>(s: S) -> Self {
+        Error::InvalidDice(s.into())
+    }
+
+    pub fn invalid_dice_section<S1, S2>(data: S1, section: S2) -> Self
+    where
+        S1: Into<String>,
+        S2: Into<String>,
+    {
+        Error::InvalidDiceSection(data.into(), section.into())
+    }
+
+    pub fn unused_values<V: Into<Vec<u32>>>(vals: V) -> Self {
+        Error::UnusedValuesInRange(vals.into())
+    }
+
+    pub fn single_oob<T1, T2, T3>(val: T1, min: T2, max: T3) -> Self
+    where
+        T1: Into<u32>,
+        T2: Into<u32>,
+        T3: Into<u32>,
+    {
+        Error::SingleOutOfBounds(val.into(), min.into(), max.into())
+    }
+
+    pub fn single_dup<T: Into<u32>>(v: T) -> Self {
+        Error::SingleDuplicatedValue(v.into())
+    }
+
+    pub fn range_oob<R, T1, T2>(r: R, min: T1, max: T2) -> Self
+    where
+        R: Into<Range>,
+        T1: Into<u32>,
+        T2: Into<u32>,
+    {
+        Error::RangeOutOfBounds(r.into(), min.into(), max.into())
+    }
+
+    pub fn range_dup<R, V>(r: R, dup: V) -> Self
+    where
+        R: Into<Range>,
+        V: Into<Vec<u32>>,
+    {
+        Error::RangeHasDuplicates(r.into(), dup.into())
+    }
 }
 
 impl fmt::Display for Error {

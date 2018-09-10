@@ -1,9 +1,8 @@
 use crate::error::Error;
-use crate::error::Error::{InvalidDice, InvalidDiceSection};
 use crate::{RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
 use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
-use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
+use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use std::fmt;
 use std::str::FromStr;
 
@@ -21,6 +20,7 @@ pub struct Dice {
 
 impl Dice {
     /// Create a new Dice
+    // TODO Add dice sizing errors
     pub fn new(amount: u16, size: u16) -> Self {
         Dice { amount, size }
     }
@@ -79,17 +79,17 @@ impl FromStr for Dice {
             if v.len() == 2 {
                 let amount = v[0]
                     .parse::<u16>()
-                    .map_err(|_| InvalidDiceSection(String::from(v[0]), 0))?;
+                    .map_err(|_| Error::invalid_dice_section(v[0], stringify!(amount)))?;
                 let size = v[1]
                     .parse::<u16>()
-                    .map_err(|_| InvalidDiceSection(String::from(v[1]), 1))?;
+                    .map_err(|_| Error::invalid_dice_section(v[1], stringify!(size)))?;
 
-                Ok(Dice { amount, size })
+                Ok(Dice::new(amount, size))
             } else {
-                Err(InvalidDice(String::from(s)))
+                Err(Error::invalid_dice(s))
             }
         } else {
-            Err(InvalidDice(String::from(s)))
+            Err(Error::invalid_dice(s))
         }
     }
 }
@@ -125,7 +125,7 @@ impl<'de> Deserialize<'de> for Dice {
                 let size = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-                Ok(Dice { amount, size })
+                Ok(Dice::new(amount, size))
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<Dice, V::Error>
@@ -138,48 +138,28 @@ impl<'de> Deserialize<'de> for Dice {
                     match key {
                         Field::Amount => {
                             if amount.is_some() {
-                                return Err(de::Error::duplicate_field("amount"));
+                                return Err(de::Error::duplicate_field(stringify!(amount)));
                             }
                             amount = Some(map.next_value()?);
                         }
                         Field::Size => {
                             if size.is_some() {
-                                return Err(de::Error::duplicate_field("size"));
+                                return Err(de::Error::duplicate_field(stringify!(size)));
                             }
                             size = Some(map.next_value()?);
                         }
                     }
                 }
-                let amount = amount.ok_or_else(|| de::Error::missing_field("amount"))?;
-                let size = size.ok_or_else(|| de::Error::missing_field("size"))?;
-                Ok(Dice { amount, size })
+                let amount = amount.ok_or_else(|| de::Error::missing_field(stringify!(amount)))?;
+                let size = size.ok_or_else(|| de::Error::missing_field(stringify!(size)))?;
+                Ok(Dice::new(amount, size))
             }
 
             fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
             where
                 E: de::Error,
             {
-                // TODO Simply call FromStr
-                if s.contains('d') {
-                    let v: Vec<&str> = s.split('d').collect();
-                    if v.len() == 2 {
-                        let amount = v[0].parse::<u16>().map_err(|_| {
-                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
-                        })?;
-                        let size = v[1].parse::<u16>().map_err(|_| {
-                            de::Error::invalid_value(Unexpected::Str(v[1]), &"an integer")
-                        })?;
-
-                        Ok(Dice { amount, size })
-                    } else {
-                        Err(de::Error::invalid_value(
-                            Unexpected::Str(s),
-                            &"two integers separated by a 'd'",
-                        ))
-                    }
-                } else {
-                    Err(de::Error::invalid_value(Unexpected::Str(s), &self))
-                }
+                Dice::from_str(s).map_err(de::Error::custom)
             }
         }
 

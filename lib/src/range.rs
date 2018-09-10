@@ -1,6 +1,5 @@
 use crate::error::Error;
-use crate::error::Error::{InvalidRange, InvalidRangeSection};
-use serde::de::{self, Unexpected, Visitor};
+use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter, Result as FmtResult};
@@ -87,17 +86,17 @@ impl FromStr for Range {
             if v.len() == 2 {
                 let start = v[0]
                     .parse::<u32>()
-                    .map_err(|_| InvalidRangeSection(String::from(v[0]), 0))?;
+                    .map_err(|_| Error::invalid_range_section(v[0], stringify!(start)))?;
                 let end = v[1]
                     .parse::<u32>()
-                    .map_err(|_| InvalidRangeSection(String::from(v[1]), 1))?;
+                    .map_err(|_| Error::invalid_range_section(v[1], stringify!(end)))?;
 
                 Ok(Range(start..=end))
             } else {
-                Err(InvalidRange(String::from(s)))
+                Err(Error::invalid_range(s))
             }
         } else {
-            Err(InvalidRange(String::from(s)))
+            Err(Error::invalid_range(s))
         }
     }
 }
@@ -120,27 +119,7 @@ impl<'de> Deserialize<'de> for Range {
             where
                 E: de::Error,
             {
-                // Simply call FromStr
-                if s.contains('-') {
-                    let v: Vec<&str> = s.split('-').collect();
-                    if v.len() == 2 {
-                        let start = v[0].parse::<u32>().map_err(|_| {
-                            de::Error::invalid_value(Unexpected::Str(v[0]), &"an integer")
-                        })?;
-                        let end = v[1].parse::<u32>().map_err(|_| {
-                            de::Error::invalid_value(Unexpected::Str(v[1]), &"an integer")
-                        })?;
-
-                        Ok(Range(start..=end))
-                    } else {
-                        Err(de::Error::invalid_value(
-                            Unexpected::Str(s),
-                            &"two integers separated by a '-'",
-                        ))
-                    }
-                } else {
-                    Err(de::Error::invalid_value(Unexpected::Str(s), &self))
-                }
+                Range::from_str(s).map_err(de::Error::custom)
             }
         }
         deserializer.deserialize_str(RangeVisitor)

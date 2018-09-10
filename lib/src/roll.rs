@@ -1,4 +1,4 @@
-use crate::error::Error::*;
+use crate::error::Error;
 use crate::{Range, Result, RowValidation};
 use std::cmp::Ordering;
 
@@ -137,10 +137,10 @@ impl Roll {
             Roll::Single(v) => {
                 // Check if the value is valid
                 if valid.is_valid_val(v) == false {
-                    Err(SingleOutOfBounds(*v, valid.min(), valid.max()))
+                    Err(Error::single_oob(*v, valid.min(), valid.max()))
                 } else if valid.contains(v) == false {
                     // Check if it has appered before
-                    Err(SingleDuplicatedValue(*v))
+                    Err(Error::single_dup(*v))
                 } else {
                     // This is fine, since the values
                     // are sorted in reverse, but
@@ -153,7 +153,7 @@ impl Roll {
             Roll::Range(r) => {
                 // Check that the range is within our bounds
                 if valid.is_valid_range(r) == false {
-                    Err(RangeOutOfBounds(r.clone(), valid.min(), valid.max()))
+                    Err(Error::range_oob(r.clone(), valid.min(), valid.max()))
                 } else {
                     // Get all the vaules that are not in our current set of values
                     // A.K.A. duplicates
@@ -163,7 +163,7 @@ impl Roll {
 
                     // Check if we have duplicates
                     if duplicates.is_empty() == false {
-                        Err(RangeHasDuplicates(r.clone(), duplicates))
+                        Err(Error::range_dup(r.clone(), duplicates))
                     } else {
                         // Remove all values in our range
                         valid.remove_range(r);
