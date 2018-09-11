@@ -18,6 +18,7 @@ impl Rows {
         Rows(rows)
     }
 
+    // TODO: Change to just crate once issue #45388 is cleared
     pub(crate) fn validate(&self, dice: &Dice) -> Result<()> {
         let mut val = RowValidation::new(dice);
 
