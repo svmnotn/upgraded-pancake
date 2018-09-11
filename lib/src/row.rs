@@ -27,7 +27,8 @@ impl Row {
     }
 
     /// Is this row valid?
-    crate fn valid(
+    // TODO: Change to just crate once issue #45388 is cleared
+    pub(crate) fn valid(
         &self,
         dice: Dice,
         values: &mut Vec<u32>,

@@ -8,7 +8,8 @@ pub struct TableResult {
 impl TableResult {
     /// Create a new Table Result, this should only be used by the
     /// `Table::roll` method
-    crate fn new(roll: u32, row: usize) -> Self {
+    // TODO: Change to just crate once issue #45388 is cleared
+    pub(crate) fn new(roll: u32, row: usize) -> Self {
         TableResult { roll, row }
     }
 
