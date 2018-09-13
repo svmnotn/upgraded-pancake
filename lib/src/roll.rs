@@ -138,8 +138,10 @@ impl Roll {
                 if valid.is_valid_val(v) == false {
                     Err(Error::single_oob(*v, valid.min(), valid.max()))
                 } else if valid.contains(v) == false {
-                    // Check if it has appered before
+                    // Check if it has appeared before
                     Err(Error::single_dup(*v))
+                } else if valid.is_next(v) == false {
+                    unimplemented!()
                 } else {
                     // This is fine, since the values
                     // are sorted in reverse, but
@@ -153,6 +155,8 @@ impl Roll {
                 // Check that the range is within our bounds
                 if valid.is_valid_range(r) == false {
                     Err(Error::range_oob(r.clone(), valid.min(), valid.max()))
+                } else if valid.is_next(r.start()) == false {
+                    unimplemented!()
                 } else {
                     // Get all the vaules that are not in our current set of values
                     // A.K.A. duplicates

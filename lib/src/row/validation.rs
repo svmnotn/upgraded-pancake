@@ -37,6 +37,13 @@ impl Validation {
         self.min <= *val && *val <= self.max
     }
 
+    /// Is this value the one we are expecting?
+    pub fn is_next(&self, val: &u32) -> bool {
+        let index = self.vals.len() - 1;
+        eprintln!("We are expecting {}, and got {}", self.vals[index], val);
+        self.vals[index] == *val
+    }
+
     /// Is this range within our range
     pub fn is_valid_range(&self, r: &Range) -> bool {
         self.min <= *r.start() && *r.end() <= self.max

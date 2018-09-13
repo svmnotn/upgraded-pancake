@@ -89,7 +89,7 @@ impl<'de> Deserialize<'de> for Table {
                     .ok_or_else(|| de::Error::invalid_length(1, &self))?;
                 let results: Rows = seq
                     .next_element()?
-                    .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?;
                 Table::new(dice, heading, results).map_err(de::Error::custom)
             }
 
