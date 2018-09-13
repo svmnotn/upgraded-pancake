@@ -39,14 +39,19 @@ impl Table {
     }
 
     /// Perform a roll on this table
-    pub fn roll(&self) -> Option<TableResult> {
+    pub fn roll(&self) -> TableResult {
         let roll = self.dice.roll();
 
-        self.results
+        match self
+            .results
             .iter()
             .enumerate()
             .find(|(_, row)| **row == roll)
             .map(|(i, _)| TableResult::new(roll, i))
+        {
+            Some(t) => t,
+            None => unreachable!("Table was created without all posible rolls!"),
+        }
     }
 }
 
