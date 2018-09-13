@@ -50,12 +50,12 @@ fn delete(name: String, mut cookies: Cookies) {
 }
 
 #[get("/table/all/name")]
-fn table_name(cookies: Cookies) -> Json<Vec<String>> {
+fn table_names(cookies: Cookies) -> Json<Vec<String>> {
     Json(cookies.iter().map(|c| c.name().to_owned()).collect())
 }
 
-#[get("/table/all/data")]
-fn table_data(cookies: Cookies) -> Json<Vec<Response>> {
+#[get("/table/all")]
+fn all(cookies: Cookies) -> Json<Vec<Response>> {
     Json(
         cookies
             .iter()
