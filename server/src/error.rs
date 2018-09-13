@@ -7,43 +7,28 @@ use upgraded_pancake::{Table, TableResult};
 
 #[derive(Debug, Serialize)]
 #[serde(untagged)]
-pub enum Result {
+pub enum Response {
     Table(Table),
     Roll(TableResult),
     Error(Error),
     Status(u8),
 }
 
-impl Result {
-    pub fn is_err(&self) -> bool {
-        match self {
-            Result::Error(_) => true,
-            _ => false,
-        }
-    }
-}
-
-impl From<Table> for Result {
+impl From<Table> for Response {
     fn from(t: Table) -> Self {
-        Result::Table(t)
+        Response::Table(t)
     }
 }
 
-impl From<TableResult> for Result {
+impl From<TableResult> for Response {
     fn from(t: TableResult) -> Self {
-        Result::Roll(t)
+        Response::Roll(t)
     }
 }
 
-impl From<Error> for Result {
+impl From<Error> for Response {
     fn from(e: Error) -> Self {
-        Result::Error(e)
-    }
-}
-
-impl From<u8> for Result {
-    fn from(r: u8) -> Self {
-        Result::Status(r)
+        Response::Error(e)
     }
 }
 
@@ -53,7 +38,6 @@ pub enum Error {
     Serde(String),
     Base64(String),
     TableNotFound(String),
-    RollNotFound,
 }
 
 impl From<SerdeError> for Error {
@@ -74,7 +58,6 @@ impl fmt::Display for Error {
             Error::Serde(e) => write!(f, "{}", e),
             Error::Base64(e) => write!(f, "{}", e),
             Error::TableNotFound(e) => write!(f, "{}", e),
-            Error::RollNotFound => write!(f, "For some reason your roll was not found"),
         }
     }
 }

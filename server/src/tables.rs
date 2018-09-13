@@ -4,22 +4,22 @@ use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Json;
 use upgraded_pancake::Table;
 
-fn from_cookies(name: &str, cookies: &Cookies) -> Result {
+fn from_cookies(name: &str, cookies: &Cookies) -> Response {
     match cookies
         .get(name)
         .ok_or_else(|| Error::TableNotFound(String::from(name)))
         .and_then(|c| base64::decode(c.value()).map_err(Into::into))
-        .and_then(|b| serde_json::from_slice(&b).map_err(Into::into))
+        .and_then(|b| serde_json::from_slice::<Table>(&b).map_err(Into::into))
     {
-        Ok(t) => Result::Table(t),
-        Err(e) => Result::Error(e),
+        Ok(t) => t.into(),
+        Err(e) => e.into(),
     }
 }
 
-fn from_str(table: &str) -> Result {
-    match serde_json::from_str(table) {
-        Ok(t) => Result::Table(t),
-        Err(e) => Result::Error(e.into()),
+fn from_str(table: &str) -> Response {
+    match serde_json::from_str::<Table>(table) {
+        Ok(t) => t.into(),
+        Err(e) => Response::Error(e.into()),
     }
 }
 
@@ -28,20 +28,19 @@ fn from_str(table: &str) -> Result {
     format = "application/json",
     data = "<table>"
 )]
-fn put(name: String, table: String, mut cookies: Cookies) -> Json<Result> {
-    let t = from_str(&table);
-
-    Json(if t.is_err() {
-        t
-    } else {
-        cookies.add(Cookie::new(name, base64::encode(&table)));
-
-        Result::Status(0)
+fn put(name: String, table: String, mut cookies: Cookies) -> Json<Response> {
+    Json(match from_str(&table) {
+        Response::Table(_) => {
+            cookies.add(Cookie::new(name, base64::encode(&table)));
+            Response::Status(0)
+        }
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
     })
 }
 
 #[get("/table/<name>")]
-fn get(name: String, cookies: Cookies) -> Json<Result> {
+fn get(name: String, cookies: Cookies) -> Json<Response> {
     Json(from_cookies(&name, &cookies))
 }
 
@@ -56,7 +55,7 @@ fn table_name(cookies: Cookies) -> Json<Vec<String>> {
 }
 
 #[get("/table/all/data")]
-fn table_data(cookies: Cookies) -> Json<Vec<Result>> {
+fn table_data(cookies: Cookies) -> Json<Vec<Response>> {
     Json(
         cookies
             .iter()
@@ -66,16 +65,11 @@ fn table_data(cookies: Cookies) -> Json<Vec<Result>> {
 }
 
 #[get("/table/<name>/roll")]
-fn roll_saved(name: String, cookies: Cookies) -> Json<Result> {
-    let table = from_cookies(&name, &cookies);
-    Json(if let Result::Table(t) = table {
-        if let Some(r) = t.roll() {
-            Result::Roll(r)
-        } else {
-            Result::Error(Error::RollNotFound)
-        }
-    } else {
-        table
+fn roll_saved(name: String, cookies: Cookies) -> Json<Response> {
+    Json(match from_cookies(&name, &cookies) {
+        Response::Table(t) => t.roll().into(),
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
     })
 }
 
@@ -84,30 +78,19 @@ fn roll_saved(name: String, cookies: Cookies) -> Json<Result> {
     format = "application/json",
     data = "<table>"
 )]
-fn validate(table: String) -> Json<Result> {
-    Json(if let Result::Error(e) = from_str(&table) {
-        Result::Error(e)
-    } else {
-        Result::Status(0)
+fn validate(table: String) -> Json<Response> {
+    Json(match from_str(&table) {
+        Response::Error(e) => e.into(),
+        _ => Response::Status(0),
     })
 }
 
 #[post("/table", format = "application/json", data = "<table>")]
-fn roll(table: String) -> Json<Result> {
-    let t = from_str(&table);
-
-    Json(if t.is_err() {
-        t
-    } else {
-        if let Result::Table(ta) = t {
-            if let Some(r) = ta.roll() {
-                Result::Roll(r)
-            } else {
-                Result::Error(Error::RollNotFound)
-            }
-        } else {
-            Result::Error(Error::TableNotFound(table))
-        }
+fn roll(table: String) -> Json<Response> {
+    Json(match from_str(&table) {
+        Response::Error(e) => e.into(),
+        Response::Table(t) => t.roll().into(),
+        _ => unreachable!("Got something other than a table / error"),
     })
 }
 
