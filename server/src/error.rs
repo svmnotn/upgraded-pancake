@@ -36,6 +36,8 @@ impl From<Error> for Response {
 #[serde(tag = "error", content = "data")]
 pub enum Error {
     Serde(String),
+    /// This one would only occur if someone
+    /// *else* messed with the cookies.
     Base64(String),
     TableNotFound(String),
 }
