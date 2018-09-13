@@ -8,7 +8,7 @@ use std::str::FromStr;
 
 /// A dice for determining what to
 /// roll on a table
-#[derive(Debug, Serialize, Clone, Copy)]
+#[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
     amount: u16,

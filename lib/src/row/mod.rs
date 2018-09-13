@@ -9,7 +9,7 @@ mod validation;
 pub use self::validation::Validation as RowValidation;
 
 /// A collection of `Row`s inside a `Table`
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Rows(#[doc(hidden)] Vec<Row>);
 
 impl Rows {
