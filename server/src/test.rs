@@ -32,8 +32,6 @@ fn can_get_table() {
 
     let mut res = client
         .get("/table/test")
-        .header(ContentType::JSON)
-        .body(TEST_DATA)
         .dispatch();
 
     assert_eq!(
@@ -57,8 +55,6 @@ fn can_remove_table() {
 
     let _ = client
         .delete("/table/test")
-        .header(ContentType::JSON)
-        .body(TEST_DATA)
         .dispatch();
 }
 
@@ -76,8 +72,6 @@ fn can_roll_table() {
 
     let mut res = client
         .get("/table/test/roll")
-        .header(ContentType::JSON)
-        .body(TEST_DATA)
         .dispatch();
 
     assert!(
@@ -107,9 +101,7 @@ fn can_get_all_names() {
     assert_eq!("0", res.body_string().unwrap());
 
     let mut res = client
-        .get("/table/all/name")
-        .header(ContentType::JSON)
-        .body(TEST_DATA)
+        .get("/table/all/id")
         .dispatch();
 
     let mut vals =
@@ -142,8 +134,6 @@ fn can_get_all_data() {
 
     let mut res = client
         .get("/table/all")
-        .header(ContentType::JSON)
-        .body(TEST_DATA)
         .dispatch();
 
     assert_eq!(
@@ -154,4 +144,100 @@ fn can_get_all_data() {
         serde_json::from_str::<Vec<Table>>(&res.body_string().expect("Failed to get a Body"))
             .expect("Failed to build body")
     );
+}
+
+#[test]
+fn bad_json_syntax() {
+    let client = Client::new(rocket()).unwrap();
+
+    let mut res = client
+        .put("/table/test")
+        .header(ContentType::JSON)
+        .body("{bad}")
+        .dispatch();
+
+    let value = serde_json::from_str::<serde_json::Value>(&res.body_string().expect("Failed to get a Body"))
+            .expect("Failed to build body");
+
+    assert_eq!("Serde", value["error"]);
+    assert_eq!("key must be a string at line 1 column 2", value["data"]);
+}
+
+#[test]
+fn bad_json_input() {
+    let client = Client::new(rocket()).unwrap();
+
+    let mut res = client
+        .put("/table/test")
+        .header(ContentType::JSON)
+        .body(r#"{"bad":"things"}"#)
+        .dispatch();
+
+    let value = serde_json::from_str::<serde_json::Value>(&res.body_string().expect("Failed to get a Body"))
+            .expect("Failed to build body");
+
+    assert_eq!("Serde", value["error"]);
+    assert_eq!("unknown field `bad`, expected one of `dice`, `heading`, `results` at line 1 column 6", value["data"]);
+}
+
+#[test]
+// Temporary should panic for unimplemented Error
+#[should_panic]
+fn unsorted_table() {
+    let client = Client::new(rocket()).unwrap();
+
+    let mut res = client
+        .put("/table/test")
+        .header(ContentType::JSON)
+        .body(r#"{
+    "dice": "1d6",
+    "heading": "Simple Value Single, Test Data",
+    "results": [
+        {
+            "roll": 1,
+            "value": "DATA"
+        },
+        {
+            "roll": 3,
+            "value": "DATA2"
+        },
+        {
+            "roll": 2,
+            "value": "DATA1"
+        },
+        {
+            "roll": 4,
+            "value": "DATA3"
+        },
+        {
+            "roll": 5,
+            "value": "DATA4"
+        },
+        {
+            "roll": 6,
+            "value": "DATA5"
+        }
+    ]
+}"#)
+        .dispatch();
+
+    let value = serde_json::from_str::<serde_json::Value>(&res.body_string().expect("Failed to get a Body"))
+            .expect("Failed to build body");
+
+    assert_eq!("Serde", value["error"]);
+}
+
+#[test]
+fn table_not_found() {
+    let client = Client::new(rocket()).unwrap();
+
+    let mut res = client
+        .get("/table/test")
+        .dispatch();
+
+    let value = serde_json::from_str::<serde_json::Value>(&res.body_string().expect("Failed to get a Body"))
+            .expect("Failed to build body");
+
+    assert_eq!("TableNotFound", value["error"]);
+    assert_eq!("test", value["data"]);
 }
