@@ -98,28 +98,29 @@ impl Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::InvalidRange(s) => write!(f, "{} is not a valid range!", s),
+            Error::InvalidRange(s) => write!(f, "{}: {} is not a valid range!", stringify!(InvalidRange), s),
             Error::InvalidRangeSection(s, i) => {
-                write!(f, "{} is not a valid section of a range {}", i, s)
+                write!(f, "{}: {} is not a valid section of a range {}!", stringify!(InvalidRangeSection), i, s)
             }
-            Error::InvalidDice(s) => write!(f, "{} is not a valid dice!", s),
+            Error::InvalidDice(s) => write!(f, "{}: {} is not a valid dice!", stringify!(InvalidDice), s),
             Error::InvalidDiceSection(s, i) => {
-                write!(f, "{} is not a valid section of a dice {}", i, s)
+                write!(f, "{}: {} is not a valid section of a dice {}!", stringify!(InvalidDiceSection), i, s)
             }
             Error::UnusedValuesInRange(vals) => write!(
                 f,
-                "the following values are not used in the range: {:?}",
+                "{}: the following values are not used in the range: {:?}!",
+                stringify!(UnusedValuesInRange),
                 vals
             ),
             Error::SingleOutOfBounds(v, min, max) => {
-                write!(f, "{} is out of bounds. min:{}, max:{}", v, min, max)
+                write!(f, "{}: {} is out of bounds. min:{}, max:{}!", stringify!(SingleOutOfBounds), v, min, max)
             }
-            Error::SingleDuplicatedValue(v) => write!(f, "{} is already represented", v),
+            Error::SingleDuplicatedValue(v) => write!(f, "{}: {} is already represented!", stringify!(SingleDuplicatedValue), v),
             Error::RangeOutOfBounds(r, min, max) => {
-                write!(f, "{} is out of bounds. min:{}, max:{}", r, min, max)
+                write!(f, "{}: {} is out of bounds. min:{}, max:{}!", stringify!(RangeOutOfBounds), r, min, max)
             }
             Error::RangeHasDuplicates(r, dups) => {
-                write!(f, "{} has the following duplicates: {:?}", r, dups)
+                write!(f, "{}: {} has the following duplicates: {:?}!", stringify!(RangeHasDuplicates), r, dups)
             }
         }
     }
