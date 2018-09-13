@@ -6,16 +6,16 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "error", content = "data")]
 pub enum Error {
-    /// This is not a valid Range
+    /// This is not a valid `Range`
     // TODO make better
     InvalidRange(String),
-    /// This part of the Range is not valid
+    /// This part of the `Range` is not valid
     // TODO make better
     InvalidRangeSection(String, String),
-    /// This is not a valid Dice
+    /// This is not a valid `Dice`
     // TODO make better
     InvalidDice(String),
-    /// This part of the Dice is not valid
+    /// This part of the `Dice` is not valid
     // TODO make better
     InvalidDiceSection(String, String),
     /// Not all values possible values were occupied

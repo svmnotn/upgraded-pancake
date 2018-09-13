@@ -6,8 +6,7 @@ use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use std::fmt;
 use std::str::FromStr;
 
-/// A dice for determining what to
-/// roll on a table
+/// A dice for determining what to roll on a `Table`
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
@@ -19,37 +18,35 @@ pub struct Dice {
 }
 
 impl Dice {
-    /// Create a new Dice
+    /// Create a new `Dice`
     // TODO Add dice sizing errors
     pub fn new(amount: u16, size: u16) -> Self {
         Dice { amount, size }
     }
 
-    /// Roll the dice
+    /// Roll the `Dice`
     pub fn roll(&self) -> u32 {
         (0..self.amount).fold(0, |acc, _| {
             thread_rng().gen_range(1, u32::from(self.size + 1)) + acc
         })
     }
 
-    /// The minimum value that this dice
-    /// can give
+    /// The minimum value that this `Dice` can give
     pub fn min(&self) -> u32 {
         u32::from(self.amount)
     }
 
-    /// The maximum value that this dice
-    /// can give
+    /// The maximum value that this `Dice` can give
     pub fn max(&self) -> u32 {
         u32::from(self.amount) * u32::from(self.size)
     }
 
-    /// The amount of dice rolled
+    /// The amount of `Dice` rolled
     pub fn amount(&self) -> u16 {
         self.amount
     }
 
-    /// The size of the dice rolled
+    /// The size of the `Dice` rolled
     pub fn size(&self) -> u16 {
         self.size
     }

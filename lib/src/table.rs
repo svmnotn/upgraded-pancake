@@ -8,7 +8,7 @@ use crate::{Column, Dice, Result, Rows};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use std::fmt;
 
-/// A table that can be rolled on
+/// A `Table` that can be rolled on
 #[derive(Debug, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Table {
     #[doc(hidden)]
@@ -20,7 +20,7 @@ pub struct Table {
 }
 
 impl Table {
-    /// Crate a new table
+    /// Crate a new `Table`
     pub fn new<C, R>(dice: Dice, heading: C, results: R) -> Result<Self>
     where
         C: Into<Column>,
@@ -38,7 +38,7 @@ impl Table {
         })
     }
 
-    /// Perform a roll on this table
+    /// Perform a roll on this `Table`
     pub fn roll(&self) -> TableResult {
         let roll = self.dice.roll();
 

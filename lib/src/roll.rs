@@ -2,7 +2,7 @@ use crate::error::Error;
 use crate::{Range, Result, RowValidation};
 use std::cmp::Ordering;
 
-/// Either a single value or a range of values
+/// Either a single value or a `Range` of values
 /// that can be rolled on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, Eq)]
 #[serde(untagged)]
@@ -10,7 +10,7 @@ pub enum Roll {
     /// This roll is determined by a single value
     /// of the dice
     Single(u32),
-    /// This roll is determined by a range of values
+    /// This roll is determined by a `Range` of values
     /// of the dice
     Range(Range),
 }
@@ -97,7 +97,7 @@ impl From<Range> for Roll {
 }
 
 impl Roll {
-    /// The value that his `Roll` covers
+    /// The value that this `Roll` covers
     pub fn single(&self) -> Option<u32> {
         match self {
             Roll::Single(v) => Some(*v),
@@ -113,8 +113,7 @@ impl Roll {
         }
     }
 
-    /// The range of values that this
-    /// `Roll` covers
+    /// The `Range` of values that this `Roll` covers
     pub fn range(&self) -> Option<Range> {
         match self {
             Roll::Range(v) => Some(v.clone()),
@@ -130,7 +129,7 @@ impl Roll {
         }
     }
 
-    /// Is this a valid roll?
+    /// Is this a valid `Roll`?
     // TODO: Change to just crate once issue #45388 is cleared
     pub(crate) fn validate(&self, valid: &mut RowValidation) -> Result<()> {
         match self {
