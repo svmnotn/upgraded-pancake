@@ -49,8 +49,8 @@ fn delete(name: String, mut cookies: Cookies) {
     cookies.remove(Cookie::named(name));
 }
 
-#[get("/table/all/name")]
-fn table_names(cookies: Cookies) -> Json<Vec<String>> {
+#[get("/table/all/id")]
+fn table_ids(cookies: Cookies) -> Json<Vec<String>> {
     Json(cookies.iter().map(|c| c.name().to_owned()).collect())
 }
 
