@@ -45,56 +45,56 @@
 //!
 //! The server will then return `0` if the table was correctly added, and an Error if it was
 //! not. Take a look at the Errors section [here](#errors).
-//! 
+//!
 //! ### Getting a Table
-//! 
+//!
 //! To get a `Table` from the storage, one must make a **HTTP GET** method call to `/table/<id>`
 //! where `id` is the identifier for the desired `Table`.
-//! 
+//!
 //! The server will return the `Table` as JSON, or an Error. Take a look at the Errors section
 //! [here](#errors).
-//! 
+//!
 //! ### Rolling on a Table
-//! 
+//!
 //! To roll on a `Table` from the storage, one must make a **HTTP GET** method call to `/table/<id>/roll`
 //! where `id` is the identifier for the `Table` to roll on.
-//! 
+//!
 //! The server will return the `TableResult` as JSON or an Error. Take a look at the Errors section
 //! [here](#errors).
-//! 
+//!
 //! ### Deleting a Table
-//! 
+//!
 //! To remove a `Table` from storage, one must make a **HTTP DELETE** method call to `/table/<id>`
 //! where `id` is the identifier for the `Table` to remove.
-//! 
+//!
 //! The server will _not_ give a response to this.
 //!
 //! ### Getting all the stored Tables
-//! 
+//!
 //! To retrieve all the tables in the storage, one must make a **HTTP GET** method call to `/table/all`.
-//! 
+//!
 //! The server will return a list containing `Table`s or Errors, depending whether the `Table` was
 //! properly retrieved from the storage. Take a look at the Errors section [here](#errors), for more
 //! information on what errors could be in the returned list.
 //!  
 //! ### Getting all the stored Tables identifiers
-//! 
+//!
 //! To retrieve the identifers of all the stored `Table`s, one must make a **HTTP GET** method call to
 //! `/table/all/id`.
-//! 
+//!
 //! The server will return a list containing the ids of every `Table` in the storage.
-//! 
+//!
 //! ### Validating a Table
-//! 
+//!
 //! To validate a `Table`, one must make a **HTTP POST** method call to `/table/validate`. _Furthermore_,
 //! the table to validate must be sent as JSON in the data portion of the HTTP method call.
-//! 
+//!
 //! The server will return `0` if the table was valid, otherwise it will return the reason why it was not.
-//! Take a look at the Errors section [here](#errors), for more information on what errors could be 
+//! Take a look at the Errors section [here](#errors), for more information on what errors could be
 //! returned.
-//! 
+//!
 //! ## Errors
-//! 
+//!
 //! TODO Add in all the errors
 
 #[macro_use]
