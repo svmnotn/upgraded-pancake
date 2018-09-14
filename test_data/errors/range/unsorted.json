@@ -11,16 +11,12 @@
             "value": "DATA1"
         },
         {
-            "roll": "7-8",
-            "value": "DATA3"
-        },
-        {
-            "roll": "7-8",
-            "value": "DATA3"
-        },
-        {
             "roll": "9-10",
             "value": "DATA4"
+        },
+        {
+            "roll": "7-8",
+            "value": "DATA3"
         },
         {
             "roll": "11-12",

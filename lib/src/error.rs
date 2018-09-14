@@ -24,12 +24,18 @@ pub enum Error {
     /// Out of Bounds
     // eprintln!("Single out of bounds!");
     SingleOutOfBounds(u32, u32, u32),
+    /// Out of Order
+    // eprintln!("Single out of order!");
+    SingleOutOfOrder(u32, usize),
     /// Duplicated value
     // eprintln!("Single duplicate!");
     SingleDuplicatedValue(u32),
     /// Out of Bounds
     // eprintln!("Range out of bounds!");
     RangeOutOfBounds(Range, u32, u32),
+    /// Out of Order
+    // eprintln!("Range out of order!");
+    RangeOutOfOrder(Range, usize),
     /// Range contains past duplicates!
     // eprintln!("Range contains past dupes!\n\tvals: {:?}\n\tvalues: {:?}", vals, values);
     RangeHasDuplicates(Range, Vec<u32>),
@@ -73,6 +79,14 @@ impl Error {
         Error::SingleOutOfBounds(val.into(), min.into(), max.into())
     }
 
+    pub fn single_ooo<T1, T2>(found: T1, expected: T2) -> Self
+    where
+        T1: Into<u32>,
+        T2: Into<usize>,
+    {
+        Error::SingleOutOfOrder(found.into(), expected.into())
+    }
+
     pub fn single_dup<T: Into<u32>>(v: T) -> Self {
         Error::SingleDuplicatedValue(v.into())
     }
@@ -84,6 +98,14 @@ impl Error {
         T2: Into<u32>,
     {
         Error::RangeOutOfBounds(r.into(), min.into(), max.into())
+    }
+
+    pub fn range_ooo<R, T1>(r: R, expected: T1) -> Self
+    where
+        R: Into<Range>,
+        T1: Into<usize>,
+    {
+        Error::RangeOutOfOrder(r.into(), expected.into())
     }
 
     pub fn range_dup<R, V>(r: R, dup: V) -> Self
@@ -98,30 +120,78 @@ impl Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::InvalidRange(s) => write!(f, "{}: {} is not a valid range!", stringify!(InvalidRange), s),
-            Error::InvalidRangeSection(s, i) => {
-                write!(f, "{}: {} is not a valid section of a range {}!", stringify!(InvalidRangeSection), i, s)
+            Error::InvalidRange(s) => write!(
+                f,
+                "{}: {} is not a valid range!",
+                stringify!(InvalidRange),
+                s
+            ),
+            Error::InvalidRangeSection(s, i) => write!(
+                f,
+                "{}: {} is not a valid section of a range {}!",
+                stringify!(InvalidRangeSection),
+                i,
+                s
+            ),
+            Error::InvalidDice(s) => {
+                write!(f, "{}: {} is not a valid dice!", stringify!(InvalidDice), s)
             }
-            Error::InvalidDice(s) => write!(f, "{}: {} is not a valid dice!", stringify!(InvalidDice), s),
-            Error::InvalidDiceSection(s, i) => {
-                write!(f, "{}: {} is not a valid section of a dice {}!", stringify!(InvalidDiceSection), i, s)
-            }
+            Error::InvalidDiceSection(s, i) => write!(
+                f,
+                "{}: {} is not a valid section of a dice {}!",
+                stringify!(InvalidDiceSection),
+                i,
+                s
+            ),
             Error::UnusedValuesInRange(vals) => write!(
                 f,
                 "{}: the following values are not used in the range: {:?}!",
                 stringify!(UnusedValuesInRange),
                 vals
             ),
-            Error::SingleOutOfBounds(v, min, max) => {
-                write!(f, "{}: {} is out of bounds. min:{}, max:{}!", stringify!(SingleOutOfBounds), v, min, max)
-            }
-            Error::SingleDuplicatedValue(v) => write!(f, "{}: {} is already represented!", stringify!(SingleDuplicatedValue), v),
-            Error::RangeOutOfBounds(r, min, max) => {
-                write!(f, "{}: {} is out of bounds. min:{}, max:{}!", stringify!(RangeOutOfBounds), r, min, max)
-            }
-            Error::RangeHasDuplicates(r, dups) => {
-                write!(f, "{}: {} has the following duplicates: {:?}!", stringify!(RangeHasDuplicates), r, dups)
-            }
+            Error::SingleOutOfBounds(v, min, max) => write!(
+                f,
+                "{}: {} is out of bounds. min:{}, max:{}!",
+                stringify!(SingleOutOfBounds),
+                v,
+                min,
+                max
+            ),
+            Error::SingleOutOfOrder(found, expected) => write!(
+                f,
+                "{}: {} was found but {} was the expected value!",
+                stringify!(SingleOutOfOrder),
+                found,
+                expected
+            ),
+            Error::SingleDuplicatedValue(v) => write!(
+                f,
+                "{}: {} is already represented!",
+                stringify!(SingleDuplicatedValue),
+                v
+            ),
+            Error::RangeOutOfBounds(r, min, max) => write!(
+                f,
+                "{}: {} is out of bounds. min:{}, max:{}!",
+                stringify!(RangeOutOfBounds),
+                r,
+                min,
+                max
+            ),
+            Error::RangeOutOfOrder(r, expected) => write!(
+                f,
+                "{}: {} was found but the expected start was: {}!",
+                stringify!(RangeOutOfOrder),
+                r,
+                expected
+            ),
+            Error::RangeHasDuplicates(r, dups) => write!(
+                f,
+                "{}: {} has the following duplicates: {:?}!",
+                stringify!(RangeHasDuplicates),
+                r,
+                dups
+            ),
         }
     }
 }

@@ -37,11 +37,13 @@ impl Validation {
         self.min <= *val && *val <= self.max
     }
 
+    pub fn expected(&self) -> usize {
+        self.vals.len() - 1
+    }
+
     /// Is this value the one we are expecting?
     pub fn is_next(&self, val: &u32) -> bool {
-        let index = self.vals.len() - 1;
-        eprintln!("We are expecting {}, and got {}", self.vals[index], val);
-        self.vals[index] == *val
+        self.vals[self.expected()] == *val
     }
 
     /// Is this range within our range
