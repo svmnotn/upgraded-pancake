@@ -95,7 +95,22 @@
 //!
 //! ## Errors
 //!
-//! TODO Add in all the errors
+//! The Error type is as follows:
+//! ```json
+//! {
+//!     "error": "<Error Type>",
+//!     "data": The Error's Data
+//! }
+//! ```
+//! 
+//! ### Serde Errors
+//! 
+//! Serde Errors are (de)serialization errors caused by either malformed JSON or a malformed `Table`.
+//! 
+//! A malformed `Table` would be a table that does not contain all possible rolls, or has duplicates,
+//! or out of bounds rolls."A string containing the error"
+//! 
+//! As such their data section is a string representing what went wrong. Their Error Type is `Serde`.
 
 #[macro_use]
 extern crate serde_derive;
