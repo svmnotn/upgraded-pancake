@@ -1,4 +1,4 @@
-#![feature(plugin, decl_macro)]
+#![feature(plugin, decl_macro, proc_macro_non_items)]
 #![plugin(rocket_codegen)]
 
 //! # Upgraded Pancake Server
@@ -49,7 +49,7 @@ fn main() {
     rocket::ignite()
         .mount(
             "/",
-            routes![
+            rocket::routes![
                 files::index,
                 tables::put,
                 tables::get,
