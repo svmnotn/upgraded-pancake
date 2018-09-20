@@ -1,5 +1,6 @@
 use crate::error::Error;
 use crate::{Dice, Result};
+use serde_derive::{Deserialize, Serialize};
 use std::ops::Deref;
 
 mod row;

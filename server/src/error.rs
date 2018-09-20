@@ -1,6 +1,7 @@
 // TODO Cleanup
 
 use base64::DecodeError as Base64Error;
+use serde_derive::Serialize;
 use serde_json::error::Error as SerdeError;
 use std::fmt;
 use upgraded_pancake::{Table, TableResult};

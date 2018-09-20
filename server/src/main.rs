@@ -1,4 +1,4 @@
-#![feature(plugin, decl_macro, proc_macro_non_items)]
+#![feature(plugin, decl_macro, proc_macro_non_items, custom_attribute)]
 #![plugin(rocket_codegen)]
 // TODO update docs
 //! # Upgraded Pancake Server
@@ -76,7 +76,7 @@
 //! The server will return a list containing `Table`s or Errors, depending whether the `Table` was
 //! properly retrieved from the storage. Take a look at the Errors section [here](#errors), for more
 //! information on what errors could be in the returned list.
-//!  
+//!
 //! ### Getting all the stored Tables identifiers
 //!
 //! To retrieve the identifers of all the stored `Table`s, one must make a **HTTP GET** method call to
@@ -102,18 +102,15 @@
 //!     "data": The Error's Data
 //! }
 //! ```
-//! 
+//!
 //! ### Serde Errors
-//! 
+//!
 //! Serde Errors are (de)serialization errors caused by either malformed JSON or a malformed `Table`.
-//! 
+//!
 //! A malformed `Table` would be a table that does not contain all possible rolls, or has duplicates,
 //! or out of bounds rolls."A string containing the error"
-//! 
+//!
 //! As such their data section is a string representing what went wrong. Their Error Type is `Serde`.
-
-#[macro_use]
-extern crate serde_derive;
 
 mod error;
 mod files;
@@ -121,10 +118,12 @@ mod tables;
 #[cfg(test)]
 mod test;
 
-fn rocket() -> rocket::Rocket {
+use rocket::{routes, Rocket};
+
+fn rocket() -> Rocket {
     rocket::ignite().mount(
         "/",
-        rocket::routes![
+        routes![
             files::index,
             tables::put,
             tables::get,

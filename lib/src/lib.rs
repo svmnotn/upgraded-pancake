@@ -1,7 +1,4 @@
-#![feature(range_contains)]
-
-#[macro_use]
-extern crate serde_derive;
+#![feature(range_contains, custom_attribute)]
 
 mod column;
 pub use self::column::Column;

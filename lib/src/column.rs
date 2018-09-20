@@ -1,3 +1,5 @@
+use serde_derive::{Deserialize, Serialize};
+
 /// The value of a column on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(untagged)]

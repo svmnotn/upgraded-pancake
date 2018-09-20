@@ -1,5 +1,6 @@
 use crate::error::Error;
 use crate::{Range, Result, RowValidation};
+use serde_derive::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
 /// Either a single value or a `Range` of values

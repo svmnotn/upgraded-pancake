@@ -1,4 +1,5 @@
 use crate::{Column, Roll};
+use serde_derive::{Deserialize, Serialize};
 
 /// A row on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]

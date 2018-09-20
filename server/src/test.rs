@@ -128,8 +128,10 @@ fn can_get_all_data() {
 
     assert_eq!(
         vec![
-            serde_json::from_str::<Table>(SIMPLE_TEST_DATA).expect("Failed to build SIMPLE_TEST_DATA"),
-            serde_json::from_str::<Table>(SIMPLE_TEST_DATA).expect("Failed to build SIMPLE_TEST_DATA")
+            serde_json::from_str::<Table>(SIMPLE_TEST_DATA)
+                .expect("Failed to build SIMPLE_TEST_DATA"),
+            serde_json::from_str::<Table>(SIMPLE_TEST_DATA)
+                .expect("Failed to build SIMPLE_TEST_DATA")
         ],
         serde_json::from_str::<Vec<Table>>(&res.body_string().expect("Failed to get a Body"))
             .expect("Failed to build body")
@@ -182,14 +184,18 @@ fn unsorted_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/unsorted.json")).dispatch();
+        .body(include_str!("../../test_data/errors/single/unsorted.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("SingleOutOfOrder: 3 was found but 4 was the expected value! at line 30 column 1", value["data"]);
+    assert_eq!(
+        "SingleOutOfOrder: 3 was found but 4 was the expected value! at line 30 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -199,14 +205,18 @@ fn duplicate_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/duplicate.json")).dispatch();
+        .body(include_str!("../../test_data/errors/single/duplicate.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("SingleDuplicatedValue: 2 is already represented! at line 30 column 1", value["data"]);
+    assert_eq!(
+        "SingleDuplicatedValue: 2 is already represented! at line 30 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -216,14 +226,18 @@ fn oob_less_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/oob_less.json")).dispatch();
+        .body(include_str!("../../test_data/errors/single/oob_less.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("SingleOutOfBounds: 0 is out of bounds. min:1, max:6! at line 30 column 1", value["data"]);
+    assert_eq!(
+        "SingleOutOfBounds: 0 is out of bounds. min:1, max:6! at line 30 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -233,14 +247,18 @@ fn oob_more_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/oob_more.json")).dispatch();
+        .body(include_str!("../../test_data/errors/single/oob_more.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("SingleOutOfBounds: 7 is out of bounds. min:1, max:6! at line 30 column 1", value["data"]);
+    assert_eq!(
+        "SingleOutOfBounds: 7 is out of bounds. min:1, max:6! at line 30 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -250,14 +268,18 @@ fn unsorted_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/unsorted.json")).dispatch();
+        .body(include_str!("../../test_data/errors/range/unsorted.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("RangeOutOfOrder: 9-10 was found but the expected start was: 5! at line 26 column 1", value["data"]);
+    assert_eq!(
+        "RangeOutOfOrder: 9-10 was found but the expected start was: 5! at line 26 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -267,14 +289,18 @@ fn duplicate_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/duplicate.json")).dispatch();
+        .body(include_str!("../../test_data/errors/range/duplicate.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("RangeOutOfOrder: 7-8 was found but the expected start was: 3! at line 30 column 1", value["data"]);
+    assert_eq!(
+        "RangeOutOfOrder: 7-8 was found but the expected start was: 3! at line 30 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -284,14 +310,18 @@ fn oob_less_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/oob_less.json")).dispatch();
+        .body(include_str!("../../test_data/errors/range/oob_less.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("RangeOutOfBounds: 1-4 is out of bounds. min:3, max:12! at line 26 column 1", value["data"]);
+    assert_eq!(
+        "RangeOutOfBounds: 1-4 is out of bounds. min:3, max:12! at line 26 column 1",
+        value["data"]
+    );
 }
 
 #[test]
@@ -301,14 +331,18 @@ fn oob_more_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/oob_more.json")).dispatch();
+        .body(include_str!("../../test_data/errors/range/oob_more.json"))
+        .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
     ).expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
-    assert_eq!("RangeOutOfBounds: 11-18 is out of bounds. min:3, max:12! at line 26 column 1", value["data"]);
+    assert_eq!(
+        "RangeOutOfBounds: 11-18 is out of bounds. min:3, max:12! at line 26 column 1",
+        value["data"]
+    );
 }
 
 #[test]

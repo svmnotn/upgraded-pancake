@@ -6,6 +6,7 @@ mod tests;
 
 use crate::{Column, Dice, Result, Rows};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+use serde_derive::{Deserialize, Serialize};
 use std::fmt;
 
 /// A `Table` that can be rolled on

@@ -3,6 +3,7 @@ use crate::{RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
 use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+use serde_derive::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 

@@ -1,3 +1,5 @@
+use serde_derive::{Deserialize, Serialize};
+
 /// The result of rolling on a `Table`.
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct TableResult {
