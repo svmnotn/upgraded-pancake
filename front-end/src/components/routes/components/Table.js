@@ -54,6 +54,13 @@ class Table extends React.Component {
         }, this);
     }
 
+    deleteTable() {
+        let tempStr = "/table/".concat(this.props.title);
+        console.log(tempStr);
+        axios.delete (tempStr);
+        //axios.delete(URL, {params: {foo: 'bar'}})
+    }
+
     //Allows the user to get another result if they do not like the one they received
     reroll() {
         this.getResult();
@@ -136,6 +143,10 @@ class Table extends React.Component {
 
                                 <td style={{border:"none"}}>
                                     <button onClick={()=> {this.saveTable()}}>Save</button>
+                                </td>
+
+                                <td style={{border:"none"}}>
+                                    <button onClick={()=> {this.deleteTable()}}>Delete</button>
                                 </td>
 
                                 <td style={{border: "none"}}>
