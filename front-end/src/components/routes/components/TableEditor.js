@@ -189,18 +189,16 @@ class TableEditor extends React.Component {
     //Saves the user's typed value to the correct text input. User is limited to numerical characters and the letter d.
     saveRoll(key, event) {
         const results = this.state.results;
-
         if(event.target.value.trim() === "") {
             results[key].roll = "";
         } else {
-            const alphaRegEx = /[A-Z][a-z]/;
-            const tempArr = event.target.value.split("-");
-
+            const alphaRegEx = /[A-z]/;
             if(alphaRegEx.test(event.target.value)) {
                 return;
-            } else if(tempArr.length > 1 || event.target.value.includes("-")) {
+            } else if(event.target.value.includes("-")) {
                 results[key].roll = event.target.value;
-            } else {
+            }
+            else {
                 results[key].roll = parseInt(event.target.value, 10);
             }
         }
