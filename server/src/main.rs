@@ -1,6 +1,6 @@
 #![feature(plugin, decl_macro, proc_macro_non_items, custom_attribute)]
 #![plugin(rocket_codegen)]
-// TODO update docs
+
 //! # Upgraded Pancake Server
 //!
 //! This is the default backend for the upgraded-pancakes library. The library was made
@@ -108,7 +108,7 @@
 //! Serde Errors are (de)serialization errors caused by either malformed JSON or a malformed `Table`.
 //!
 //! A malformed `Table` would be a table that does not contain all possible rolls, or has duplicates,
-//! or out of bounds rolls."A string containing the error"
+//! or out of bounds rolls.
 //!
 //! As such their data section is a string representing what went wrong. Their Error Type is `Serde`.
 

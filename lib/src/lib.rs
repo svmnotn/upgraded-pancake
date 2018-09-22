@@ -3,9 +3,6 @@
 mod column;
 pub use self::column::Column;
 
-mod constants;
-use self::constants::*;
-
 mod dice;
 pub use self::dice::Dice;
 

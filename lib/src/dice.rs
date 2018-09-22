@@ -1,70 +1,59 @@
 use crate::error::Error;
-use crate::{RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
-use rand::distributions::{Distribution, Standard};
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
 use std::fmt;
+use std::num::NonZeroU16;
 use std::str::FromStr;
 
 /// A dice for determining what to roll on a `Table`
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
-    amount: u16,
+    amount: NonZeroU16,
     #[doc(hidden)]
-    size: u16,
+    size: NonZeroU16,
     // TODO add optional modifier +X where
     // X: i8/16/32?
 }
 
 impl Dice {
     /// Create a new `Dice`
-    // TODO Add dice sizing errors
-    pub fn new(amount: u16, size: u16) -> Self {
+    pub fn new(amount: NonZeroU16, size: NonZeroU16) -> Self {
         Dice { amount, size }
     }
 
     /// Roll the `Dice`
     pub fn roll(&self) -> u32 {
-        (0..self.amount).fold(0, |acc, _| {
-            thread_rng().gen_range(1, u32::from(self.size + 1)) + acc
+        (0..self.amount.get()).fold(0, |acc, _| {
+            thread_rng().gen_range(1, u32::from(self.size.get() + 1)) + acc
         })
     }
 
     /// The minimum value that this `Dice` can give
     pub fn min(&self) -> u32 {
-        u32::from(self.amount)
+        u32::from(self.amount.get())
     }
 
     /// The maximum value that this `Dice` can give
     pub fn max(&self) -> u32 {
-        u32::from(self.amount) * u32::from(self.size)
+        u32::from(self.amount.get()) * u32::from(self.size.get())
     }
 
     /// The amount of `Dice` rolled
     pub fn amount(&self) -> u16 {
-        self.amount
+        self.amount.get()
     }
 
     /// The size of the `Dice` rolled
     pub fn size(&self) -> u16 {
-        self.size
+        self.size.get()
     }
 }
 
 impl fmt::Display for Dice {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}d{}", self.amount, self.size)
-    }
-}
-
-impl Distribution<Dice> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Dice {
-        Dice {
-            amount: rng.gen_range(1, RNG_MAX_DICE_AMOUNT),
-            size: *rng.choose(&RNG_DICE_SIZES).expect("sizes where empty?"),
-        }
     }
 }
 
@@ -75,12 +64,17 @@ impl FromStr for Dice {
         if s.contains('d') {
             let v: Vec<&str> = s.split('d').collect();
             if v.len() == 2 {
-                let amount = v[0]
-                    .parse::<u16>()
+                let amount: u16 = v[0]
+                    .parse()
                     .map_err(|_| Error::invalid_dice_section(v[0], stringify!(amount)))?;
-                let size = v[1]
-                    .parse::<u16>()
+                let amount = NonZeroU16::new(amount)
+                    .ok_or_else(|| Error::invalid_dice_section(v[0], stringify!(amount)))?;
+
+                let size: u16 = v[1]
+                    .parse()
                     .map_err(|_| Error::invalid_dice_section(v[1], stringify!(size)))?;
+                let size = NonZeroU16::new(size)
+                    .ok_or_else(|| Error::invalid_dice_section(v[1], stringify!(size)))?;
 
                 Ok(Dice::new(amount, size))
             } else {
@@ -117,10 +111,10 @@ impl<'de> Deserialize<'de> for Dice {
             where
                 V: SeqAccess<'de>,
             {
-                let amount = seq
+                let amount: NonZeroU16 = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-                let size = seq
+                let size: NonZeroU16 = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(1, &self))?;
                 Ok(Dice::new(amount, size))
@@ -148,8 +142,10 @@ impl<'de> Deserialize<'de> for Dice {
                         }
                     }
                 }
-                let amount = amount.ok_or_else(|| de::Error::missing_field(stringify!(amount)))?;
-                let size = size.ok_or_else(|| de::Error::missing_field(stringify!(size)))?;
+                let amount: NonZeroU16 =
+                    amount.ok_or_else(|| de::Error::missing_field(stringify!(amount)))?;
+                let size: NonZeroU16 =
+                    size.ok_or_else(|| de::Error::missing_field(stringify!(size)))?;
                 Ok(Dice::new(amount, size))
             }
 
