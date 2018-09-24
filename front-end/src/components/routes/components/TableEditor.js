@@ -263,7 +263,7 @@ class TableEditor extends React.Component {
             this.state.results.map(function(result, i) {
                 return (
                     <tr key={i}>
-                        <td style={{width:"20%"}}>
+                        <td className="width20">
                             <input type="text"
                                    name="roll"
                                    value={result.roll}
@@ -273,7 +273,7 @@ class TableEditor extends React.Component {
 
                         {this.createCols(i, result.value)}
 
-                        <td style={{borderRight:"none", borderTop:"1px solid white"}}>
+                        <td className="borderFix">
                             <button type="button"
                                     className="tinyBtn squareBtn"
                                     onClick={(e) => {this.removeRow(i, e)}}>
@@ -397,7 +397,7 @@ class TableEditor extends React.Component {
                         <table>
                             <tbody>
                                 <tr>
-                                    <th style={{width:"20%"}}>
+                                    <th className="width20">
                                         <input type="text"
                                                name="dice"
                                                value={this.state.dice}

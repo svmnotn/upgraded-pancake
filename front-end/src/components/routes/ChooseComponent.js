@@ -11,16 +11,13 @@ class Choose extends React.Component {
     }
 
     createRows(arr){
-        console.log("CreateRows Received: " + arr);
         if (typeof arr !== "object") {
             return (
                 <td>
                     <LinkBtn btnName={arr} url= {"table/".concat(arr)} />
                 </td>
             )
-        }
-
-        else {
+        } else {
             return (
                 arr.map(function(tableName, i) {
                     return (
@@ -40,9 +37,7 @@ class Choose extends React.Component {
         for (let i = 0; i < tempTables.length; i++) {
             if (tempTables.length === 1) {
                 savedTables.push(tempTables[0]);
-            }
-
-            else {
+            } else {
                 tempRow.push(tempTables[i]);
                 if (i + 1 > tempTables.length - 1 || (i % 2 === 0 && i !== 0)) {
                     savedTables.push(tempRow);
@@ -52,13 +47,14 @@ class Choose extends React.Component {
         }
 
         return (
-        savedTables.map(function (row, i) {
-            return (
-                <tr key={i}>
-                    {this.createRows(row)}
-                </tr>
-            )
-        }, this));
+            savedTables.map(function (row, i) {
+                return (
+                    <tr key={i}>
+                        {this.createRows(row)}
+                    </tr>
+                )
+            }, this)
+        );
     }
 
     render() {
@@ -71,8 +67,8 @@ class Choose extends React.Component {
                     <tbody>
                         {this.createTable()}
                         <tr>
-                            <td style={{textAlign: "right"}}>
-                                <button style={{height: "8vh", width: "8vh", fontSize:"1em"}}>
+                            <td className="rightAlign">
+                                <button className="tinyButton">
                                     <i className="fa fa-file-upload"></i>
                                 </button>
                             </td>

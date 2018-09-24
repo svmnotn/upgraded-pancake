@@ -27,11 +27,11 @@ class App extends React.Component {
 
   render() {
     return (
-      <div style = {{marginTop: '10%'}}>
+      <div className="marginTop">
         <h1>Upgraded Pancakes</h1>
         <p>Roll your own pancake-styled table today! Click on the roll button to roll one of our default tables. If you want to make your own table, click on the generate table button.</p>
         <div className = "btnRow">
-          <div style = {{marginRight: '5vw'}}>
+          <div className="marginRight">
             <Link to = {{ pathname: "/choose",
                           state: { savedTables: this.state.savedTables}
                         }}>

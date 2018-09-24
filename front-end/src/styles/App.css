@@ -5,6 +5,26 @@
   font-size: 5vh;
 }
 
+.marginTop {
+  margin-top: 10%;
+}
+
+.marginRight {
+  margin-right: 5vw;
+}
+
+.rightAlign {
+  text-align: right;
+}
+
+.width20 {
+  width: 20%;
+}
+
+.removeBrdr {
+  border: none;
+}
+
 /*CSS for App.js*/
 .btnRow {
   display: flex;
@@ -18,6 +38,12 @@
   padding: 0.9em;
   border-bottom: none;
   border-right: none;
+}
+
+.tinyBtn {
+  height: 8vh;
+  width: 8vh;
+  font-size: 1em;
 }
 
 /*CSS for Table.js*/
@@ -49,6 +75,11 @@
   width: 1.5em;
   font-size: 0.8em;
   justify-items:"center";
+}
+
+.borderFix {
+  border-right: none;
+  border-top: 1px solid white;
 }
 
 .h1Input {

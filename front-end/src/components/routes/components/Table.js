@@ -9,10 +9,14 @@ class Table extends React.Component {
         super(props);
         this.state = {
             tableResult: this.getResult(),
+            confirmTable: false,
+            savedTable: false,
+            confirmText: "Sure?"
         }
 
         this.getResult = this.getResult.bind(this);
         this.createCols = this.createCols.bind(this);
+        this.changeBool = this.changeBool.bind(this);
     }
 
     //Gets a random result on the table from the server and displays it
@@ -39,7 +43,6 @@ class Table extends React.Component {
         }, this)
     }
 
-//axios.put(url[, data[, config]])
     saveTable() {
         let tempStr = "/table/".concat(this.props.title);
         axios.put(tempStr, {
@@ -52,13 +55,54 @@ class Table extends React.Component {
         }).catch (function (error) {
             console.log(error);
         }, this);
+
+        this.setState({
+            savedTable: true,
+        })
     }
 
     deleteTable() {
         let tempStr = "/table/".concat(this.props.title);
-        console.log(tempStr);
+        this.setState ({
+            confirmText: "Deleted!"
+        })
         axios.delete (tempStr);
-        //axios.delete(URL, {params: {foo: 'bar'}})
+    }
+
+    confirm() {
+        if (this.state.confirmTable) {
+            return (
+                <button onClick={()=> {this.deleteTable()}}>{this.state.confirmText}</button>
+            )
+        } else {
+            return (
+                <button onClick={()=> {this.changeBool()}}>Delete</button>
+            )
+        }
+    }
+
+    confirmSave(){
+        if (this.state.savedTable) {
+            return (
+                <button>Saved!</button>
+            )
+        } else {
+            return (
+                <button onClick={()=> {this.saveTable()}}>Save</button>
+            )
+        }
+    }
+
+    changeBool() {
+        if (this.state.confirmTable) {
+            this.setState({
+                confirmTable: false
+            })
+        } else {
+            this.setState({
+                confirmTable: true
+            })
+        }
     }
 
     //Allows the user to get another result if they do not like the one they received
@@ -136,20 +180,20 @@ class Table extends React.Component {
                     <table>
                         <tbody>
                             <tr>
-                                <td style={{border: "none"}}>
-                                    <button style= {{marginRight: '5%',}}
+                                <td className="removeBrdr">
+                                    <button className="marginRight"
                                             onClick={()=>{this.reroll()}}>Reroll</button>
                                 </td>
 
-                                <td style={{border:"none"}}>
-                                    <button onClick={()=> {this.saveTable()}}>Save</button>
+                                <td className="removeBrdr">
+                                    {this.confirmSave()}
                                 </td>
 
-                                <td style={{border:"none"}}>
-                                    <button onClick={()=> {this.deleteTable()}}>Delete</button>
+                                <td className="removeBrdr">
+                                    {this.confirm()}
                                 </td>
 
-                                <td style={{border: "none"}}>
+                                <td className="removeBrdr">
                                     <Link to = {{ pathname: "/edit",
                                                 state: { title: this.props.title,
                                                         heading: this.props.heading,
@@ -161,7 +205,7 @@ class Table extends React.Component {
                                     </Link>
                                 </td>
 
-                                <td style={{border: "none"}}>
+                                <td className="removeBrdr">
                                     <Link to="/">
                                         <button>Return</button>
                                     </Link>
