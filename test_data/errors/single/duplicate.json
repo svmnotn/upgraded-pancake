@@ -1,0 +1,30 @@
+{
+    "dice": "1d6",
+    "heading": "Simple Value Single, Test Data",
+    "results": [
+        {
+            "roll": 1,
+            "value": "DATA"
+        },
+        {
+            "roll": 2,
+            "value": "DATA1"
+        },
+        {
+            "roll": 2,
+            "value": "DATA1"
+        },
+        {
+            "roll": 4,
+            "value": "DATA3"
+        },
+        {
+            "roll": 5,
+            "value": "DATA4"
+        },
+        {
+            "roll": 6,
+            "value": "DATA5"
+        }
+    ]
+}

@@ -1,17 +1,20 @@
-use crate::{Column, Dice, Range, Roll};
+use crate::{Column, Roll};
+use serde_derive::{Deserialize, Serialize};
 
-/// A row on a Table
+/// A row on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Row {
     #[doc(hidden)]
-    roll: Roll,
+    pub(super) roll: Roll,
     #[doc(hidden)]
     value: Column,
 }
 
 impl Row {
     // Create a new row
-    pub fn new(roll: Roll, value: Column) -> Self {
+    pub fn new<C: Into<Column>>(roll: Roll, value: C) -> Self {
+        let value: Column = value.into();
+
         Row { roll, value }
     }
 
@@ -24,18 +27,6 @@ impl Row {
     /// The text value of this row
     pub fn value(&self) -> Column {
         self.value.clone()
-    }
-
-    /// Is this row valid?
-    // TODO: Change to just crate once issue #45388 is cleared
-    pub(crate) fn valid(
-        &self,
-        dice: Dice,
-        values: &mut Vec<u32>,
-        range: &mut Range,
-        val: &mut u32,
-    ) -> bool {
-        self.roll.valid(dice, values, range, val)
     }
 }
 

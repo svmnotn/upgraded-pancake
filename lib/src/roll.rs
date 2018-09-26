@@ -1,7 +1,9 @@
-use crate::{Dice, Range};
+use crate::error::Error;
+use crate::{Range, Result, RowValidation};
+use serde_derive::{Deserialize, Serialize};
 use std::cmp::Ordering;
 
-/// Either a single value or a range of values
+/// Either a single value or a `Range` of values
 /// that can be rolled on a `Table`
 #[derive(Debug, Serialize, Deserialize, Clone, Eq)]
 #[serde(untagged)]
@@ -9,7 +11,7 @@ pub enum Roll {
     /// This roll is determined by a single value
     /// of the dice
     Single(u32),
-    /// This roll is determined by a range of values
+    /// This roll is determined by a `Range` of values
     /// of the dice
     Range(Range),
 }
@@ -96,7 +98,7 @@ impl From<Range> for Roll {
 }
 
 impl Roll {
-    /// The value that his `Roll` covers
+    /// The value that this `Roll` covers
     pub fn single(&self) -> Option<u32> {
         match self {
             Roll::Single(v) => Some(*v),
@@ -112,8 +114,7 @@ impl Roll {
         }
     }
 
-    /// The range of values that this
-    /// `Roll` covers
+    /// The `Range` of values that this `Roll` covers
     pub fn range(&self) -> Option<Range> {
         match self {
             Roll::Range(v) => Some(v.clone()),
@@ -129,94 +130,52 @@ impl Roll {
         }
     }
 
-    /// Is this a valid roll?
+    /// Is this a valid `Roll`?
     // TODO: Change to just crate once issue #45388 is cleared
-    pub(crate) fn valid(
-        &self,
-        dice: Dice,
-        values: &mut Vec<u32>,
-        range: &mut Range,
-        val: &mut u32,
-    ) -> bool {
-        let lowest = dice.min();
-        let highest = dice.max();
-
+    pub(crate) fn validate(&self, valid: &mut RowValidation) -> Result<()> {
         match self {
             Roll::Single(v) => {
-                if *v < lowest || *v > highest {
-                    // Out of Bounds
-                    eprintln!("Single out of bounds!");
-                    return false;
+                // Check if the value is valid
+                if valid.is_valid_val(v) == false {
+                    Err(Error::single_oob(*v, valid.min(), valid.max()))
+                } else if valid.contains(v) == false {
+                    // Check if it has appeared before
+                    Err(Error::single_dup(*v))
+                } else if valid.is_next(v) == false {
+                    Err(Error::single_ooo(*v, valid.expected()))
+                } else {
+                    // This is fine, since the values
+                    // are sorted in reverse, but
+                    // we step through in order
+                    valid.remove_last_val();
+
+                    Ok(())
                 }
-
-                if *v < *val {
-                    // Out of Order
-                    eprintln!("Single out of order!");
-                    return false;
-                }
-
-                if range.contains(v) {
-                    // Inside a defined range
-                    eprintln!("Single inside range!");
-                    return false;
-                }
-
-                if values.contains(&v) == false {
-                    // Duplicated value
-                    eprintln!("Single duplicate!");
-                    return false;
-                }
-
-                values.retain(|x| *x != *v);
-
-                *val = *v;
             }
             Roll::Range(r) => {
-                if *r.start() < lowest || *r.end() > highest {
-                    // Out of Bounds
-                    eprintln!("Range out of bounds!");
-                    return false;
+                // Check that the range is within our bounds
+                if valid.is_valid_range(r) == false {
+                    Err(Error::range_oob(r.clone(), valid.min(), valid.max()))
+                } else if valid.is_next(r.start()) == false {
+                    Err(Error::range_ooo(r.clone(), valid.expected()))
+                } else {
+                    // Get all the vaules that are not in our current set of values
+                    // A.K.A. duplicates
+                    let duplicates: Vec<u32> = (*r.start()..=*r.end())
+                        .filter(|v| valid.contains(v) == false)
+                        .collect();
+
+                    // Check if we have duplicates
+                    if duplicates.is_empty() == false {
+                        Err(Error::range_dup(r.clone(), duplicates))
+                    } else {
+                        // Remove all values in our range
+                        valid.remove_range(r);
+
+                        Ok(())
+                    }
                 }
-                if *r.start() < *val {
-                    // Start of range is under the last value
-                    eprintln!("Range less than last val!");
-                    return false;
-                }
-
-                if *r.start() < *range.start() {
-                    // Out of Order
-                    eprintln!("Range out of order!");
-                    return false;
-                }
-
-                if range.contains(r.start()) || range.contains(r.end()) {
-                    // Inside last range!
-                    eprintln!("Range inside last range!");
-                    return false;
-                }
-
-                let vals: Vec<u32> = (*r.start()..=*r.end())
-                    .filter(|v| values.contains(&v) == false)
-                    .collect();
-
-                if vals.is_empty() == false {
-                    // Range contains past duplicates!
-                    eprintln!(
-                        "Range contains past dupes!\n\tvals: {:?}\n\tvalues: {:?}",
-                        vals, values
-                    );
-                    return false;
-                }
-
-                values.retain(|x| r.contains(x) == false);
-
-                // TODO check to see if there are more checks that need be done
-
-                *range = r.clone();
-                *val = r.end() + 1;
             }
         }
-
-        true
     }
 }

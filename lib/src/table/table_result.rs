@@ -1,4 +1,6 @@
-/// The result of rolling on a table.
+use serde_derive::{Deserialize, Serialize};
+
+/// The result of rolling on a `Table`.
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct TableResult {
     roll: u32,
@@ -6,7 +8,7 @@ pub struct TableResult {
 }
 
 impl TableResult {
-    /// Create a new Table Result, this should only be used by the
+    /// Create a new `TableResult`, this should only be used by the
     /// `Table::roll` method
     // TODO: Change to just crate once issue #45388 is cleared
     pub(crate) fn new(roll: u32, row: usize) -> Self {

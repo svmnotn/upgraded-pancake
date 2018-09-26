@@ -1,13 +1,26 @@
+use crate::error::*;
 use rand::{thread_rng, Rng};
 use rocket::http::{Cookie, Cookies};
 use rocket_contrib::Json;
-use upgraded_pancake::{Table, TableResult};
+use upgraded_pancake::Table;
 
-fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
-    cookies
+fn from_cookies(name: &str, cookies: &Cookies) -> Response {
+    match cookies
         .get(name)
-        .and_then(|c| base64::decode(c.value()).ok())
-        .and_then(|b| serde_json::from_slice(&b).ok())
+        .ok_or_else(|| Error::TableNotFound(String::from(name)))
+        .and_then(|c| base64::decode(c.value()).map_err(Into::into))
+        .and_then(|b| serde_json::from_slice::<Table>(&b).map_err(Into::into))
+    {
+        Ok(t) => t.into(),
+        Err(e) => e.into(),
+    }
+}
+
+fn from_str(table: &str) -> Response {
+    match serde_json::from_str::<Table>(table) {
+        Ok(t) => t.into(),
+        Err(e) => Response::Error(e.into()),
+    }
 }
 
 #[put(
@@ -15,21 +28,20 @@ fn get_table(name: &str, cookies: &Cookies) -> Option<Table> {
     format = "application/json",
     data = "<table>"
 )]
-fn put(name: String, table: Json<Table>, mut cookies: Cookies) -> Json<bool> {
-    Json(if table.is_valid() {
-        cookies.add(Cookie::new(
-            name,
-            base64::encode(&serde_json::to_string(&table.0).expect("Unable to JSONify JSON?")),
-        ));
-        true
-    } else {
-        false
+fn put(name: String, table: String, mut cookies: Cookies) -> Json<Response> {
+    Json(match from_str(&table) {
+        Response::Table(_) => {
+            cookies.add(Cookie::new(name, base64::encode(&table)));
+            Response::Status(0)
+        }
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
     })
 }
 
 #[get("/table/<name>")]
-fn get(name: String, cookies: Cookies) -> Option<Json<Table>> {
-    get_table(&name, &cookies).map(Json)
+fn get(name: String, cookies: Cookies) -> Json<Response> {
+    Json(from_cookies(&name, &cookies))
 }
 
 #[delete("/table/<name>")]
@@ -37,39 +49,28 @@ fn delete(name: String, mut cookies: Cookies) {
     cookies.remove(Cookie::named(name));
 }
 
-#[get("/table/all/name")]
-fn table_name(cookies: Cookies) -> Json<Vec<String>> {
+#[get("/table/all/id")]
+fn table_ids(cookies: Cookies) -> Json<Vec<String>> {
     Json(cookies.iter().map(|c| c.name().to_owned()).collect())
 }
 
-#[get("/table/all/data")]
-fn table_data(cookies: Cookies) -> Json<Vec<Table>> {
+#[get("/table/all")]
+fn all(cookies: Cookies) -> Json<Vec<Response>> {
     Json(
         cookies
             .iter()
-            .map(|c| get_table(c.name(), &cookies))
-            .filter(Option::is_some)
-            // The following is only ok because of the filter above
-            .map(Option::unwrap)
+            .map(|c| from_cookies(c.name(), &cookies))
             .collect(),
     )
 }
 
 #[get("/table/<name>/roll")]
-fn roll_saved(name: String, cookies: Cookies) -> Option<Json<TableResult>> {
-    match get_table(&name, &cookies) {
-        Some(ref t) if t.is_valid() => t.roll().map(Json),
-        _ => None,
-    }
-}
-
-#[post("/table", format = "application/json", data = "<table>")]
-fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
-    if table.is_valid() {
-        table.roll().map(Json)
-    } else {
-        None
-    }
+fn roll_saved(name: String, cookies: Cookies) -> Json<Response> {
+    Json(match from_cookies(&name, &cookies) {
+        Response::Table(t) => t.roll().into(),
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
+    })
 }
 
 #[post(
@@ -77,15 +78,27 @@ fn roll(table: Json<Table>) -> Option<Json<TableResult>> {
     format = "application/json",
     data = "<table>"
 )]
-fn validate(table: Json<Table>) -> Json<bool> {
-    Json(table.is_valid())
+fn validate(table: String) -> Json<Response> {
+    Json(match from_str(&table) {
+        Response::Error(e) => e.into(),
+        _ => Response::Status(0),
+    })
+}
+
+#[post("/table", format = "application/json", data = "<table>")]
+fn roll(table: String) -> Json<Response> {
+    Json(match from_str(&table) {
+        Response::Error(e) => e.into(),
+        Response::Table(t) => t.roll().into(),
+        _ => unreachable!("Got something other than a table / error"),
+    })
 }
 
 #[get("/table/static")]
 fn static_tables() -> Json<Table> {
     Json(
         serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
-            .expect("wrong json"),
+            .expect("malformed test json"),
     )
 }
 

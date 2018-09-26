@@ -4,69 +4,133 @@ pub use self::table_result::TableResult;
 #[cfg(test)]
 mod tests;
 
-use crate::{Column, Dice, Range, Row};
+use crate::{Column, Dice, Result, Rows};
+use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+use serde_derive::{Deserialize, Serialize};
+use std::fmt;
 
-/// A table that can be rolled on
-#[derive(Debug, Serialize, Deserialize, Clone)]
+/// A `Table` that can be rolled on
+#[derive(Debug, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Table {
     #[doc(hidden)]
     dice: Dice,
     #[doc(hidden)]
     heading: Column,
     #[doc(hidden)]
-    results: Vec<Row>,
+    results: Rows,
 }
 
 impl Table {
-    /// Crate a new table
-    pub fn new(dice: Dice, heading: Column, results: Vec<Row>) -> Option<Self> {
-        let t = Table {
+    /// Crate a new `Table`
+    pub fn new<C, R>(dice: Dice, heading: C, results: R) -> Result<Self>
+    where
+        C: Into<Column>,
+        R: Into<Rows>,
+    {
+        let heading: Column = heading.into();
+        let results: Rows = results.into();
+
+        results.validate(&dice)?;
+
+        Ok(Table {
             dice,
             heading,
             results,
-        };
-
-        if t.is_valid() {
-            Some(t)
-        } else {
-            None
-        }
+        })
     }
 
-    /// Perform a roll on this table
-    pub fn roll(&self) -> Option<TableResult> {
+    /// Perform a roll on this `Table`
+    pub fn roll(&self) -> TableResult {
         let roll = self.dice.roll();
 
-        self.results
+        match self
+            .results
             .iter()
             .enumerate()
             .find(|(_, row)| **row == roll)
             .map(|(i, _)| TableResult::new(roll, i))
+        {
+            Some(t) => t,
+            None => unreachable!("Table was created without all posible rolls!"),
+        }
     }
+}
 
-    /// Check that the table is valid, this is used internally
-    /// as well as when making sure that deserialized tables
-    /// are correct
-    // TODO impl deserialize so that this function becomes part of the
-    // Deserialization step
-    // EXPECTING results to be sorted such that the lowest value
-    // is at the lowest index (for ranges what is taken is the start value)
-    pub fn is_valid(&self) -> bool {
-        let mut values: Vec<u32> = (self.dice.min()..=self.dice.max()).collect();
-        let mut range = Range::from(0..=0);
-        let mut val = 0;
+impl<'de> Deserialize<'de> for Table {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        #[serde(field_identifier, rename_all = "lowercase")]
+        enum Field {
+            Dice,
+            Heading,
+            Results,
+        };
 
-        for row in &self.results {
-            if row.valid(self.dice, &mut values, &mut range, &mut val) == false {
-                return false;
+        struct TableVisitor;
+
+        impl<'de> Visitor<'de> for TableVisitor {
+            type Value = Table;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("struct Table")
+            }
+
+            fn visit_seq<V>(self, mut seq: V) -> std::result::Result<Table, V::Error>
+            where
+                V: SeqAccess<'de>,
+            {
+                let dice: Dice = seq
+                    .next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(0, &self))?;
+                let heading: Column = seq
+                    .next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(1, &self))?;
+                let results: Rows = seq
+                    .next_element()?
+                    .ok_or_else(|| de::Error::invalid_length(2, &self))?;
+                Table::new(dice, heading, results).map_err(de::Error::custom)
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<Table, V::Error>
+            where
+                V: MapAccess<'de>,
+            {
+                let mut dice = None;
+                let mut heading = None;
+                let mut results = None;
+                while let Some(key) = map.next_key()? {
+                    match key {
+                        Field::Dice => {
+                            if dice.is_some() {
+                                return Err(de::Error::duplicate_field("dice"));
+                            }
+                            dice = Some(map.next_value()?);
+                        }
+                        Field::Heading => {
+                            if heading.is_some() {
+                                return Err(de::Error::duplicate_field("heading"));
+                            }
+                            heading = Some(map.next_value()?);
+                        }
+                        Field::Results => {
+                            if results.is_some() {
+                                return Err(de::Error::duplicate_field("results"));
+                            }
+                            results = Some(map.next_value()?);
+                        }
+                    }
+                }
+                let dice: Dice = dice.ok_or_else(|| de::Error::missing_field("dice"))?;
+                let heading: Column = heading.ok_or_else(|| de::Error::missing_field("heading"))?;
+                let results: Rows = results.ok_or_else(|| de::Error::missing_field("results"))?;
+                Table::new(dice, heading, results).map_err(de::Error::custom)
             }
         }
 
-        if values.is_empty() {
-            true
-        } else {
-            eprintln!("Not all values used!\n\t values: {:?}", values);
-            false
-        }
+        const FIELDS: &'static [&'static str] = &["dice", "heading", "results"];
+        deserializer.deserialize_struct("Table", FIELDS, TableVisitor)
     }
 }

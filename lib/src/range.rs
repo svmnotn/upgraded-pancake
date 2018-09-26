@@ -1,11 +1,12 @@
-use serde::de::{self, Unexpected, Visitor};
+use crate::error::Error;
+use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, RangeInclusive};
+use std::str::FromStr;
 
-/// An inclusive range of values that can be rolled
-/// on a `Table`
+/// An inclusive range of values that can be rolled on a `Table`
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Range(#[doc(hidden)] RangeInclusive<u32>);
 
@@ -75,6 +76,30 @@ impl Serialize for Range {
     }
 }
 
+impl FromStr for Range {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains('-') {
+            let v: Vec<&str> = s.split('-').collect();
+            if v.len() == 2 {
+                let start = v[0]
+                    .parse::<u32>()
+                    .map_err(|_| Error::invalid_range_section(v[0], stringify!(start)))?;
+                let end = v[1]
+                    .parse::<u32>()
+                    .map_err(|_| Error::invalid_range_section(v[1], stringify!(end)))?;
+
+                Ok(Range(start..=end))
+            } else {
+                Err(Error::invalid_range(s))
+            }
+        } else {
+            Err(Error::invalid_range(s))
+        }
+    }
+}
+
 impl<'de> Deserialize<'de> for Range {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -93,15 +118,7 @@ impl<'de> Deserialize<'de> for Range {
             where
                 E: de::Error,
             {
-                if s.contains('-') {
-                    let v: Vec<u32> = s
-                        .split('-')
-                        .map(|x| x.parse::<u32>().expect("not a number!"))
-                        .collect(); // TODO make into error
-                    Ok(Range(v[0]..=v[1]))
-                } else {
-                    Err(de::Error::invalid_value(Unexpected::Str(s), &self))
-                }
+                Range::from_str(s).map_err(de::Error::custom)
             }
         }
         deserializer.deserialize_str(RangeVisitor)

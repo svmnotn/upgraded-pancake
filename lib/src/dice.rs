@@ -1,54 +1,53 @@
-use crate::{RNG_DICE_SIZES, RNG_MAX_DICE_AMOUNT};
-use rand::distributions::{Distribution, Standard};
+use crate::error::Error;
 use rand::{thread_rng, Rng};
-use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Unexpected, Visitor};
+use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
+use serde_derive::{Deserialize, Serialize};
 use std::fmt;
+use std::num::NonZeroU16;
+use std::str::FromStr;
 
-/// A dice for determining what to
-/// roll on a table
-#[derive(Debug, Serialize, Clone, Copy)]
+/// A dice for determining what to roll on a `Table`
+#[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
-    amount: u16,
+    amount: NonZeroU16,
     #[doc(hidden)]
-    size: u16,
+    size: NonZeroU16,
     // TODO add optional modifier +X where
     // X: i8/16/32?
 }
 
 impl Dice {
-    /// Create a new Dice
-    pub fn new(amount: u16, size: u16) -> Self {
+    /// Create a new `Dice`
+    pub fn new(amount: NonZeroU16, size: NonZeroU16) -> Self {
         Dice { amount, size }
     }
 
-    /// Roll the dice
+    /// Roll the `Dice`
     pub fn roll(&self) -> u32 {
-        (0..self.amount).fold(0, |acc, _| {
-            thread_rng().gen_range(1, u32::from(self.size + 1)) + acc
+        (0..self.amount.get()).fold(0, |acc, _| {
+            thread_rng().gen_range(1, u32::from(self.size.get() + 1)) + acc
         })
     }
 
-    /// The minimum value that this dice
-    /// can give
+    /// The minimum value that this `Dice` can give
     pub fn min(&self) -> u32 {
-        u32::from(self.amount)
+        u32::from(self.amount.get())
     }
 
-    /// The maximum value that this dice
-    /// can give
+    /// The maximum value that this `Dice` can give
     pub fn max(&self) -> u32 {
-        u32::from(self.amount) * u32::from(self.size)
+        u32::from(self.amount.get()) * u32::from(self.size.get())
     }
 
-    /// The amount of dice rolled
+    /// The amount of `Dice` rolled
     pub fn amount(&self) -> u16 {
-        self.amount
+        self.amount.get()
     }
 
-    /// The size of the dice rolled
+    /// The size of the `Dice` rolled
     pub fn size(&self) -> u16 {
-        self.size
+        self.size.get()
     }
 }
 
@@ -58,11 +57,31 @@ impl fmt::Display for Dice {
     }
 }
 
-impl Distribution<Dice> for Standard {
-    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Dice {
-        Dice {
-            amount: rng.gen_range(1, RNG_MAX_DICE_AMOUNT),
-            size: *rng.choose(&RNG_DICE_SIZES).expect("sizes where empty?"),
+impl FromStr for Dice {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains('d') {
+            let v: Vec<&str> = s.split('d').collect();
+            if v.len() == 2 {
+                let amount: u16 = v[0]
+                    .parse()
+                    .map_err(|_| Error::invalid_dice_section(v[0], stringify!(amount)))?;
+                let amount = NonZeroU16::new(amount)
+                    .ok_or_else(|| Error::invalid_dice_section(v[0], stringify!(amount)))?;
+
+                let size: u16 = v[1]
+                    .parse()
+                    .map_err(|_| Error::invalid_dice_section(v[1], stringify!(size)))?;
+                let size = NonZeroU16::new(size)
+                    .ok_or_else(|| Error::invalid_dice_section(v[1], stringify!(size)))?;
+
+                Ok(Dice::new(amount, size))
+            } else {
+                Err(Error::invalid_dice(s))
+            }
+        } else {
+            Err(Error::invalid_dice(s))
         }
     }
 }
@@ -92,13 +111,13 @@ impl<'de> Deserialize<'de> for Dice {
             where
                 V: SeqAccess<'de>,
             {
-                let amount = seq
+                let amount: NonZeroU16 = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(0, &self))?;
-                let size = seq
+                let size: NonZeroU16 = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(1, &self))?;
-                Ok(Dice { amount, size })
+                Ok(Dice::new(amount, size))
             }
 
             fn visit_map<V>(self, mut map: V) -> Result<Dice, V::Error>
@@ -111,39 +130,30 @@ impl<'de> Deserialize<'de> for Dice {
                     match key {
                         Field::Amount => {
                             if amount.is_some() {
-                                return Err(de::Error::duplicate_field("amount"));
+                                return Err(de::Error::duplicate_field(stringify!(amount)));
                             }
                             amount = Some(map.next_value()?);
                         }
                         Field::Size => {
                             if size.is_some() {
-                                return Err(de::Error::duplicate_field("size"));
+                                return Err(de::Error::duplicate_field(stringify!(size)));
                             }
                             size = Some(map.next_value()?);
                         }
                     }
                 }
-                let amount = amount.ok_or_else(|| de::Error::missing_field("amount"))?;
-                let size = size.ok_or_else(|| de::Error::missing_field("size"))?;
-                Ok(Dice { amount, size })
+                let amount: NonZeroU16 =
+                    amount.ok_or_else(|| de::Error::missing_field(stringify!(amount)))?;
+                let size: NonZeroU16 =
+                    size.ok_or_else(|| de::Error::missing_field(stringify!(size)))?;
+                Ok(Dice::new(amount, size))
             }
 
             fn visit_str<E>(self, s: &str) -> Result<Self::Value, E>
             where
                 E: de::Error,
             {
-                if s.contains('d') {
-                    let v: Vec<u16> = s
-                        .split('d')
-                        .map(|x| x.parse::<u16>().expect("not a number!"))
-                        .collect(); // TODO make into error
-                    Ok(Dice {
-                        amount: v[0],
-                        size: v[1],
-                    })
-                } else {
-                    Err(de::Error::invalid_value(Unexpected::Str(s), &self))
-                }
+                Dice::from_str(s).map_err(de::Error::custom)
             }
         }
 
