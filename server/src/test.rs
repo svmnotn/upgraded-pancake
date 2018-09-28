@@ -150,7 +150,8 @@ fn bad_json_syntax() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!("key must be a string at line 1 column 2", value["data"]);
@@ -168,7 +169,8 @@ fn bad_json_input() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -189,7 +191,8 @@ fn unsorted_single() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -210,7 +213,8 @@ fn duplicate_single() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -231,7 +235,8 @@ fn oob_less_single() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -252,7 +257,8 @@ fn oob_more_single() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -273,7 +279,8 @@ fn unsorted_range() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -294,7 +301,8 @@ fn duplicate_range() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -315,7 +323,8 @@ fn oob_less_range() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -336,7 +345,8 @@ fn oob_more_range() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("Serde", value["error"]);
     assert_eq!(
@@ -353,7 +363,8 @@ fn table_not_found() {
 
     let value = serde_json::from_str::<serde_json::Value>(
         &res.body_string().expect("Failed to get a Body"),
-    ).expect("Failed to build body");
+    )
+    .expect("Failed to build body");
 
     assert_eq!("TableNotFound", value["error"]);
     assert_eq!("test", value["data"]);

@@ -16,4 +16,4 @@ serde_derive = "1.0.79"
 rand = "0.5.5"
 
 [dev-dependencies]
-serde_json = "1.0.28"
+serde_json = "1.0.31"

@@ -22,6 +22,6 @@ rocket_codegen = { git = "https://github.com/SergioBenitez/Rocket" }
 rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket" }
 serde = "1.0.79"
 serde_derive = "1.0.79"
-serde_json = "1.0.28"
+serde_json = "1.0.31"
 rand = "0.5.5"
 base64 = "0.9.3"
