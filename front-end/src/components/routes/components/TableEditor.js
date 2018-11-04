@@ -226,7 +226,7 @@ class TableEditor extends React.Component {
             results:  this.state.results,
         }).then ((response) => {
             console.log(response);
-            if (response.data) {
+            if (response.statusText === "OK") {
                 this.setState({
                     passedTest: true,
                 })
