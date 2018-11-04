@@ -18,7 +18,8 @@ class App extends React.Component {
   }
 
   getSavedTables() {
-    axios.get("/table/all/name").then((response) => {
+    axios.get("/table/all/id").then((response) => {
+        console.log(response);
         this.setState({
             savedTables: this.state.savedTables.concat(response.data),
         })

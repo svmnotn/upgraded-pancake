@@ -46,11 +46,11 @@ class Table extends React.Component {
     saveTable() {
         let tempStr = "/table/".concat(this.props.title);
         axios.put(tempStr, {
-            title: this.props.title,
             heading: this.props.heading,
             dice: this.props.dice,
             results:  this.props.results,
         }).then ((response) => {
+            console.log(response);
             console.log("Table Successfully Saved!");
         }).catch (function (error) {
             console.log(error);

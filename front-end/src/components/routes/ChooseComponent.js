@@ -45,6 +45,9 @@ class Choose extends React.Component {
                 }
             }
         }
+        console.log("Temp Tables:" + tempTables);
+        console.log("Temp Row:" + tempRow);
+        console.log("Saved Tables:" + savedTables);
 
         return (
             savedTables.map(function (row, i) {
