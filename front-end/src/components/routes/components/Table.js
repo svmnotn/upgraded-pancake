@@ -50,7 +50,6 @@ class Table extends React.Component {
             dice: this.props.dice,
             results:  this.props.results,
         }).then ((response) => {
-            console.log(response);
             console.log("Table Successfully Saved!");
         }).catch (function (error) {
             console.log(error);
@@ -69,7 +68,7 @@ class Table extends React.Component {
         axios.delete (tempStr);
     }
 
-    confirm() {
+    deleteConfirm() {
         if (this.state.confirmTable) {
             return (
                 <button onClick={()=> {this.deleteTable()}}>{this.state.confirmText}</button>
@@ -190,7 +189,7 @@ class Table extends React.Component {
                                 </td>
 
                                 <td className="removeBrdr">
-                                    {this.confirm()}
+                                    {this.deleteConfirm()}
                                 </td>
 
                                 <td className="removeBrdr">

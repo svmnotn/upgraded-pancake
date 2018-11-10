@@ -11,7 +11,7 @@ class Choose extends React.Component {
     }
 
     createRows(arr){
-        if (typeof arr !== "object") {
+        if (arr <= 0) {
             return (
                 <td>
                     <LinkBtn btnName={arr} url= {"table/".concat(arr)} />
@@ -34,20 +34,15 @@ class Choose extends React.Component {
         let tempTables = this.props.location.state.savedTables,
             savedTables = [], tempRow = [];
 
-        for (let i = 0; i < tempTables.length; i++) {
-            if (tempTables.length === 1) {
-                savedTables.push(tempTables[0]);
-            } else {
-                tempRow.push(tempTables[i]);
-                if (i + 1 > tempTables.length - 1 || (i % 2 === 0 && i !== 0)) {
-                    savedTables.push(tempRow);
-                    tempRow = [];
-                }
+        tempTables.map(function (table, i) {
+            tempRow.push(table);
+            if ((i + 1) % 3 === 0) {
+                savedTables.push(tempRow);
+                tempRow = [];
+            } else if (i + 1 === tempTables.length) {
+                savedTables.push(tempRow);
             }
-        }
-        console.log("Temp Tables:" + tempTables);
-        console.log("Temp Row:" + tempRow);
-        console.log("Saved Tables:" + savedTables);
+        })
 
         return (
             savedTables.map(function (row, i) {
