@@ -10,7 +10,6 @@ class Table extends React.Component {
         this.state = {
             tableResult: this.getResult(),
             confirmTable: false,
-            savedTable: false,
             confirmText: "Sure?"
         }
 
@@ -43,22 +42,6 @@ class Table extends React.Component {
         }, this)
     }
 
-    saveTable() {
-        let tempStr = "/table/".concat(this.props.title);
-        axios.put(tempStr, {
-            heading: this.props.heading,
-            dice: this.props.dice,
-            results:  this.props.results,
-        }).then ((response) => {
-            console.log("Table Successfully Saved!");
-        }).catch (function (error) {
-            console.log(error);
-        }, this);
-
-        this.setState({
-            savedTable: true,
-        })
-    }
 
     deleteTable() {
         let tempStr = "/table/".concat(this.props.title);
@@ -76,18 +59,6 @@ class Table extends React.Component {
         } else {
             return (
                 <button onClick={()=> {this.changeBool()}}>Delete</button>
-            )
-        }
-    }
-
-    confirmSave(){
-        if (this.state.savedTable) {
-            return (
-                <button>Saved!</button>
-            )
-        } else {
-            return (
-                <button onClick={()=> {this.saveTable()}}>Save</button>
             )
         }
     }
@@ -182,10 +153,6 @@ class Table extends React.Component {
                                 <td className="removeBrdr">
                                     <button className="marginRight"
                                             onClick={()=>{this.reroll()}}>Reroll</button>
-                                </td>
-
-                                <td className="removeBrdr">
-                                    {this.confirmSave()}
                                 </td>
 
                                 <td className="removeBrdr">

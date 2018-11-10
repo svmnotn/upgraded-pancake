@@ -246,7 +246,7 @@ class TableEditor extends React.Component {
                                        dice: this.state.dice,
                                        results: this.state.results,
                 }}}>
-                    <button className="squareBtn"><i className="fa fa-arrow-right"></i></button>
+                    <button onClick={() => this.saveTable()}className="squareBtn"><i className="fa fa-arrow-right"></i></button>
                 </Link>
             )
         }
@@ -380,6 +380,20 @@ class TableEditor extends React.Component {
         }
     }
 
+    saveTable() {
+        let tempStr = "/table/".concat(this.state.title);
+        axios.put(tempStr, {
+            heading: this.state.heading,
+            dice: this.state.dice,
+            results:  this.state.results,
+        }).then ((response) => {
+            console.log(response);
+            console.log("Table Successfully Saved!");
+        }).catch (function (error) {
+            console.log(error);
+        }, this);
+    }
+
     render () {
         return (
             <div>
@@ -414,6 +428,7 @@ class TableEditor extends React.Component {
                                                 onClick={(event) => this.removeCol(event)}>
                                             <i className="fa fa-minus"></i>
                                         </button>
+
                                         <button style={{marginTop: "0.7em"}}
                                                 className="tinyBtn squareBtn"
                                                 onClick={(event) => this.addCol(event)}>
