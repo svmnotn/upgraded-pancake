@@ -1,7 +1,6 @@
 use crate::error::*;
-use rand::{thread_rng, Rng};
 use rocket::http::{Cookie, Cookies};
-use rocket_contrib::Json;
+use rocket_contrib::json::Json;
 use upgraded_pancake::Table;
 
 fn from_cookies(name: &str, cookies: &Cookies) -> Response {
@@ -23,12 +22,8 @@ fn from_str(table: &str) -> Response {
     }
 }
 
-#[put(
-    "/table/<name>",
-    format = "application/json",
-    data = "<table>"
-)]
-fn put(name: String, table: String, mut cookies: Cookies) -> Json<Response> {
+#[put("/<name>", format = "application/json", data = "<table>")]
+pub fn put(name: String, table: String, mut cookies: Cookies) -> Json<Response> {
     Json(match from_str(&table) {
         Response::Table(_) => {
             cookies.add(Cookie::new(name, base64::encode(&table)));
@@ -39,23 +34,23 @@ fn put(name: String, table: String, mut cookies: Cookies) -> Json<Response> {
     })
 }
 
-#[get("/table/<name>")]
-fn get(name: String, cookies: Cookies) -> Json<Response> {
+#[get("/<name>")]
+pub fn get(name: String, cookies: Cookies) -> Json<Response> {
     Json(from_cookies(&name, &cookies))
 }
 
-#[delete("/table/<name>")]
-fn delete(name: String, mut cookies: Cookies) {
+#[delete("/<name>")]
+pub fn delete(name: String, mut cookies: Cookies) {
     cookies.remove(Cookie::named(name));
 }
 
-#[get("/table/all/id")]
-fn table_ids(cookies: Cookies) -> Json<Vec<String>> {
+#[get("/all/id")]
+pub fn table_ids(cookies: Cookies) -> Json<Vec<String>> {
     Json(cookies.iter().map(|c| c.name().to_owned()).collect())
 }
 
-#[get("/table/all")]
-fn all(cookies: Cookies) -> Json<Vec<Response>> {
+#[get("/all")]
+pub fn all(cookies: Cookies) -> Json<Vec<Response>> {
     Json(
         cookies
             .iter()
@@ -64,8 +59,8 @@ fn all(cookies: Cookies) -> Json<Vec<Response>> {
     )
 }
 
-#[get("/table/<name>/roll")]
-fn roll_saved(name: String, cookies: Cookies) -> Json<Response> {
+#[get("/<name>/roll")]
+pub fn roll_saved(name: String, cookies: Cookies) -> Json<Response> {
     Json(match from_cookies(&name, &cookies) {
         Response::Table(t) => t.roll().into(),
         Response::Error(e) => e.into(),
@@ -73,20 +68,16 @@ fn roll_saved(name: String, cookies: Cookies) -> Json<Response> {
     })
 }
 
-#[post(
-    "/table/validate",
-    format = "application/json",
-    data = "<table>"
-)]
-fn validate(table: String) -> Json<Response> {
+#[post("/validate", format = "application/json", data = "<table>")]
+pub fn validate(table: String) -> Json<Response> {
     Json(match from_str(&table) {
         Response::Error(e) => e.into(),
         _ => Response::Status(0),
     })
 }
 
-#[post("/table", format = "application/json", data = "<table>")]
-fn roll(table: String) -> Json<Response> {
+#[post("/", format = "application/json", data = "<table>")]
+pub fn roll(table: String) -> Json<Response> {
     Json(match from_str(&table) {
         Response::Error(e) => e.into(),
         Response::Table(t) => t.roll().into(),
@@ -94,11 +85,16 @@ fn roll(table: String) -> Json<Response> {
     })
 }
 
-#[get("/table/static")]
-fn static_tables() -> Json<Table> {
+#[get("/static")]
+pub fn static_tables() -> Json<Table> {
+    use rand::seq::SliceRandom;
     Json(
-        serde_json::from_str(thread_rng().choose(&CHOICES).expect("choices empty?"))
-            .expect("malformed test json"),
+        serde_json::from_str(
+            CHOICES
+                .choose(&mut rand::thread_rng())
+                .expect("choices empty?"),
+        )
+        .expect("malformed test json"),
     )
 }
 

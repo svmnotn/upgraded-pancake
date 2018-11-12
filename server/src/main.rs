@@ -1,5 +1,4 @@
-#![feature(plugin, decl_macro, proc_macro_non_items, custom_attribute)]
-#![plugin(rocket_codegen)]
+#![feature(decl_macro, proc_macro_hygiene)]
 
 //! # Upgraded Pancake Server
 //!
@@ -113,30 +112,35 @@
 //! As such their data section is a string representing what went wrong. Their Error Type is `Serde`.
 
 mod error;
-mod files;
 mod tables;
 #[cfg(test)]
 mod test;
 
-use rocket::{routes, Rocket};
+#[macro_use]
+extern crate rocket;
+
+use rocket::Rocket;
 
 fn rocket() -> Rocket {
-    rocket::ignite().mount(
-        "/",
-        routes![
-            files::index,
-            tables::put,
-            tables::get,
-            tables::delete,
-            tables::table_ids,
-            tables::all,
-            tables::roll_saved,
-            tables::roll,
-            tables::static_tables,
-            tables::validate,
-            files::get,
-        ],
-    )
+    use crate::tables::*;
+    use rocket_contrib::serve::StaticFiles;
+
+    rocket::ignite()
+        .mount("/", StaticFiles::from("front-end/build"))
+        .mount(
+            "/table",
+            routes![
+                put,
+                get,
+                delete,
+                table_ids,
+                all,
+                roll_saved,
+                roll,
+                static_tables,
+                validate,
+            ],
+        )
 }
 
 fn main() {
