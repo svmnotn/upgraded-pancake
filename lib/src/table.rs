@@ -4,10 +4,10 @@ pub use self::table_result::TableResult;
 #[cfg(test)]
 mod tests;
 
-use crate::{Column, Dice, Result, Rows};
+use crate::{Column, Dice, Result, Rows, Row};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
-use std::fmt;
+use std::{fmt, slice::Iter};
 
 /// A `Table` that can be rolled on
 #[derive(Debug, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -44,8 +44,7 @@ impl Table {
         let roll = self.dice.roll();
 
         match self
-            .results
-            .iter()
+            .rows()
             .enumerate()
             .find(|(_, row)| **row == roll)
             .map(|(i, _)| TableResult::new(roll, i))
@@ -53,6 +52,11 @@ impl Table {
             Some(t) => t,
             None => unreachable!("Table was created without all posible rolls!"),
         }
+    }
+
+    /// Iterate over every `Row` in this `Table`
+    pub fn rows(&self) -> Iter<Row> {
+        self.results.iter()
     }
 }
 
