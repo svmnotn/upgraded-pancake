@@ -5,7 +5,7 @@ pub use self::table_result::TableResult;
 mod tests;
 
 use core::{fmt, slice::Iter};
-use crate::{Column, Dice, Result, Rows, Row};
+use crate::{Column, Dice, Result, Roll, Row, Rows};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
 
@@ -37,6 +37,20 @@ impl Table {
             heading,
             results,
         })
+    }
+
+    /// Obtain the probability of the given `Roll` on this table
+    pub fn probability<R: Into<Roll>>(&self, roll: R) -> f64 {
+        match roll.into() {
+            Roll::Single(r) => self.dice.probability(r),
+            Roll::Range(r) => {
+                let mut total = 0.0;
+                for n in r.iter() {
+                    total += self.dice.probability(n);
+                }
+                total
+            }
+        }
     }
 
     /// Perform a roll on this `Table`

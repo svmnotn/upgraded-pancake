@@ -67,6 +67,55 @@ impl Dice {
     pub fn values(&self) -> RangeInclusive<u32> {
         self.min_val()..=self.max_val()
     }
+
+    /// The probability of getting the value `n` from this `Dice`
+    ///
+    /// If the value `n` is outside the posibility space of the
+    /// `Dice` then a `0` is returned, indicating no probability
+    pub fn probability(&self, n: u32) -> f64 {
+        if self.min_val() > n || self.max_val() < n {
+            // If outside the range, there is no probability
+            0.0
+        } else if self.amount() == 1 {
+            // If single die, then there is only
+            // one way to get any number
+            1.0 / f64::from(self.size())
+        } else {
+            // If there are multiple dice, then
+            // we need the number of possible combinations
+            // that will give us that number,
+            // divided by our dice size to the power of our amount.
+            // So rolling a 2 on a 2d6, has only 1 combination (1,1)
+            // and 6^2 = 36, so the end result is 1/36
+            self.possible_combinations(n)
+                / f64::from(u32::from(self.size()).pow(u32::from(self.amount())))
+        }
+    }
+
+    /// The amount of ways in which the dice could be rolled to end
+    /// with the given amount
+    ///
+    /// Example: 2d6, to get a 12, you only have 1 way, (6,6)
+    pub fn possible_combinations(&self, n: u32) -> f64 {
+        let mut combinations = vec![vec![0.0; (n + 1) as usize]; usize::from(self.amount() + 1)];
+        combinations[0][0] = 1.0;
+
+        for i in 1..=usize::from(self.amount()) {
+            for j in 1..=(n as usize) {
+                if j < i || j > usize::from(self.size()) * i {
+                    combinations[i][j] = 0.0;
+                } else {
+                    let mut k = 1;
+                    while k <= usize::from(self.size()) && j >= k {
+                        combinations[i][j] += combinations[i - 1][j - k];
+                        k += 1;
+                    }
+                }
+            }
+        }
+
+        combinations[usize::from(self.amount())][n as usize]
+    }
 }
 
 impl fmt::Display for Dice {
