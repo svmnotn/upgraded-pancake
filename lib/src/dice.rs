@@ -21,6 +21,21 @@ impl Dice {
         Dice { amount, size }
     }
 
+    /// Create a new `Dice` if and only if both inputs are > 0
+    pub fn maybe_new(amount: u16, size: u16) -> Option<Self> {
+        let amount = NonZeroU16::new(amount);
+        let size = NonZeroU16::new(size);
+        if let None = amount {
+            None
+        } else if let None = size {
+            None
+        } else {
+            let amount = amount.expect("Expected a NonZeroU16, but found None");
+            let size = size.expect("Expected a NonZeroU16, but found None");
+            Some(Dice { amount, size })
+        }
+    }
+
     /// Roll the `Dice`
     pub fn roll(&self) -> u32 {
         (0..self.amount.get()).fold(0, |acc, _| {
