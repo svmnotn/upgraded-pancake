@@ -44,12 +44,12 @@ impl Dice {
     }
 
     /// The minimum value that this `Dice` can give
-    pub fn min(&self) -> u32 {
+    pub fn min_val(&self) -> u32 {
         u32::from(self.amount.get())
     }
 
     /// The maximum value that this `Dice` can give
-    pub fn max(&self) -> u32 {
+    pub fn max_val(&self) -> u32 {
         u32::from(self.amount.get()) * u32::from(self.size.get())
     }
 

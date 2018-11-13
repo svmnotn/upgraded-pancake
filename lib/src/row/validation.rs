@@ -16,8 +16,8 @@ impl Validation {
         vals.reverse();
 
         Validation {
-            max: d.max(),
-            min: d.min(),
+            max: d.max_val(),
+            min: d.min_val(),
             vals,
         }
     }
