@@ -12,6 +12,7 @@ class TableEditor extends React.Component {
             dice: "1d2",
             results: [{roll: 1, value:"Some Data"}, {roll:2, value:"Some More Data"}],
             passedTest: false,
+            errorMsg: "Your table has not been checked!"
         }
 
         this.addRow = this.addRow.bind(this);
@@ -218,7 +219,6 @@ class TableEditor extends React.Component {
         })
     }
 
-    //Tests if the table is in valid dice notation and it does not break any set logic
     testTable () {
         axios.post ('/table/validate', {
             heading: this.state.heading,
@@ -226,9 +226,15 @@ class TableEditor extends React.Component {
             results:  this.state.results,
         }).then ((response) => {
             console.log(response);
-            if (response.statusText === "OK") {
+            if (response.data === 0) {
                 this.setState({
                     passedTest: true,
+                    errorMsg: "Table seems fine. Click -> to save your table."
+                })
+            }
+            else {
+                this.setState ({
+                    errorMsg: response.data.data
                 })
             }
         }).catch (function (error) {
@@ -444,7 +450,9 @@ class TableEditor extends React.Component {
                         </table>
                     </form>
                 </div>
-
+                <div>
+                    {this.state.errorMsg}
+                </div>
                 <div className="container">
                     <Link to="/">
                         <button className="squareBtn"><i className="fa fa-times"></i></button>
