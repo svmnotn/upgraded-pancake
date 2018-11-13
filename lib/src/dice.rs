@@ -1,4 +1,4 @@
-use core::{fmt, num::NonZeroU16, str::FromStr};
+use core::{fmt, num::NonZeroU16, ops::RangeInclusive, str::FromStr};
 use crate::error::Error;
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
@@ -61,6 +61,11 @@ impl Dice {
     /// The size of the `Dice` rolled
     pub fn size(&self) -> u16 {
         self.size.get()
+    }
+
+    /// An iterator over all the values of this `Dice`
+    pub fn values(&self) -> RangeInclusive<u32> {
+        self.min_val()..=self.max_val()
     }
 }
 

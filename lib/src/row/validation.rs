@@ -12,13 +12,10 @@ pub struct Validation {
 impl Validation {
     /// Create a new row validation data
     pub fn new(d: &Dice) -> Self {
-        let mut vals: Vec<u32> = (d.min()..=d.max()).collect();
-        vals.reverse();
-
         Validation {
             max: d.max_val(),
             min: d.min_val(),
-            vals,
+            vals: d.values().rev().collect(),
         }
     }
 
