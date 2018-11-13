@@ -96,6 +96,12 @@ impl From<Range> for Roll {
     }
 }
 
+impl From<RangeInclusive<u32>> for Roll {
+    fn from(r: RangeInclusive<u32>) -> Self {
+        Roll::Range(r.into())
+    }
+}
+
 impl Roll {
     /// The value that this `Roll` covers
     pub fn single(&self) -> Option<u32> {
