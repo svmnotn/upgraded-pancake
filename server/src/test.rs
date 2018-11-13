@@ -2,7 +2,7 @@ use crate::rocket;
 use rocket::{http::ContentType, local::Client};
 use upgraded_pancake::{Table, TableResult};
 
-const SIMPLE_TEST_DATA: &str = include_str!("../../test_data/simple/value_single.json");
+const SIMPLE_TEST_DATA: &str = include_str!("../../test_data/server/simple/value_single.json");
 
 #[test]
 fn can_add_table() {
@@ -185,7 +185,7 @@ fn unsorted_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/unsorted.json"))
+        .body(include_str!("../../test_data/server/errors/single/unsorted.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -207,7 +207,7 @@ fn duplicate_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/duplicate.json"))
+        .body(include_str!("../../test_data/server/errors/single/duplicate.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -229,7 +229,7 @@ fn oob_less_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/oob_less.json"))
+        .body(include_str!("../../test_data/server/errors/single/oob_less.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -251,7 +251,7 @@ fn oob_more_single() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/single/oob_more.json"))
+        .body(include_str!("../../test_data/server/errors/single/oob_more.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -273,7 +273,7 @@ fn unsorted_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/unsorted.json"))
+        .body(include_str!("../../test_data/server/errors/range/unsorted.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -295,7 +295,7 @@ fn duplicate_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/duplicate.json"))
+        .body(include_str!("../../test_data/server/errors/range/duplicate.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -317,7 +317,7 @@ fn oob_less_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/oob_less.json"))
+        .body(include_str!("../../test_data/server/errors/range/oob_less.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(
@@ -339,7 +339,7 @@ fn oob_more_range() {
     let mut res = client
         .put("/table/test")
         .header(ContentType::JSON)
-        .body(include_str!("../../test_data/errors/range/oob_more.json"))
+        .body(include_str!("../../test_data/server/errors/range/oob_more.json"))
         .dispatch();
 
     let value = serde_json::from_str::<serde_json::Value>(

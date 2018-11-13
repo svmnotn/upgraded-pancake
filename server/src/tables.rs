@@ -99,16 +99,16 @@ pub fn static_tables() -> Json<Table> {
 }
 
 const CHOICES: [&str; 12] = [
-    include_str!("../../test_data/simple/value_single.json"),
-    include_str!("../../test_data/simple/value_multiple.json"),
-    include_str!("../../test_data/simple/ranges_single.json"),
-    include_str!("../../test_data/simple/ranges_multiple.json"),
-    include_str!("../../test_data/simple/mixed_single.json"),
-    include_str!("../../test_data/simple/mixed_multiple.json"),
-    include_str!("../../test_data/complex/value_single.json"),
-    include_str!("../../test_data/complex/value_multiple.json"),
-    include_str!("../../test_data/complex/ranges_single.json"),
-    include_str!("../../test_data/complex/ranges_multiple.json"),
-    include_str!("../../test_data/complex/mixed_single.json"),
-    include_str!("../../test_data/complex/mixed_multiple.json"),
+    include_str!("../../test_data/lib/simple/value_single.json"),
+    include_str!("../../test_data/lib/simple/value_multiple.json"),
+    include_str!("../../test_data/lib/simple/ranges_single.json"),
+    include_str!("../../test_data/lib/simple/ranges_multiple.json"),
+    include_str!("../../test_data/lib/simple/mixed_single.json"),
+    include_str!("../../test_data/lib/simple/mixed_multiple.json"),
+    include_str!("../../test_data/lib/complex/value_single.json"),
+    include_str!("../../test_data/lib/complex/value_multiple.json"),
+    include_str!("../../test_data/lib/complex/ranges_single.json"),
+    include_str!("../../test_data/lib/complex/ranges_multiple.json"),
+    include_str!("../../test_data/lib/complex/mixed_single.json"),
+    include_str!("../../test_data/lib/complex/mixed_multiple.json"),
 ];
