@@ -1,6 +1,5 @@
 use crate::rocket;
-use rocket::http::ContentType;
-use rocket::local::Client;
+use rocket::{http::ContentType, local::Client};
 use upgraded_pancake::{Table, TableResult};
 
 const SIMPLE_TEST_DATA: &str = include_str!("../../test_data/simple/value_single.json");
