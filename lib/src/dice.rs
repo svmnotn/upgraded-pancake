@@ -4,6 +4,9 @@ use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
 
+#[cfg(test)]
+mod test;
+
 /// A `Dice` for determining what to roll on a `Table`
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
@@ -97,7 +100,7 @@ impl Dice {
     ///
     /// Example: 2d6, to get a 12, you only have 1 way, (6,6)
     pub fn possible_combinations(&self, n: u32) -> f64 {
-        let mut combinations = vec![vec![0.0; (n + 1) as usize]; usize::from(self.amount() + 1)];
+        let mut combinations = vec![vec![0.0; (n as usize) + 1]; usize::from(self.amount()) + 1];
         combinations[0][0] = 1.0;
 
         for i in 1..=usize::from(self.amount()) {
