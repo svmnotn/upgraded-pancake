@@ -4,10 +4,10 @@ pub use self::table_result::TableResult;
 #[cfg(test)]
 mod tests;
 
+use core::{fmt, slice::Iter};
 use crate::{Column, Dice, Result, Rows, Row};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
-use std::{fmt, slice::Iter};
 
 /// A `Table` that can be rolled on
 #[derive(Debug, Serialize, Clone, PartialEq, Eq, PartialOrd, Ord)]

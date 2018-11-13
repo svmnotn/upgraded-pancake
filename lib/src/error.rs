@@ -1,6 +1,6 @@
+use core::fmt;
 use crate::Range;
 use serde_derive::{Deserialize, Serialize};
-use std::fmt;
 
 pub type Result<T> = std::result::Result<T, Error>;
 

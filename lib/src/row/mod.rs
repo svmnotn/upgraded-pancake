@@ -1,7 +1,6 @@
-use crate::error::Error;
-use crate::{Dice, Result};
+use core::ops::Deref;
+use crate::{error::Error, Dice, Result};
 use serde_derive::{Deserialize, Serialize};
-use std::ops::Deref;
 
 mod row;
 pub use self::row::Row;

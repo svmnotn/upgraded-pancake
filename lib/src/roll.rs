@@ -1,6 +1,6 @@
+use core::{cmp::Ordering, ops::RangeInclusive};
 use crate::{error::Error, Range, Result, RowValidation};
 use serde_derive::{Deserialize, Serialize};
-use std::{cmp::Ordering, ops::RangeInclusive};
 
 /// Either a single value or a `Range` of values
 /// that can be rolled on a `Table`

@@ -1,8 +1,8 @@
+use core::{fmt, num::NonZeroU16, str::FromStr};
 use crate::error::Error;
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
-use std::{fmt, num::NonZeroU16, str::FromStr};
 
 /// A `Dice` for determining what to roll on a `Table`
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]

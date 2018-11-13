@@ -1,13 +1,13 @@
-use crate::error::Error;
-use serde::{
-    de::{self, Visitor},
-    Deserialize, Deserializer, Serialize, Serializer,
-};
-use std::{
+use core::{
     cmp::Ordering,
     fmt::{Display, Formatter, Result as FmtResult},
     ops::{Deref, RangeInclusive},
     str::FromStr,
+};
+use crate::error::Error;
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Deserializer, Serialize, Serializer,
 };
 
 /// An inclusive range of values that can be rolled on a `Table`
