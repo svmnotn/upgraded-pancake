@@ -1,4 +1,9 @@
-use core::{fmt, num::NonZeroU16, ops::RangeInclusive, str::FromStr};
+use core::{
+    fmt,
+    num::{NonZeroU16, NonZeroU8},
+    ops::RangeInclusive,
+    str::FromStr,
+};
 use crate::error::Error;
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
@@ -11,7 +16,7 @@ mod test;
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
-    amount: NonZeroU16,
+    amount: NonZeroU8,
     #[doc(hidden)]
     size: NonZeroU16,
     // TODO add optional modifier +`mod` where
@@ -20,13 +25,13 @@ pub struct Dice {
 
 impl Dice {
     /// Create a new `Dice`
-    pub fn new(amount: NonZeroU16, size: NonZeroU16) -> Self {
+    pub fn new(amount: NonZeroU8, size: NonZeroU16) -> Self {
         Dice { amount, size }
     }
 
     /// Create a new `Dice` if and only if both inputs are > 0
-    pub fn maybe_new(amount: u16, size: u16) -> Option<Self> {
-        let amount = NonZeroU16::new(amount);
+    pub fn maybe_new(amount: u8, size: u16) -> Option<Self> {
+        let amount = NonZeroU8::new(amount);
         let size = NonZeroU16::new(size);
         if let None = amount {
             None
@@ -41,9 +46,9 @@ impl Dice {
 
     /// Roll the `Dice`
     pub fn roll(&self) -> u32 {
-        (0..self.amount.get()).fold(0, |acc, _| {
-            thread_rng().gen_range(1, u32::from(self.size.get() + 1)) + acc
-        })
+        (0..self.amount.get())
+            .map(|_| thread_rng().gen_range(1, u32::from(self.size.get() + 1)))
+            .sum()
     }
 
     /// The minimum value that this `Dice` can give
@@ -57,7 +62,7 @@ impl Dice {
     }
 
     /// The amount of `Dice` rolled
-    pub fn amount(&self) -> u16 {
+    pub fn amount(&self) -> u8 {
         self.amount.get()
     }
 
@@ -134,10 +139,10 @@ impl FromStr for Dice {
         if s.contains('d') {
             let v: Vec<&str> = s.split('d').collect();
             if v.len() == 2 {
-                let amount: u16 = v[0]
+                let amount: u8 = v[0]
                     .parse()
                     .map_err(|_| Error::invalid_dice_section(v[0], stringify!(amount)))?;
-                let amount = NonZeroU16::new(amount)
+                let amount = NonZeroU8::new(amount)
                     .ok_or_else(|| Error::invalid_dice_section(v[0], stringify!(amount)))?;
 
                 let size: u16 = v[1]
@@ -181,7 +186,7 @@ impl<'de> Deserialize<'de> for Dice {
             where
                 V: SeqAccess<'de>,
             {
-                let amount: NonZeroU16 = seq
+                let amount: NonZeroU8 = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(0, &self))?;
                 let size: NonZeroU16 = seq
@@ -212,7 +217,7 @@ impl<'de> Deserialize<'de> for Dice {
                         }
                     }
                 }
-                let amount: NonZeroU16 =
+                let amount: NonZeroU8 =
                     amount.ok_or_else(|| de::Error::missing_field(stringify!(amount)))?;
                 let size: NonZeroU16 =
                     size.ok_or_else(|| de::Error::missing_field(stringify!(size)))?;
