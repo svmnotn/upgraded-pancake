@@ -1,10 +1,14 @@
 use crate::error::Error;
-use serde::de::{self, Visitor};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use std::cmp::Ordering;
-use std::fmt::{Display, Formatter, Result as FmtResult};
-use std::ops::{Deref, RangeInclusive};
-use std::str::FromStr;
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
+use std::{
+    cmp::Ordering,
+    fmt::{Display, Formatter, Result as FmtResult},
+    ops::{Deref, RangeInclusive},
+    str::FromStr,
+};
 
 /// An inclusive range of values that can be rolled on a `Table`
 #[derive(Debug, Clone, PartialEq, Eq)]

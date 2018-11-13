@@ -2,19 +2,17 @@ use crate::error::Error;
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
-use std::fmt;
-use std::num::NonZeroU16;
-use std::str::FromStr;
+use std::{fmt, num::NonZeroU16, str::FromStr};
 
-/// A dice for determining what to roll on a `Table`
+/// A `Dice` for determining what to roll on a `Table`
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
     amount: NonZeroU16,
     #[doc(hidden)]
     size: NonZeroU16,
-    // TODO add optional modifier +X where
-    // X: i8/16/32?
+    // TODO add optional modifier +`mod` where
+    // mod: i8 / i16?
 }
 
 impl Dice {
