@@ -160,9 +160,8 @@ impl Roll {
                 } else {
                     // Get all the vaules that are not in our current set of values
                     // A.K.A. duplicates
-                    let duplicates: Vec<u32> = (*r.start()..=*r.end())
-                        .filter(|v| valid.contains(v) == false)
-                        .collect();
+                    let duplicates: Vec<u32> =
+                        r.iter().filter(|v| valid.contains(v) == false).collect();
 
                     // Check if we have duplicates
                     if duplicates.is_empty() == false {

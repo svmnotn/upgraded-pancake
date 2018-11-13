@@ -14,6 +14,12 @@ use std::{
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Range(#[doc(hidden)] RangeInclusive<u32>);
 
+impl Range {
+    pub fn iter(&self) -> RangeInclusive<u32> {
+        *self.start()..=*self.end()
+    }
+}
+
 impl From<RangeInclusive<u32>> for Range {
     fn from(r: RangeInclusive<u32>) -> Self {
         Range(r)
