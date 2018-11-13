@@ -17,6 +17,10 @@
 //! For more information check [here](#rolling-on-a-table).
 //! * **DELETE** `/table/<id>`: Used to delete the specifed `Table`
 //! For more information check [here](#deleting-a-table).
+//! For more information check [here](#getting-all-probabilities).
+//! * **GET** `/table/<id>/probability/<row>`: Used to retrieve the probability of a specific `row`
+//! For more information check [here](#getting-probability-of-row).
+//! * **GET** `/table/all`: Used to retrieve all available `Table`s as JSON
 //! * **GET** `/table/all`: Used to retrieve all available `Table`s as JSON
 //! For more information check [here](#getting-all-the-stored-tables).
 //! * **GET** `/table/all/id`: Used to retrieve all available `Table` identifiers
@@ -68,6 +72,23 @@
 //!
 //! The server will _not_ give a response to this.
 //!
+//! ### Getting all Probabilities
+//!
+//! To obtain the probabilities of all the rows from a `Table`, one must make a **HTTP GET** method call
+//! to `/table/<id>/probability` where `id` is the identifier for the `Table` to get probabilities from.
+//!
+//! The server will return a JSON Array of Floating Point values, or an Error. Take a look at the Errors
+//! section [here](#errors)
+//!
+//! ### Getting Probability of Row
+//!
+//! To obtain the probabilities of all the rows from a `Table`, one must make a **HTTP GET** method call
+//! to `/table/<id>/probability/<row>` where `id` is the identifier for the `Table` to get probabilities
+//! from, and row is the index of the row whose probability one wants.
+//!
+//! The server will return a JSON Floating Point value, or an Error. Take a look at the Errors section
+//! [here](#errors)
+//!
 //! ### Getting all the stored Tables
 //!
 //! To retrieve all the tables in the storage, one must make a **HTTP GET** method call to `/table/all`.
@@ -112,6 +133,8 @@
 //! As such their data section is a string representing what went wrong. Their Error Type is `Serde`.
 
 mod error;
+mod response;
+mod table;
 mod tables;
 #[cfg(test)]
 mod test;
@@ -133,12 +156,14 @@ fn rocket() -> Rocket {
                 put,
                 get,
                 delete,
-                table_ids,
-                all,
                 roll_saved,
+                probability,
+                probability_of_row,
+                all,
+                table_ids,
                 roll,
-                static_tables,
                 validate,
+                static_tables,
             ],
         )
 }

@@ -1,37 +1,7 @@
-// TODO Cleanup
-
 use base64::DecodeError as Base64Error;
 use serde_derive::Serialize;
 use serde_json::error::Error as SerdeError;
 use std::fmt;
-use upgraded_pancake::{Table, TableResult};
-
-#[derive(Debug, Serialize)]
-#[serde(untagged)]
-pub enum Response {
-    Table(Table),
-    Roll(TableResult),
-    Error(Error),
-    Status(u8),
-}
-
-impl From<Table> for Response {
-    fn from(t: Table) -> Self {
-        Response::Table(t)
-    }
-}
-
-impl From<TableResult> for Response {
-    fn from(t: TableResult) -> Self {
-        Response::Roll(t)
-    }
-}
-
-impl From<Error> for Response {
-    fn from(e: Error) -> Self {
-        Response::Error(e)
-    }
-}
 
 #[derive(Debug, Serialize)]
 #[serde(tag = "error", content = "data")]
