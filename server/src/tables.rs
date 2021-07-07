@@ -1,52 +1,76 @@
-use crate::error::*;
+use crate::{error::*, response::Response, table::Table};
 use rocket::http::{Cookie, Cookies};
 use rocket_contrib::json::Json;
-use upgraded_pancake::Table;
 
-fn from_cookies(name: &str, cookies: &Cookies) -> Response {
+fn from_cookies(id: &str, cookies: &Cookies) -> Response {
     match cookies
-        .get(name)
-        .ok_or_else(|| Error::TableNotFound(String::from(name)))
+        .get(id)
+        .ok_or_else(|| Error::TableNotFound(String::from(id)))
         .and_then(|c| base64::decode(c.value()).map_err(Into::into))
         .and_then(|b| serde_json::from_slice::<Table>(&b).map_err(Into::into))
     {
-        Ok(t) => t.into(),
+        Ok(t) => t.fill_in().into(),
         Err(e) => e.into(),
     }
 }
 
 fn from_str(table: &str) -> Response {
     match serde_json::from_str::<Table>(table) {
-        Ok(t) => t.into(),
+        Ok(t) => t.fill_in().into(),
         Err(e) => Response::Error(e.into()),
     }
 }
 
-#[put("/<name>", format = "application/json", data = "<table>")]
-pub fn put(name: String, table: String, mut cookies: Cookies) -> Json<Response> {
+#[put("/<id>", format = "application/json", data = "<table>")]
+pub fn put(id: String, table: String, mut cookies: Cookies) -> Json<Response> {
     Json(match from_str(&table) {
-        Response::Table(_) => {
-            cookies.add(Cookie::new(name, base64::encode(&table)));
-            Response::Status(0)
-        }
+        Response::Table(t) => match serde_json::to_string(&t).map_err(|e| Error::from(e)) {
+            Ok(t) => {
+                cookies.add(Cookie::new(id, base64::encode(&t)));
+                Response::Status(0)
+            }
+            Err(e) => e.into(),
+        },
         Response::Error(e) => e.into(),
         _ => unreachable!("Got something other than a table / error"),
     })
 }
 
-#[get("/<name>")]
-pub fn get(name: String, cookies: Cookies) -> Json<Response> {
-    Json(from_cookies(&name, &cookies))
+#[get("/<id>")]
+pub fn get(id: String, cookies: Cookies) -> Json<Response> {
+    Json(from_cookies(&id, &cookies))
 }
 
-#[delete("/<name>")]
-pub fn delete(name: String, mut cookies: Cookies) {
-    cookies.remove(Cookie::named(name));
+#[delete("/<id>")]
+pub fn delete(id: String, mut cookies: Cookies) {
+    cookies.remove(Cookie::named(id));
 }
 
-#[get("/all/id")]
-pub fn table_ids(cookies: Cookies) -> Json<Vec<String>> {
-    Json(cookies.iter().map(|c| c.name().to_owned()).collect())
+#[get("/<id>/roll")]
+pub fn roll_saved(id: String, cookies: Cookies) -> Json<Response> {
+    Json(match from_cookies(&id, &cookies) {
+        Response::Table(t) => t.roll().into(),
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
+    })
+}
+
+#[get("/<id>/probability")]
+pub fn probability(id: String, cookies: Cookies) -> Json<Response> {
+    Json(match from_cookies(&id, &cookies) {
+        Response::Table(t) => t.probabilities().into(),
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
+    })
+}
+
+#[get("/<id>/probability/<row>")]
+pub fn probability_of_row(id: String, row: u32, cookies: Cookies) -> Json<Response> {
+    Json(match from_cookies(&id, &cookies) {
+        Response::Table(t) => t.probability(row).into(),
+        Response::Error(e) => e.into(),
+        _ => unreachable!("Got something other than a table / error"),
+    })
 }
 
 #[get("/all")]
@@ -59,11 +83,16 @@ pub fn all(cookies: Cookies) -> Json<Vec<Response>> {
     )
 }
 
-#[get("/<name>/roll")]
-pub fn roll_saved(name: String, cookies: Cookies) -> Json<Response> {
-    Json(match from_cookies(&name, &cookies) {
-        Response::Table(t) => t.roll().into(),
+#[get("/all/id")]
+pub fn table_ids(cookies: Cookies) -> Json<Vec<String>> {
+    Json(cookies.iter().map(|c| c.name().to_owned()).collect())
+}
+
+#[post("/", format = "application/json", data = "<table>")]
+pub fn roll(table: String) -> Json<Response> {
+    Json(match from_str(&table) {
         Response::Error(e) => e.into(),
+        Response::Table(t) => t.roll().into(),
         _ => unreachable!("Got something other than a table / error"),
     })
 }
@@ -73,15 +102,6 @@ pub fn validate(table: String) -> Json<Response> {
     Json(match from_str(&table) {
         Response::Error(e) => e.into(),
         _ => Response::Status(0),
-    })
-}
-
-#[post("/", format = "application/json", data = "<table>")]
-pub fn roll(table: String) -> Json<Response> {
-    Json(match from_str(&table) {
-        Response::Error(e) => e.into(),
-        Response::Table(t) => t.roll().into(),
-        _ => unreachable!("Got something other than a table / error"),
     })
 }
 
@@ -99,16 +119,16 @@ pub fn static_tables() -> Json<Table> {
 }
 
 const CHOICES: [&str; 12] = [
-    include_str!("../../test_data/simple/value_single.json"),
-    include_str!("../../test_data/simple/value_multiple.json"),
-    include_str!("../../test_data/simple/ranges_single.json"),
-    include_str!("../../test_data/simple/ranges_multiple.json"),
-    include_str!("../../test_data/simple/mixed_single.json"),
-    include_str!("../../test_data/simple/mixed_multiple.json"),
-    include_str!("../../test_data/complex/value_single.json"),
-    include_str!("../../test_data/complex/value_multiple.json"),
-    include_str!("../../test_data/complex/ranges_single.json"),
-    include_str!("../../test_data/complex/ranges_multiple.json"),
-    include_str!("../../test_data/complex/mixed_single.json"),
-    include_str!("../../test_data/complex/mixed_multiple.json"),
+    include_str!("../../test_data/lib/simple/value_single.json"),
+    include_str!("../../test_data/lib/simple/value_multiple.json"),
+    include_str!("../../test_data/lib/simple/ranges_single.json"),
+    include_str!("../../test_data/lib/simple/ranges_multiple.json"),
+    include_str!("../../test_data/lib/simple/mixed_single.json"),
+    include_str!("../../test_data/lib/simple/mixed_multiple.json"),
+    include_str!("../../test_data/lib/complex/value_single.json"),
+    include_str!("../../test_data/lib/complex/value_multiple.json"),
+    include_str!("../../test_data/lib/complex/ranges_single.json"),
+    include_str!("../../test_data/lib/complex/ranges_multiple.json"),
+    include_str!("../../test_data/lib/complex/mixed_single.json"),
+    include_str!("../../test_data/lib/complex/mixed_multiple.json"),
 ];

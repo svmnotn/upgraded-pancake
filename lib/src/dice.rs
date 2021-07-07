@@ -1,14 +1,22 @@
-use core::{fmt, num::NonZeroU16, ops::RangeInclusive, str::FromStr};
+use core::{
+    fmt,
+    num::{NonZeroU16, NonZeroU8},
+    ops::RangeInclusive,
+    str::FromStr,
+};
 use crate::error::Error;
 use rand::{thread_rng, Rng};
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_derive::{Deserialize, Serialize};
 
+#[cfg(test)]
+mod test;
+
 /// A `Dice` for determining what to roll on a `Table`
 #[derive(Debug, Serialize, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Dice {
     #[doc(hidden)]
-    amount: NonZeroU16,
+    amount: NonZeroU8,
     #[doc(hidden)]
     size: NonZeroU16,
     // TODO add optional modifier +`mod` where
@@ -17,13 +25,13 @@ pub struct Dice {
 
 impl Dice {
     /// Create a new `Dice`
-    pub fn new(amount: NonZeroU16, size: NonZeroU16) -> Self {
+    pub fn new(amount: NonZeroU8, size: NonZeroU16) -> Self {
         Dice { amount, size }
     }
 
     /// Create a new `Dice` if and only if both inputs are > 0
-    pub fn maybe_new(amount: u16, size: u16) -> Option<Self> {
-        let amount = NonZeroU16::new(amount);
+    pub fn maybe_new(amount: u8, size: u16) -> Option<Self> {
+        let amount = NonZeroU8::new(amount);
         let size = NonZeroU16::new(size);
         if let None = amount {
             None
@@ -38,9 +46,9 @@ impl Dice {
 
     /// Roll the `Dice`
     pub fn roll(&self) -> u32 {
-        (0..self.amount.get()).fold(0, |acc, _| {
-            thread_rng().gen_range(1, u32::from(self.size.get() + 1)) + acc
-        })
+        (0..self.amount.get())
+            .map(|_| thread_rng().gen_range(1, u32::from(self.size.get() + 1)))
+            .sum()
     }
 
     /// The minimum value that this `Dice` can give
@@ -54,7 +62,7 @@ impl Dice {
     }
 
     /// The amount of `Dice` rolled
-    pub fn amount(&self) -> u16 {
+    pub fn amount(&self) -> u8 {
         self.amount.get()
     }
 
@@ -66,6 +74,55 @@ impl Dice {
     /// An iterator over all the values of this `Dice`
     pub fn values(&self) -> RangeInclusive<u32> {
         self.min_val()..=self.max_val()
+    }
+
+    /// The probability of getting the value `n` from this `Dice`
+    ///
+    /// If the value `n` is outside the posibility space of the
+    /// `Dice` then a `0` is returned, indicating no probability
+    pub fn probability(&self, n: u32) -> f64 {
+        if self.min_val() > n || self.max_val() < n {
+            // If outside the range, there is no probability
+            0.0
+        } else if self.amount() == 1 {
+            // If single die, then there is only
+            // one way to get any number
+            1.0 / f64::from(self.size())
+        } else {
+            // If there are multiple dice, then
+            // we need the number of possible combinations
+            // that will give us that number,
+            // divided by our dice size to the power of our amount.
+            // So rolling a 2 on a 2d6, has only 1 combination (1,1)
+            // and 6^2 = 36, so the end result is 1/36
+            self.possible_combinations(n)
+                / f64::from(u32::from(self.size()).pow(u32::from(self.amount())))
+        }
+    }
+
+    /// The amount of ways in which the dice could be rolled to end
+    /// with the given amount
+    ///
+    /// Example: 2d6, to get a 12, you only have 1 way, (6,6)
+    pub fn possible_combinations(&self, n: u32) -> f64 {
+        let mut combinations = vec![vec![0.0; (n as usize) + 1]; usize::from(self.amount()) + 1];
+        combinations[0][0] = 1.0;
+
+        for i in 1..=usize::from(self.amount()) {
+            for j in 1..=(n as usize) {
+                if j < i || j > usize::from(self.size()) * i {
+                    combinations[i][j] = 0.0;
+                } else {
+                    let mut k = 1;
+                    while k <= usize::from(self.size()) && j >= k {
+                        combinations[i][j] += combinations[i - 1][j - k];
+                        k += 1;
+                    }
+                }
+            }
+        }
+
+        combinations[usize::from(self.amount())][n as usize]
     }
 }
 
@@ -82,10 +139,10 @@ impl FromStr for Dice {
         if s.contains('d') {
             let v: Vec<&str> = s.split('d').collect();
             if v.len() == 2 {
-                let amount: u16 = v[0]
+                let amount: u8 = v[0]
                     .parse()
                     .map_err(|_| Error::invalid_dice_section(v[0], stringify!(amount)))?;
-                let amount = NonZeroU16::new(amount)
+                let amount = NonZeroU8::new(amount)
                     .ok_or_else(|| Error::invalid_dice_section(v[0], stringify!(amount)))?;
 
                 let size: u16 = v[1]
@@ -129,7 +186,7 @@ impl<'de> Deserialize<'de> for Dice {
             where
                 V: SeqAccess<'de>,
             {
-                let amount: NonZeroU16 = seq
+                let amount: NonZeroU8 = seq
                     .next_element()?
                     .ok_or_else(|| de::Error::invalid_length(0, &self))?;
                 let size: NonZeroU16 = seq
@@ -160,7 +217,7 @@ impl<'de> Deserialize<'de> for Dice {
                         }
                     }
                 }
-                let amount: NonZeroU16 =
+                let amount: NonZeroU8 =
                     amount.ok_or_else(|| de::Error::missing_field(stringify!(amount)))?;
                 let size: NonZeroU16 =
                     size.ok_or_else(|| de::Error::missing_field(stringify!(size)))?;
